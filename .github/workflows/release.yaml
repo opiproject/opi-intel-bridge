@@ -1,0 +1,11 @@
+name: Release
+
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+jobs:
+  call:
+    uses: ./.github/workflows/docker-publish.yml
+    secrets: inherit

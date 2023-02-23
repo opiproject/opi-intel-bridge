@@ -1,0 +1,38 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2022 Dell Inc, or its subsidiaries.
+---
+version: "3.7"
+
+services:
+
+  opi-intel-server:
+    build:
+      context: .
+    ports:
+      - "50051:50051"
+    networks:
+      - opi
+    command: /opi-intel-bridge -port=50051
+    healthcheck:
+      test: grpcurl -plaintext localhost:50051 list || exit 1
+
+  opi-test:
+    image: docker.io/namely/grpc-cli
+    networks:
+      - opi
+    depends_on:
+      opi-intel-server:
+        condition: service_healthy
+    command: ls opi-intel-server:50051 opi_api.storage.v1.FrontendNvmeService -l
+
+  opi-client:
+    image: docker.io/opiproject/godpu:main
+    networks:
+      - opi
+    depends_on:
+      opi-intel-server:
+        condition: service_healthy
+    command: storagetest --addr=opi-intel-server:50051
+
+networks:
+  opi:
