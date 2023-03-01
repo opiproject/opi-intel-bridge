@@ -37,7 +37,7 @@ func main() {
 
 	s := grpc.NewServer()
 
-	pb.RegisterFrontendNvmeServiceServer(s, &fe.PluginFrontendNvme)
+	pb.RegisterFrontendNvmeServiceServer(s, fe.NewServer())
 	pb.RegisterFrontendVirtioBlkServiceServer(s, &frontend.Server{})
 	pb.RegisterFrontendVirtioScsiServiceServer(s, &frontend.Server{})
 	pb.RegisterNVMfRemoteControllerServiceServer(s, &backend.Server{})
