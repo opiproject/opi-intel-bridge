@@ -11,6 +11,7 @@ import (
 
 	pc "github.com/opiproject/opi-api/common/v1/gen/go"
 	pb "github.com/opiproject/opi-api/storage/v1alpha1/gen/go"
+	"github.com/opiproject/opi-spdk-bridge/pkg/server"
 
 	"github.com/ulule/deepcopier"
 	"google.golang.org/grpc/codes"
@@ -24,14 +25,17 @@ type Server struct {
 	Subsystems  map[string]*pb.NVMeSubsystem
 	Controllers map[string]*pb.NVMeController
 	Namespaces  map[string]*pb.NVMeNamespace
+
+	rpc server.JSONRPC
 }
 
 // NewServer creates initialized instance of NVMe server
-func NewServer() *Server {
+func NewServer(jsonRPC server.JSONRPC) *Server {
 	return &Server{
 		Subsystems:  make(map[string]*pb.NVMeSubsystem),
 		Controllers: make(map[string]*pb.NVMeController),
 		Namespaces:  make(map[string]*pb.NVMeNamespace),
+		rpc:         jsonRPC,
 	}
 }
 

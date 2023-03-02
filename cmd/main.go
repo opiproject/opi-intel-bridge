@@ -15,6 +15,7 @@ import (
 	"github.com/opiproject/opi-spdk-bridge/pkg/backend"
 	"github.com/opiproject/opi-spdk-bridge/pkg/frontend"
 	"github.com/opiproject/opi-spdk-bridge/pkg/middleend"
+	"github.com/opiproject/opi-spdk-bridge/pkg/server"
 	"github.com/opiproject/opi-strongswan-bridge/pkg/ipsec"
 
 	pc "github.com/opiproject/opi-api/common/v1/gen/go"
@@ -28,6 +29,8 @@ import (
 func main() {
 	var port int
 	flag.IntVar(&port, "port", 50051, "The Server port")
+	var spdkSocket string
+	flag.StringVar(&spdkSocket, "rpc_sock", "/var/tmp/spdk.sock", "Path to SPDK JSON RPC socket")
 	flag.Parse()
 
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
@@ -37,13 +40,18 @@ func main() {
 
 	s := grpc.NewServer()
 
-	pb.RegisterFrontendNvmeServiceServer(s, fe.NewServer())
-	pb.RegisterFrontendVirtioBlkServiceServer(s, &frontend.Server{})
-	pb.RegisterFrontendVirtioScsiServiceServer(s, &frontend.Server{})
-	pb.RegisterNVMfRemoteControllerServiceServer(s, &backend.Server{})
-	pb.RegisterNullDebugServiceServer(s, &backend.Server{})
-	pb.RegisterAioControllerServiceServer(s, &backend.Server{})
-	pb.RegisterMiddleendServiceServer(s, &middleend.Server{})
+	jsonRPC := server.NewUnixSocketJSONRPC(spdkSocket)
+	frontendServer := frontend.NewServer(jsonRPC)
+	backendServer := backend.NewServer(jsonRPC)
+	middleendServer := middleend.NewServer(jsonRPC)
+
+	pb.RegisterFrontendNvmeServiceServer(s, fe.NewServer(jsonRPC))
+	pb.RegisterFrontendVirtioBlkServiceServer(s, frontendServer)
+	pb.RegisterFrontendVirtioScsiServiceServer(s, frontendServer)
+	pb.RegisterNVMfRemoteControllerServiceServer(s, backendServer)
+	pb.RegisterNullDebugServiceServer(s, backendServer)
+	pb.RegisterAioControllerServiceServer(s, backendServer)
+	pb.RegisterMiddleendServiceServer(s, middleendServer)
 	pc.RegisterInventorySvcServer(s, &inventory.Server{})
 	ps.RegisterIPsecServer(s, &ipsec.Server{})
 
