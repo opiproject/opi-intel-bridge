@@ -16,6 +16,7 @@ import (
 	"github.com/opiproject/opi-spdk-bridge/pkg/backend"
 	"github.com/opiproject/opi-spdk-bridge/pkg/frontend"
 	"github.com/opiproject/opi-spdk-bridge/pkg/middleend"
+	"github.com/opiproject/opi-spdk-bridge/pkg/server"
 	"github.com/opiproject/opi-strongswan-bridge/pkg/ipsec"
 
 	pc "github.com/opiproject/opi-api/common/v1/gen/go"
@@ -29,6 +30,9 @@ import (
 func main() {
 	var port int
 	flag.IntVar(&port, "port", 50051, "The Server port")
+	var spdkSocket string
+	// TODO: restore to rpc_sock when opi-spdk-bridge removes DefaultJSONRPC
+	flag.StringVar(&spdkSocket, "rpc_socket", "/var/tmp/spdk.sock", "Path to SPDK JSON RPC socket")
 	flag.Parse()
 
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
@@ -38,10 +42,11 @@ func main() {
 
 	s := grpc.NewServer()
 
-	frontendOpiIntelServer := fe.NewServer()
-	frontendOpiSpdkServer := frontend.NewServer()
-	backendOpiSpdkServer := backend.NewServer()
-	middleendOpiSpdkServer := middleend.NewServer()
+	jsonRPC := server.NewUnixSocketJSONRPC(spdkSocket)
+	frontendOpiIntelServer := fe.NewServer(jsonRPC)
+	frontendOpiSpdkServer := frontend.NewServerWithJSONRPC(jsonRPC)
+	backendOpiSpdkServer := backend.NewServerWithJSONRPC(jsonRPC)
+	middleendOpiSpdkServer := middleend.NewServerWithJSONRPC(jsonRPC)
 
 	pb.RegisterFrontendNvmeServiceServer(s, frontendOpiIntelServer)
 	pb.RegisterFrontendVirtioBlkServiceServer(s, frontendOpiSpdkServer)
