@@ -31,8 +31,7 @@ func main() {
 	var port int
 	flag.IntVar(&port, "port", 50051, "The Server port")
 	var spdkSocket string
-	// TODO: restore to rpc_sock when opi-spdk-bridge removes DefaultJSONRPC
-	flag.StringVar(&spdkSocket, "rpc_socket", "/var/tmp/spdk.sock", "Path to SPDK JSON RPC socket")
+	flag.StringVar(&spdkSocket, "rpc_sock", "/var/tmp/spdk.sock", "Path to SPDK JSON RPC socket")
 	flag.Parse()
 
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
