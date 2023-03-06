@@ -5,7 +5,7 @@ go 1.19
 require (
 	github.com/opiproject/opi-api v0.0.0-20230303162737-328ef45a14b7
 	github.com/opiproject/opi-smbios-bridge v0.1.2
-	github.com/opiproject/opi-spdk-bridge v0.1.2-0.20230304170424-f5c97293a254
+	github.com/opiproject/opi-spdk-bridge v0.1.2-0.20230306151936-4cfcc169e612
 	github.com/opiproject/opi-strongswan-bridge v0.1.1
 	github.com/ulule/deepcopier v0.0.0-20200430083143-45decc6639b6
 	google.golang.org/grpc v1.53.0
