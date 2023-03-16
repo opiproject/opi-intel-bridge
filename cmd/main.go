@@ -30,8 +30,8 @@ import (
 func main() {
 	var port int
 	flag.IntVar(&port, "port", 50051, "The Server port")
-	var spdkSocket string
-	flag.StringVar(&spdkSocket, "rpc_sock", "/var/tmp/spdk.sock", "Path to SPDK JSON RPC socket")
+	var spdkAddress string
+	flag.StringVar(&spdkAddress, "spdk_addr", "/var/tmp/spdk.sock", "Points to SPDK unix socket/tcp socket to interact with")
 	flag.Parse()
 
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
@@ -41,7 +41,7 @@ func main() {
 
 	s := grpc.NewServer()
 
-	jsonRPC := server.NewSpdkJSONRPC(spdkSocket)
+	jsonRPC := server.NewSpdkJSONRPC(spdkAddress)
 	frontendOpiIntelServer := frontend.NewServerWithSubsystemListener(jsonRPC, fe.NewSubsystemListener())
 	frontendOpiSpdkServer := frontend.NewServer(jsonRPC)
 	backendOpiSpdkServer := backend.NewServer(jsonRPC)
