@@ -12,7 +12,7 @@ services:
       - "50051:50051"
     networks:
       - opi
-    command: /opi-intel-bridge -port=50051
+    command: /opi-intel-bridge -port=50051 -spdk_addr /var/tmp/spdk.sock
     healthcheck:
       test: grpcurl -plaintext localhost:50051 list || exit 1
 
