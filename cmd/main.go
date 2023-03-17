@@ -42,7 +42,7 @@ func main() {
 	s := grpc.NewServer()
 
 	jsonRPC := server.NewSpdkJSONRPC(spdkAddress)
-	frontendOpiIntelServer := frontend.NewServerWithSubsystemListener(jsonRPC, fe.NewSubsystemListener())
+	frontendOpiIntelServer := fe.NewServer(jsonRPC)
 	frontendOpiSpdkServer := frontend.NewServer(jsonRPC)
 	backendOpiSpdkServer := backend.NewServer(jsonRPC)
 	middleendOpiSpdkServer := middleend.NewServer(jsonRPC)
