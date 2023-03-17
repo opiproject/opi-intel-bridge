@@ -14,18 +14,12 @@ import (
 // Server contains frontend related OPI services
 type Server struct {
 	pb.FrontendNvmeServiceServer
-
-	nvme *frontend.NvmeParameters
-	rpc  server.JSONRPC
 }
 
 // NewServer creates initialized instance of NVMe server
 func NewServer(jsonRPC server.JSONRPC) *Server {
-	opiSpdkServer := frontend.NewServer(jsonRPC)
+	opiSpdkServer := frontend.NewServerWithSubsystemListener(jsonRPC, NewSubsystemListener())
 	return &Server{
 		opiSpdkServer,
-
-		&opiSpdkServer.Nvme,
-		jsonRPC,
 	}
 }
