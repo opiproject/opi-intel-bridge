@@ -8,6 +8,6 @@ import (
 	"testing"
 )
 
-func TestSpdk_Call(t *testing.T) {
+func TestSpdk_Call(_ *testing.T) {
 
 }
