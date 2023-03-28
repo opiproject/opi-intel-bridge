@@ -9,6 +9,8 @@
 [![Go Doc](https://img.shields.io/badge/godoc-reference-blue.svg)](http://godoc.org/github.com/opiproject/opi-intel-bridge)
 [![Pulls](https://img.shields.io/docker/pulls/opiproject/opi-intel-bridge.svg?logo=docker&style=flat&label=Pulls)](https://hub.docker.com/r/opiproject/opi-intel-bridge)
 [![Last Release](https://img.shields.io/github/v/release/opiproject/opi-intel-bridge?label=Latest&style=flat-square&logo=go)](https://github.com/opiproject/opi-intel-bridge/releases)
+[![GitHub stars](https://img.shields.io/github/stars/opiproject/opi-intel-bridge.svg?style=flat-square&label=github%20stars)](https://github.com/opiproject/opi-intel-bridge)
+[![GitHub Contributors](https://img.shields.io/github/contributors/opiproject/opi-intel-bridge.svg?style=flat-square)](https://github.com/opiproject/opi-intel-bridge/graphs/contributors)
 
 This is a Intel app (bridge) to OPI APIs for storage, inventory, ipsec and networking (future).
 
