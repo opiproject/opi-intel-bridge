@@ -12,10 +12,10 @@ import (
 	"net"
 
 	fe "github.com/opiproject/opi-intel-bridge/pkg/frontend"
+	me "github.com/opiproject/opi-intel-bridge/pkg/middleend"
 	"github.com/opiproject/opi-smbios-bridge/pkg/inventory"
 	"github.com/opiproject/opi-spdk-bridge/pkg/backend"
 	"github.com/opiproject/opi-spdk-bridge/pkg/frontend"
-	"github.com/opiproject/opi-spdk-bridge/pkg/middleend"
 	"github.com/opiproject/opi-spdk-bridge/pkg/server"
 	"github.com/opiproject/opi-strongswan-bridge/pkg/ipsec"
 
@@ -45,7 +45,7 @@ func main() {
 	frontendOpiIntelServer := fe.NewServer(jsonRPC)
 	frontendOpiSpdkServer := frontend.NewServer(jsonRPC)
 	backendOpiSpdkServer := backend.NewServer(jsonRPC)
-	middleendOpiSpdkServer := middleend.NewServer(jsonRPC)
+	middleendOpiIntelServer := me.NewServer(jsonRPC)
 
 	pb.RegisterFrontendNvmeServiceServer(s, frontendOpiIntelServer)
 	pb.RegisterFrontendVirtioBlkServiceServer(s, frontendOpiSpdkServer)
@@ -53,7 +53,7 @@ func main() {
 	pb.RegisterNVMfRemoteControllerServiceServer(s, backendOpiSpdkServer)
 	pb.RegisterNullDebugServiceServer(s, backendOpiSpdkServer)
 	pb.RegisterAioControllerServiceServer(s, backendOpiSpdkServer)
-	pb.RegisterMiddleendServiceServer(s, middleendOpiSpdkServer)
+	pb.RegisterMiddleendServiceServer(s, middleendOpiIntelServer)
 	pc.RegisterInventorySvcServer(s, &inventory.Server{})
 	ps.RegisterIPsecServer(s, &ipsec.Server{})
 
