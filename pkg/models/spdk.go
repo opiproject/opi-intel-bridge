@@ -15,3 +15,11 @@ type NpiBdevSetKeysParams struct {
 
 // NpiBdevSetKeysResult is the result of setting crypto keys
 type NpiBdevSetKeysResult bool
+
+// NpiBdevClearKeysParams holds the parameters required to clear crypto keys
+type NpiBdevClearKeysParams struct {
+	UUID string `json:"uuid"`
+}
+
+// NpiBdevClearKeysResult is the result of clearing crypto keys
+type NpiBdevClearKeysResult bool

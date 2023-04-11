@@ -10,6 +10,7 @@ import (
 	"log"
 	"runtime"
 	"runtime/debug"
+	"strings"
 
 	pc "github.com/opiproject/opi-api/common/v1/gen/go"
 	pb "github.com/opiproject/opi-api/storage/v1alpha1/gen/go"
@@ -19,6 +20,7 @@ import (
 	"github.com/opiproject/opi-spdk-bridge/pkg/server"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 var (
@@ -137,6 +139,40 @@ func verifyCreateEncryptedVolumeRequestArgs(in *pb.CreateEncryptedVolumeRequest)
 	}
 
 	return nil
+}
+
+// DeleteEncryptedVolume deletes an encrypted volume
+func (s *Server) DeleteEncryptedVolume(_ context.Context, in *pb.DeleteEncryptedVolumeRequest) (*emptypb.Empty, error) {
+	log.Printf("DeleteEncryptedVolume: Received from client: %v", in)
+	if in == nil {
+		log.Println("request cannot be empty")
+		return nil, errMissingArgument
+	}
+
+	bdevUUID, err := s.getBdevUUIDByName(in.Name)
+	if err != nil {
+		log.Println("Failed to find UUID for bdev", in.Name)
+		return nil, err
+	}
+	params := intelmodels.NpiBdevClearKeysParams{
+		UUID: bdevUUID,
+	}
+	var result intelmodels.NpiBdevClearKeysResult
+	err = s.rpc.Call("npi_bdev_clear_keys", params, &result)
+	if err != nil {
+		cryptoObjMissingErrMsg := "Could not find a crypto object for a given bdev"
+		if in.AllowMissing &&
+			strings.Contains(err.Error(), cryptoObjMissingErrMsg) {
+			return &emptypb.Empty{}, nil
+		}
+		log.Println(err)
+		return nil, server.ErrFailedSpdkCall
+	}
+	if !result {
+		log.Println("Failed result on SPDK call:", result)
+		return nil, server.ErrUnexpectedSpdkCallResult
+	}
+	return &emptypb.Empty{}, nil
 }
 
 func (s *Server) getBdevUUIDByName(name string) (string, error) {
