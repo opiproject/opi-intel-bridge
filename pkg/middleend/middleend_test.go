@@ -387,3 +387,70 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 		})
 	}
 }
+
+func TestMiddleEnd_DeleteEncryptedVolume(t *testing.T) {
+	tests := map[string]struct {
+		in          *pb.DeleteEncryptedVolumeRequest
+		spdk        []string
+		expectedErr error
+		start       bool
+	}{
+
+		"nil request": {
+			in:          nil,
+			spdk:        []string{},
+			expectedErr: errMissingArgument,
+			start:       false,
+		},
+		"valid delete encrypted volume request": {
+			in:          &pb.DeleteEncryptedVolumeRequest{Name: bdevName},
+			spdk:        []string{foundBdevResponse, `{"id":%d,"error":{"code":0,"message":""},"result":true}`},
+			expectedErr: nil,
+			start:       true,
+		},
+		"find bdev uuid by name internal SPDK failure": {
+			in:          &pb.DeleteEncryptedVolumeRequest{Name: bdevName},
+			spdk:        []string{`{"id":%d,"error":{"code":-19,"message":"No such device"},"result":null}`},
+			expectedErr: server.ErrFailedSpdkCall,
+			start:       true,
+		},
+		"find no bdev uuid by name": {
+			in:          &pb.DeleteEncryptedVolumeRequest{Name: bdevName},
+			spdk:        []string{`{"id":%d,"error":{"code":0,"message":""},"result":[]}`},
+			expectedErr: server.ErrUnexpectedSpdkCallResult,
+			start:       true,
+		},
+		"internal SPDK failure": {
+			in:          &pb.DeleteEncryptedVolumeRequest{Name: bdevName},
+			spdk:        []string{foundBdevResponse, `{"id":%d,"error":{"code":1,"message":"some internal error"},"result":true}`},
+			expectedErr: server.ErrFailedSpdkCall,
+			start:       true,
+		},
+		"SPDK result false": {
+			in:          &pb.DeleteEncryptedVolumeRequest{Name: bdevName},
+			spdk:        []string{foundBdevResponse, `{"id":%d,"error":{"code":0,"message":""},"result":false}`},
+			expectedErr: server.ErrUnexpectedSpdkCallResult,
+			start:       true,
+		},
+		"delete non-existing encrypted volume with missing allowed": {
+			in: &pb.DeleteEncryptedVolumeRequest{Name: bdevName, AllowMissing: true},
+			spdk: []string{foundBdevResponse,
+				`{"id":%d,"error":{"code":-32603,"message":"Could not find a crypto object for a given bdev, set using npi_bdev_set_keys"},"result":null}`},
+			expectedErr: nil,
+			start:       true,
+		},
+	}
+
+	for testName, test := range tests {
+		t.Run(testName, func(t *testing.T) {
+			testEnv := createTestEnvironment(test.start, test.spdk)
+			defer testEnv.Close()
+
+			_, err := testEnv.opiSpdkServer.DeleteEncryptedVolume(testEnv.ctx, test.in)
+
+			if err != test.expectedErr {
+				t.Error("error: expected", test.expectedErr, "received", err)
+			}
+		})
+	}
+}
