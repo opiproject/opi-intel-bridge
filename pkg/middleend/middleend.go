@@ -31,7 +31,7 @@ var (
 
 // Server contains middleend related OPI services
 type Server struct {
-	pb.MiddleendServiceServer
+	pb.MiddleendEncryptionServiceServer
 	rpc server.JSONRPC
 }
 

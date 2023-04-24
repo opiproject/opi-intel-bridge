@@ -22,7 +22,7 @@ import (
 )
 
 type middleendClient struct {
-	pb.MiddleendServiceClient
+	pb.MiddleendEncryptionServiceClient
 }
 
 type testEnv struct {
@@ -61,7 +61,7 @@ func createTestEnvironment(startSpdkServer bool, spdkResponses []string) *testEn
 	env.conn = conn
 
 	env.client = &middleendClient{
-		pb.NewMiddleendServiceClient(env.conn),
+		pb.NewMiddleendEncryptionServiceClient(env.conn),
 	}
 
 	return env
@@ -70,7 +70,7 @@ func createTestEnvironment(startSpdkServer bool, spdkResponses []string) *testEn
 func dialer(opiSpdkServer *Server) func(context.Context, string) (net.Conn, error) {
 	listener := bufconn.Listen(1024 * 1024)
 	server := grpc.NewServer()
-	pb.RegisterMiddleendServiceServer(server, opiSpdkServer)
+	pb.RegisterMiddleendEncryptionServiceServer(server, opiSpdkServer)
 
 	go func() {
 		if err := server.Serve(listener); err != nil {
