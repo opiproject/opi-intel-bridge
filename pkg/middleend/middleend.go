@@ -12,12 +12,12 @@ import (
 	"runtime/debug"
 	"strings"
 
+	"github.com/opiproject/gospdk/spdk"
 	pc "github.com/opiproject/opi-api/common/v1/gen/go"
 	pb "github.com/opiproject/opi-api/storage/v1alpha1/gen/go"
-	intelmodels "github.com/opiproject/opi-intel-bridge/pkg/models"
+	"github.com/opiproject/opi-intel-bridge/pkg/models"
 	"github.com/opiproject/opi-spdk-bridge/pkg/middleend"
-	spdkmodels "github.com/opiproject/opi-spdk-bridge/pkg/models"
-	"github.com/opiproject/opi-spdk-bridge/pkg/server"
+
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -32,11 +32,11 @@ var (
 // Server contains middleend related OPI services
 type Server struct {
 	pb.MiddleendEncryptionServiceServer
-	rpc server.JSONRPC
+	rpc spdk.JSONRPC
 }
 
 // NewServer creates initialized instance of middleend server
-func NewServer(jsonRPC server.JSONRPC) *Server {
+func NewServer(jsonRPC spdk.JSONRPC) *Server {
 	opiSpdkServer := middleend.NewServer(jsonRPC)
 	return &Server{
 		opiSpdkServer,
@@ -73,7 +73,7 @@ func (s *Server) CreateEncryptedVolume(_ context.Context, in *pb.CreateEncrypted
 
 	half := len(in.EncryptedVolume.Key) / 2
 	tweakMode := "A"
-	params := &intelmodels.NpiBdevSetKeysParams{
+	params := &models.NpiBdevSetKeysParams{
 		UUID:   bdevUUID,
 		Key:    hex.EncodeToString(in.EncryptedVolume.Key[:half]),
 		Key2:   hex.EncodeToString(in.EncryptedVolume.Key[half:]),
@@ -84,15 +84,15 @@ func (s *Server) CreateEncryptedVolume(_ context.Context, in *pb.CreateEncrypted
 		params = nil
 	}()
 
-	var result intelmodels.NpiBdevSetKeysResult
+	var result models.NpiBdevSetKeysResult
 	err = s.rpc.Call("npi_bdev_set_keys", params, &result)
 	if err != nil {
 		log.Println("error:", err)
-		return nil, server.ErrFailedSpdkCall
+		return nil, spdk.ErrFailedSpdkCall
 	}
 	if !result {
 		log.Println("Failed result on SPDK call:", result)
-		return nil, server.ErrUnexpectedSpdkCallResult
+		return nil, spdk.ErrUnexpectedSpdkCallResult
 	}
 
 	return &pb.EncryptedVolume{
@@ -154,10 +154,10 @@ func (s *Server) DeleteEncryptedVolume(_ context.Context, in *pb.DeleteEncrypted
 		log.Println("Failed to find UUID for bdev", in.Name)
 		return nil, err
 	}
-	params := intelmodels.NpiBdevClearKeysParams{
+	params := models.NpiBdevClearKeysParams{
 		UUID: bdevUUID,
 	}
-	var result intelmodels.NpiBdevClearKeysResult
+	var result models.NpiBdevClearKeysResult
 	err = s.rpc.Call("npi_bdev_clear_keys", params, &result)
 	if err != nil {
 		cryptoObjMissingErrMsg := "Could not find a crypto object for a given bdev"
@@ -166,26 +166,26 @@ func (s *Server) DeleteEncryptedVolume(_ context.Context, in *pb.DeleteEncrypted
 			return &emptypb.Empty{}, nil
 		}
 		log.Println(err)
-		return nil, server.ErrFailedSpdkCall
+		return nil, spdk.ErrFailedSpdkCall
 	}
 	if !result {
 		log.Println("Failed result on SPDK call:", result)
-		return nil, server.ErrUnexpectedSpdkCallResult
+		return nil, spdk.ErrUnexpectedSpdkCallResult
 	}
 	return &emptypb.Empty{}, nil
 }
 
 func (s *Server) getBdevUUIDByName(name string) (string, error) {
-	params := spdkmodels.BdevGetBdevsParams{Name: name}
-	var result []spdkmodels.BdevGetBdevsResult
+	params := spdk.BdevGetBdevsParams{Name: name}
+	var result []spdk.BdevGetBdevsResult
 	err := s.rpc.Call("bdev_get_bdevs", params, &result)
 	if err != nil {
 		log.Println("error:", err)
-		return "", server.ErrFailedSpdkCall
+		return "", spdk.ErrFailedSpdkCall
 	}
 	if len(result) != 1 {
 		log.Println("Found bdevs:", result, "under the name", params.Name)
-		return "", server.ErrUnexpectedSpdkCallResult
+		return "", spdk.ErrUnexpectedSpdkCallResult
 	}
 	return result[0].UUID, nil
 }

@@ -7,9 +7,9 @@ package frontend
 import (
 	"strconv"
 
+	"github.com/opiproject/gospdk/spdk"
 	pb "github.com/opiproject/opi-api/storage/v1alpha1/gen/go"
 	"github.com/opiproject/opi-spdk-bridge/pkg/frontend"
-	"github.com/opiproject/opi-spdk-bridge/pkg/models"
 )
 
 type npiSubsystemListener struct {
@@ -20,8 +20,8 @@ func NewSubsystemListener() frontend.SubsystemListener {
 	return npiSubsystemListener{}
 }
 
-func (c npiSubsystemListener) Params(ctrlr *pb.NVMeController, nqn string) models.NvmfSubsystemAddListenerParams {
-	result := models.NvmfSubsystemAddListenerParams{}
+func (c npiSubsystemListener) Params(ctrlr *pb.NVMeController, nqn string) spdk.NvmfSubsystemAddListenerParams {
+	result := spdk.NvmfSubsystemAddListenerParams{}
 	result.Nqn = nqn
 	result.ListenAddress.Trtype = "npi"
 	result.ListenAddress.Traddr = calculateTransportAddr(ctrlr.Spec.PcieId)

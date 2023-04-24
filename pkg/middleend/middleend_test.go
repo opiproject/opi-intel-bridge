@@ -12,6 +12,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/opiproject/gospdk/spdk"
 	pc "github.com/opiproject/opi-api/common/v1/gen/go"
 	pb "github.com/opiproject/opi-api/storage/v1alpha1/gen/go"
 	"github.com/opiproject/opi-spdk-bridge/pkg/server"
@@ -32,7 +33,7 @@ type testEnv struct {
 	testSocket    string
 	ctx           context.Context
 	conn          *grpc.ClientConn
-	jsonRPC       server.JSONRPC
+	jsonRPC       spdk.JSONRPC
 }
 
 func (e *testEnv) Close() {
@@ -321,7 +322,7 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			out:           nil,
 			spdk:          []string{`{"id":%d,"error":{"code":-19,"message":"No such device"},"result":null}`},
 			expectedInKey: make([]byte, len(encryptedVolumeAesXts256.Key)),
-			expectedErr:   server.ErrFailedSpdkCall,
+			expectedErr:   spdk.ErrFailedSpdkCall,
 			start:         true,
 		},
 		"find no bdev uuid by name": {
@@ -329,7 +330,7 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			out:           nil,
 			spdk:          []string{`{"id":%d,"error":{"code":0,"message":""},"result":[]}`},
 			expectedInKey: make([]byte, len(encryptedVolumeAesXts256.Key)),
-			expectedErr:   server.ErrUnexpectedSpdkCallResult,
+			expectedErr:   spdk.ErrUnexpectedSpdkCallResult,
 			start:         true,
 		},
 		"internal SPDK failure": {
@@ -337,7 +338,7 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			out:           nil,
 			spdk:          []string{foundBdevResponse, `{"id":%d,"error":{"code":1,"message":"some internal error"},"result":true}`},
 			expectedInKey: make([]byte, len(encryptedVolumeAesXts256.Key)),
-			expectedErr:   server.ErrFailedSpdkCall,
+			expectedErr:   spdk.ErrFailedSpdkCall,
 			start:         true,
 		},
 		"SPDK result false": {
@@ -345,7 +346,7 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			out:           nil,
 			spdk:          []string{foundBdevResponse, `{"id":%d,"error":{"code":0,"message":""},"result":false}`},
 			expectedInKey: make([]byte, len(encryptedVolumeAesXts256.Key)),
-			expectedErr:   server.ErrUnexpectedSpdkCallResult,
+			expectedErr:   spdk.ErrUnexpectedSpdkCallResult,
 			start:         true,
 		},
 	}
@@ -411,25 +412,25 @@ func TestMiddleEnd_DeleteEncryptedVolume(t *testing.T) {
 		"find bdev uuid by name internal SPDK failure": {
 			in:          &pb.DeleteEncryptedVolumeRequest{Name: bdevName},
 			spdk:        []string{`{"id":%d,"error":{"code":-19,"message":"No such device"},"result":null}`},
-			expectedErr: server.ErrFailedSpdkCall,
+			expectedErr: spdk.ErrFailedSpdkCall,
 			start:       true,
 		},
 		"find no bdev uuid by name": {
 			in:          &pb.DeleteEncryptedVolumeRequest{Name: bdevName},
 			spdk:        []string{`{"id":%d,"error":{"code":0,"message":""},"result":[]}`},
-			expectedErr: server.ErrUnexpectedSpdkCallResult,
+			expectedErr: spdk.ErrUnexpectedSpdkCallResult,
 			start:       true,
 		},
 		"internal SPDK failure": {
 			in:          &pb.DeleteEncryptedVolumeRequest{Name: bdevName},
 			spdk:        []string{foundBdevResponse, `{"id":%d,"error":{"code":1,"message":"some internal error"},"result":true}`},
-			expectedErr: server.ErrFailedSpdkCall,
+			expectedErr: spdk.ErrFailedSpdkCall,
 			start:       true,
 		},
 		"SPDK result false": {
 			in:          &pb.DeleteEncryptedVolumeRequest{Name: bdevName},
 			spdk:        []string{foundBdevResponse, `{"id":%d,"error":{"code":0,"message":""},"result":false}`},
-			expectedErr: server.ErrUnexpectedSpdkCallResult,
+			expectedErr: spdk.ErrUnexpectedSpdkCallResult,
 			start:       true,
 		},
 		"delete non-existing encrypted volume with missing allowed": {
