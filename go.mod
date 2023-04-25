@@ -3,9 +3,10 @@ module github.com/opiproject/opi-intel-bridge
 go 1.19
 
 require (
+	github.com/opiproject/gospdk v0.0.0-20230420205223-03a74a33aa2a
 	github.com/opiproject/opi-api v0.0.0-20230420192212-eb4dd1c1e3dc
 	github.com/opiproject/opi-smbios-bridge v0.1.2
-	github.com/opiproject/opi-spdk-bridge v0.1.2-0.20230424140956-85dc6ef471e0
+	github.com/opiproject/opi-spdk-bridge v0.1.2-0.20230425121807-7a5f2635b58a
 	github.com/opiproject/opi-strongswan-bridge v0.1.1
 	google.golang.org/grpc v1.54.0
 	google.golang.org/protobuf v1.30.0
@@ -20,7 +21,6 @@ require (
 	github.com/jaypipes/ghw v0.10.0 // indirect
 	github.com/jaypipes/pcidb v1.0.0 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
-	github.com/opiproject/gospdk v0.0.0-20230420185639-315d30a80a20 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/strongswan/govici v0.6.0 // indirect
 	github.com/ulule/deepcopier v0.0.0-20200430083143-45decc6639b6 // indirect
