@@ -32,6 +32,7 @@ var (
 // Server contains middleend related OPI services
 type Server struct {
 	pb.MiddleendEncryptionServiceServer
+	pb.MiddleendQosVolumeServiceServer
 	rpc spdk.JSONRPC
 }
 
@@ -39,6 +40,7 @@ type Server struct {
 func NewServer(jsonRPC spdk.JSONRPC) *Server {
 	opiSpdkServer := middleend.NewServer(jsonRPC)
 	return &Server{
+		opiSpdkServer,
 		opiSpdkServer,
 		jsonRPC,
 	}

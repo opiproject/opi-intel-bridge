@@ -54,6 +54,7 @@ func main() {
 	pb.RegisterNullDebugServiceServer(s, backendOpiSpdkServer)
 	pb.RegisterAioControllerServiceServer(s, backendOpiSpdkServer)
 	pb.RegisterMiddleendEncryptionServiceServer(s, middleendOpiIntelServer)
+	pb.RegisterMiddleendQosVolumeServiceServer(s, middleendOpiIntelServer)
 	pc.RegisterInventorySvcServer(s, &inventory.Server{})
 	ps.RegisterIPsecServer(s, &ipsec.Server{})
 
