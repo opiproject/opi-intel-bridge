@@ -14,6 +14,8 @@ github.com/google/uuid v1.3.0 h1:t6JiXgmwXMjEs8VusXIJk2BXHsn+wx8BZdTaoZ5fu7I=
 github.com/google/uuid v1.3.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/jaypipes/ghw v0.10.1-0.20230329185050-227643e14380 h1:jyt0G4jRwqNEbe+oeUy21l/0+QopoMXnnz1Xb3W3cUA=
 github.com/jaypipes/ghw v0.10.1-0.20230329185050-227643e14380/go.mod h1:jeJGbkRB2lL3/gxYzNYzEDETV1ZJ56OKr+CSeSEym+g=
+github.com/jaypipes/ghw v0.10.1-0.20230504185505-3ff88ab77a9e h1:iMbljUn3uJ1fiOZwxmyWBFGM52DYosibqf09EXLyXB4=
+github.com/jaypipes/ghw v0.10.1-0.20230504185505-3ff88ab77a9e/go.mod h1:jeJGbkRB2lL3/gxYzNYzEDETV1ZJ56OKr+CSeSEym+g=
 github.com/jaypipes/pcidb v1.0.0 h1:vtZIfkiCUE42oYbJS0TAq9XSfSmcsgo9IdxSm9qzYU8=
 github.com/jaypipes/pcidb v1.0.0/go.mod h1:TnYUvqhPBzCKnH34KrIX22kAeEbDCSRJ9cqLRCuNDfk=
 github.com/jessevdk/go-flags v1.4.0/go.mod h1:4FA24M0QyGHXBuZZK/XkWh8h0e1EYbRYJSGM75WSRxI=
@@ -29,6 +31,8 @@ github.com/opiproject/opi-api v0.0.0-20230504180422-da1d8ce22515 h1:8ANCsElk0GcY
 github.com/opiproject/opi-api v0.0.0-20230504180422-da1d8ce22515/go.mod h1:92pv4ulvvPMuxCJ9ND3aYbmBfEMLx0VCjpkiR7ZTqPY=
 github.com/opiproject/opi-smbios-bridge v0.1.3-0.20230429074246-f8134c6dd336 h1:QuA18ZwctAcvOgO/Bz5/RlkiCD79SWIQUh7Nl/O57jk=
 github.com/opiproject/opi-smbios-bridge v0.1.3-0.20230429074246-f8134c6dd336/go.mod h1:UktQuxcWGZNCrEh6FLDmaBfjHmDHMh8U26MAhB6F0fY=
+github.com/opiproject/opi-smbios-bridge v0.1.3-0.20230506084426-15c240301312 h1:jJ+Hc6TdpXBO2LmrcRbFel6D2d6DZhjt8DNj8TIToJA=
+github.com/opiproject/opi-smbios-bridge v0.1.3-0.20230506084426-15c240301312/go.mod h1:vxBARsiIpTEiOcwEYzQdSZ+ySoH4IKgHzRR/w8W8Tgc=
 github.com/opiproject/opi-spdk-bridge v0.1.2-0.20230429125315-7f180aa38423 h1:VGaiAM2arsMgdFSv79VZphbrfGBs6QpZ3qfxMeKlJMk=
 github.com/opiproject/opi-spdk-bridge v0.1.2-0.20230429125315-7f180aa38423/go.mod h1:wY44PeIOLUIJsZ6OxQJpG2IFvW3ZaJddQY7Pyyd4KPY=
 github.com/opiproject/opi-spdk-bridge v0.1.2-0.20230501134823-f60ea788533c h1:QWQW1z7prcdkG4e1S1doocj9MFYbt+UpY92DFuw4Cws=
