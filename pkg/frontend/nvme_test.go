@@ -561,3 +561,358 @@ func TestFrontEnd_CreateNVMeController(t *testing.T) {
 		})
 	}
 }
+
+func TestFrontEnd_UpdateNVMeController(t *testing.T) {
+	tests := map[string]struct {
+		in                 *pb.NVMeController
+		out                *pb.NVMeController
+		spdk               []string
+		errCode            codes.Code
+		errMsg             string
+		start              bool
+		existingController *pb.NVMeController
+	}{
+		"limit_max rw_iops_kiops is not supported": {
+			in: &pb.NVMeController{
+				Spec: &pb.NVMeControllerSpec{
+					Id:               &pc.ObjectKey{Value: testControllerID},
+					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Spec.Id.Value},
+					PcieId:           &pb.PciEndpoint{PhysicalFunction: 0, VirtualFunction: 2},
+					NvmeControllerId: 1,
+					MaxLimit:         &pb.QosLimit{RwIopsKiops: 1},
+				},
+			},
+			out:                nil,
+			spdk:               []string{},
+			errCode:            codes.InvalidArgument,
+			errMsg:             "QoS limit_max rw_iops_kiops is not supported",
+			start:              false,
+			existingController: nil,
+		},
+		"limit_max rw_bandwidth_mbs is not supported": {
+			in: &pb.NVMeController{
+				Spec: &pb.NVMeControllerSpec{
+					Id:               &pc.ObjectKey{Value: testControllerID},
+					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Spec.Id.Value},
+					PcieId:           &pb.PciEndpoint{PhysicalFunction: 0, VirtualFunction: 2},
+					NvmeControllerId: 1,
+					MaxLimit:         &pb.QosLimit{RwBandwidthMbs: 1},
+				},
+			},
+			out:                nil,
+			spdk:               []string{},
+			errCode:            codes.InvalidArgument,
+			errMsg:             "QoS limit_max rw_bandwidth_mbs is not supported",
+			start:              false,
+			existingController: &testControllerWithMaxQos,
+		},
+		"limit_min rw_bandwidth_mbs is not supported": {
+			in: &pb.NVMeController{
+				Spec: &pb.NVMeControllerSpec{
+					Id:               &pc.ObjectKey{Value: testControllerID},
+					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Spec.Id.Value},
+					PcieId:           &pb.PciEndpoint{PhysicalFunction: 0, VirtualFunction: 2},
+					NvmeControllerId: 1,
+					MinLimit:         &pb.QosLimit{RwBandwidthMbs: 1},
+				},
+			},
+			out:                nil,
+			spdk:               []string{},
+			errCode:            codes.InvalidArgument,
+			errMsg:             "QoS limit_min rw_bandwidth_mbs is not supported",
+			start:              false,
+			existingController: &testControllerWithMaxQos,
+		},
+		"limit_min rw_iops_kiops is not supported": {
+			in: &pb.NVMeController{
+				Spec: &pb.NVMeControllerSpec{
+					Id:               &pc.ObjectKey{Value: testControllerID},
+					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Spec.Id.Value},
+					PcieId:           &pb.PciEndpoint{PhysicalFunction: 0, VirtualFunction: 2},
+					NvmeControllerId: 1,
+					MinLimit:         &pb.QosLimit{RwIopsKiops: 1},
+				},
+			},
+			out:                nil,
+			spdk:               []string{},
+			errCode:            codes.InvalidArgument,
+			errMsg:             "QoS limit_min rw_iops_kiops is not supported",
+			start:              false,
+			existingController: &testControllerWithMaxQos,
+		},
+		"limit_min rd_iops_kiops is not supported": {
+			in: &pb.NVMeController{
+				Spec: &pb.NVMeControllerSpec{
+					Id:               &pc.ObjectKey{Value: testControllerID},
+					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Spec.Id.Value},
+					PcieId:           &pb.PciEndpoint{PhysicalFunction: 0, VirtualFunction: 2},
+					NvmeControllerId: 1,
+					MinLimit:         &pb.QosLimit{RdIopsKiops: 1},
+				},
+			},
+			out:                nil,
+			spdk:               []string{},
+			errCode:            codes.InvalidArgument,
+			errMsg:             "QoS limit_min rd_iops_kiops is not supported",
+			start:              false,
+			existingController: &testControllerWithMaxQos,
+		},
+		"limit_min wr_iops_kiops is not supported": {
+			in: &pb.NVMeController{
+				Spec: &pb.NVMeControllerSpec{
+					Id:               &pc.ObjectKey{Value: testControllerID},
+					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Spec.Id.Value},
+					PcieId:           &pb.PciEndpoint{PhysicalFunction: 0, VirtualFunction: 2},
+					NvmeControllerId: 1,
+					MinLimit:         &pb.QosLimit{WrIopsKiops: 1},
+				},
+			},
+			out:                nil,
+			spdk:               []string{},
+			errCode:            codes.InvalidArgument,
+			errMsg:             "QoS limit_min wr_iops_kiops is not supported",
+			start:              false,
+			existingController: &testControllerWithMaxQos,
+		},
+		"limit_min rd_bandwidth_mbs cannot be greater than limit_max rd_bandwidth_mbs": {
+			in: &pb.NVMeController{
+				Spec: &pb.NVMeControllerSpec{
+					Id:               &pc.ObjectKey{Value: testControllerID},
+					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Spec.Id.Value},
+					PcieId:           &pb.PciEndpoint{PhysicalFunction: 0, VirtualFunction: 2},
+					NvmeControllerId: 1,
+					MinLimit:         &pb.QosLimit{RdBandwidthMbs: 2},
+					MaxLimit:         &pb.QosLimit{RdBandwidthMbs: 1},
+				},
+			},
+			out:                nil,
+			spdk:               []string{},
+			errCode:            codes.InvalidArgument,
+			errMsg:             "QoS limit_min rd_bandwidth_mbs cannot be greater than limit_max rd_bandwidth_mbs",
+			start:              false,
+			existingController: &testControllerWithMaxQos,
+		},
+		"limit_min wr_bandwidth_mbs cannot be greater than limit_max wr_bandwidth_mbs": {
+			in: &pb.NVMeController{
+				Spec: &pb.NVMeControllerSpec{
+					Id:               &pc.ObjectKey{Value: testControllerID},
+					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Spec.Id.Value},
+					PcieId:           &pb.PciEndpoint{PhysicalFunction: 0, VirtualFunction: 2},
+					NvmeControllerId: 1,
+					MinLimit:         &pb.QosLimit{WrBandwidthMbs: 2},
+					MaxLimit:         &pb.QosLimit{WrBandwidthMbs: 1},
+				},
+			},
+			out:                nil,
+			spdk:               []string{},
+			errCode:            codes.InvalidArgument,
+			errMsg:             "QoS limit_min wr_bandwidth_mbs cannot be greater than limit_max wr_bandwidth_mbs",
+			start:              false,
+			existingController: &testControllerWithMaxQos,
+		},
+		"limit_max rd_iops_kiops is negative": {
+			in: &pb.NVMeController{
+				Spec: &pb.NVMeControllerSpec{
+					Id:               &pc.ObjectKey{Value: testControllerID},
+					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Spec.Id.Value},
+					PcieId:           &pb.PciEndpoint{PhysicalFunction: 0, VirtualFunction: 2},
+					NvmeControllerId: 1,
+					MaxLimit:         &pb.QosLimit{RdIopsKiops: -1},
+				},
+			},
+			out:                nil,
+			spdk:               []string{},
+			errCode:            codes.InvalidArgument,
+			errMsg:             "QoS limit_max rd_iops_kiops cannot be negative",
+			start:              false,
+			existingController: &testControllerWithMaxQos,
+		},
+		"limit_max wr_iops_kiops is negative": {
+			in: &pb.NVMeController{
+				Spec: &pb.NVMeControllerSpec{
+					Id:               &pc.ObjectKey{Value: testControllerID},
+					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Spec.Id.Value},
+					PcieId:           &pb.PciEndpoint{PhysicalFunction: 0, VirtualFunction: 2},
+					NvmeControllerId: 1,
+					MaxLimit:         &pb.QosLimit{WrIopsKiops: -1},
+				},
+			},
+			out:                nil,
+			spdk:               []string{},
+			errCode:            codes.InvalidArgument,
+			errMsg:             "QoS limit_max wr_iops_kiops cannot be negative",
+			start:              false,
+			existingController: &testControllerWithMaxQos,
+		},
+		"limit_max rd_bandwidth_mbs is negative": {
+			in: &pb.NVMeController{
+				Spec: &pb.NVMeControllerSpec{
+					Id:               &pc.ObjectKey{Value: testControllerID},
+					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Spec.Id.Value},
+					PcieId:           &pb.PciEndpoint{PhysicalFunction: 0, VirtualFunction: 2},
+					NvmeControllerId: 1,
+					MaxLimit:         &pb.QosLimit{RdBandwidthMbs: -1},
+				},
+			},
+			out:                nil,
+			spdk:               []string{},
+			errCode:            codes.InvalidArgument,
+			errMsg:             "QoS limit_max rd_bandwidth_mbs cannot be negative",
+			start:              false,
+			existingController: &testControllerWithMaxQos,
+		},
+		"limit_max wr_bandwidth_mbs is negative": {
+			in: &pb.NVMeController{
+				Spec: &pb.NVMeControllerSpec{
+					Id:               &pc.ObjectKey{Value: testControllerID},
+					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Spec.Id.Value},
+					PcieId:           &pb.PciEndpoint{PhysicalFunction: 0, VirtualFunction: 2},
+					NvmeControllerId: 1,
+					MaxLimit:         &pb.QosLimit{WrBandwidthMbs: -1},
+				},
+			},
+			out:                nil,
+			spdk:               []string{},
+			errCode:            codes.InvalidArgument,
+			errMsg:             "QoS limit_max wr_bandwidth_mbs cannot be negative",
+			start:              false,
+			existingController: &testControllerWithMaxQos,
+		},
+		"limit_min rd_bandwidth_mbs is negative": {
+			in: &pb.NVMeController{
+				Spec: &pb.NVMeControllerSpec{
+					Id:               &pc.ObjectKey{Value: testControllerID},
+					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Spec.Id.Value},
+					PcieId:           &pb.PciEndpoint{PhysicalFunction: 0, VirtualFunction: 2},
+					NvmeControllerId: 1,
+					MinLimit:         &pb.QosLimit{RdBandwidthMbs: -1},
+				},
+			},
+			out:                nil,
+			spdk:               []string{},
+			errCode:            codes.InvalidArgument,
+			errMsg:             "QoS limit_min rd_bandwidth_mbs cannot be negative",
+			start:              false,
+			existingController: &testControllerWithMaxQos,
+		},
+		"limit_min wr_bandwidth_mbs is negative": {
+			in: &pb.NVMeController{
+				Spec: &pb.NVMeControllerSpec{
+					Id:               &pc.ObjectKey{Value: testControllerID},
+					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Spec.Id.Value},
+					PcieId:           &pb.PciEndpoint{PhysicalFunction: 0, VirtualFunction: 2},
+					NvmeControllerId: 1,
+					MinLimit:         &pb.QosLimit{WrBandwidthMbs: -1},
+				},
+			},
+			out:                nil,
+			spdk:               []string{},
+			errCode:            codes.InvalidArgument,
+			errMsg:             "QoS limit_min wr_bandwidth_mbs cannot be negative",
+			start:              false,
+			existingController: &testControllerWithMaxQos,
+		},
+		"no qos limits are specified": {
+			in: &pb.NVMeController{
+				Spec: &pb.NVMeControllerSpec{
+					Id:               &pc.ObjectKey{Value: testControllerID},
+					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Spec.Id.Value},
+					PcieId:           &pb.PciEndpoint{PhysicalFunction: 0, VirtualFunction: 2},
+					NvmeControllerId: 1,
+				},
+			},
+			out: &pb.NVMeController{
+				Spec: &pb.NVMeControllerSpec{
+					Id:               &pc.ObjectKey{Value: testControllerID},
+					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Spec.Id.Value},
+					PcieId:           &pb.PciEndpoint{PhysicalFunction: 0, VirtualFunction: 2},
+					NvmeControllerId: 1,
+				},
+				Status: &pb.NVMeControllerStatus{Active: true},
+			},
+			spdk:               []string{`{"id":%d,"error":{"code":0,"message":""},"result":true}`},
+			errCode:            codes.OK,
+			errMsg:             "",
+			start:              true,
+			existingController: &testControllerWithMaxQos,
+		},
+		"set qos SPDK call failed": {
+			in: &pb.NVMeController{
+				Spec: &pb.NVMeControllerSpec{
+					Id:               &pc.ObjectKey{Value: testControllerID},
+					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Spec.Id.Value},
+					PcieId:           &pb.PciEndpoint{PhysicalFunction: 0, VirtualFunction: 2},
+					NvmeControllerId: 1,
+					MaxLimit:         &pb.QosLimit{RdIopsKiops: 10},
+					MinLimit:         &pb.QosLimit{RdBandwidthMbs: 5},
+				},
+			},
+			out:                nil,
+			spdk:               []string{`{"id":%d,"error":{"code":-1,"message":"some internal error"},"result":true}`},
+			errCode:            status.Convert(spdk.ErrFailedSpdkCall).Code(),
+			errMsg:             status.Convert(spdk.ErrFailedSpdkCall).Message(),
+			start:              true,
+			existingController: &testControllerWithMaxQos,
+		},
+		"set qos SPDK call result false": {
+			in: &pb.NVMeController{
+				Spec: &pb.NVMeControllerSpec{
+					Id:               &pc.ObjectKey{Value: testControllerID},
+					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Spec.Id.Value},
+					PcieId:           &pb.PciEndpoint{PhysicalFunction: 0, VirtualFunction: 2},
+					NvmeControllerId: 1,
+					MaxLimit:         &pb.QosLimit{RdIopsKiops: 10},
+					MinLimit:         &pb.QosLimit{RdBandwidthMbs: 5},
+				},
+			},
+			out:                nil,
+			spdk:               []string{`{"id":%d,"error":{"code":0,"message":""},"result":false}`},
+			errCode:            status.Convert(spdk.ErrUnexpectedSpdkCallResult).Code(),
+			errMsg:             status.Convert(spdk.ErrUnexpectedSpdkCallResult).Message(),
+			start:              true,
+			existingController: &testControllerWithMaxQos,
+		},
+	}
+
+	for testName, test := range tests {
+		t.Run(testName, func(t *testing.T) {
+			testEnv := createTestEnvironment(test.start, test.spdk)
+			defer testEnv.Close()
+			testEnv.opiSpdkServer.nvme.Subsystems[testSubsystem.Spec.Id.Value] = &testSubsystem
+			if test.existingController != nil {
+				testEnv.opiSpdkServer.nvme.Controllers[test.existingController.Spec.Id.Value] = test.existingController
+			}
+
+			response, err := testEnv.opiSpdkServer.UpdateNVMeController(testEnv.ctx,
+				&pb.UpdateNVMeControllerRequest{NvMeController: test.in})
+
+			marshalledOut, _ := proto.Marshal(test.out)
+			marshalledResponse, _ := proto.Marshal(response)
+			if !bytes.Equal(marshalledOut, marshalledResponse) {
+				t.Error("response: expected", test.out, "received", response)
+			}
+
+			if er, ok := status.FromError(err); ok {
+				if er.Code() != test.errCode {
+					t.Error("error code: expected", test.errCode, "received", er.Code())
+				}
+				if er.Message() != test.errMsg {
+					t.Error("error message: expected", test.errMsg, "received", er.Message())
+				}
+			} else {
+				t.Errorf("expect grpc error status")
+			}
+
+			controller := testEnv.opiSpdkServer.nvme.Controllers[test.in.Spec.Id.Value]
+			if test.errCode == codes.OK {
+				if !proto.Equal(test.in, controller) {
+					t.Errorf("expect new %v exists, found %v", test.in, controller)
+				}
+			} else {
+				if !proto.Equal(test.existingController, controller) {
+					t.Errorf("expect original %v exists, found %v", test.existingController, controller)
+				}
+			}
+		})
+	}
+}
