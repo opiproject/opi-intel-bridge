@@ -42,7 +42,7 @@ func calculateTransportAddr(pci *pb.PciEndpoint) string {
 
 // CreateNVMeController creates an NVMe controller
 func (s *Server) CreateNVMeController(ctx context.Context, in *pb.CreateNVMeControllerRequest) (*pb.NVMeController, error) {
-	log.Printf("Intel bridge received from client: %v", in.NvMeController)
+	log.Printf("Intel bridge CreateNVMeController received from client: %v", in.NvMeController)
 	if err := s.verifyNVMeController(in.NvMeController); err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
@@ -141,10 +141,10 @@ func (s *Server) verifyNVMeControllerMinLimits(minLimit *pb.QosLimit) error {
 
 func (s *Server) verifyNVMeControllerMinMaxLimitCorrespondence(minLimit *pb.QosLimit, maxLimit *pb.QosLimit) error {
 	if minLimit != nil && maxLimit != nil {
-		if minLimit.RdBandwidthMbs > maxLimit.RdBandwidthMbs {
+		if maxLimit.RdBandwidthMbs != 0 && minLimit.RdBandwidthMbs > maxLimit.RdBandwidthMbs {
 			return fmt.Errorf("QoS limit_min rd_bandwidth_mbs cannot be greater than limit_max rd_bandwidth_mbs")
 		}
-		if minLimit.WrBandwidthMbs > maxLimit.WrBandwidthMbs {
+		if maxLimit.WrBandwidthMbs != 0 && minLimit.WrBandwidthMbs > maxLimit.WrBandwidthMbs {
 			return fmt.Errorf("QoS limit_min wr_bandwidth_mbs cannot be greater than limit_max wr_bandwidth_mbs")
 		}
 	}
