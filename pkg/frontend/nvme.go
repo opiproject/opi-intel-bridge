@@ -75,7 +75,33 @@ func (s *Server) CreateNVMeController(ctx context.Context, in *pb.CreateNVMeCont
 	return response, err
 }
 
+// UpdateNVMeController updates an NVMe controller
+func (s *Server) UpdateNVMeController(ctx context.Context, in *pb.UpdateNVMeControllerRequest) (*pb.NVMeController, error) {
+	log.Printf("Intel bridge UpdateNVMeController received from client: %v", in)
+	if err := s.verifyNVMeController(in.NvMeController); err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	originalNvmeController := s.nvme.Controllers[in.NvMeController.Spec.Id.Value]
+	log.Printf("Passing request to opi-spdk-bridge")
+	response, err := s.FrontendNvmeServiceServer.UpdateNVMeController(ctx, in)
+
+	if err == nil {
+		if qosErr := s.setNVMeQosLimit(in.NvMeController); qosErr != nil {
+			log.Println("Failed to set qos settings:", qosErr)
+			log.Println("Restore original controller")
+			s.nvme.Controllers[in.NvMeController.Spec.Id.Value] = originalNvmeController
+			return nil, qosErr
+		}
+	}
+	return response, err
+}
+
 func (s *Server) verifyNVMeController(controller *pb.NVMeController) error {
+	if controller.Spec.Id == nil || controller.Spec.Id.Value == "" {
+		return fmt.Errorf("id cannot be empty")
+	}
+
 	maxLimit := controller.Spec.MaxLimit
 	if err := s.verifyNVMeControllerMaxLimits(maxLimit); err != nil {
 		return err
