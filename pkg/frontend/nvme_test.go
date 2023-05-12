@@ -321,6 +321,7 @@ func TestFrontEnd_CreateNVMeController(t *testing.T) {
 					PcieId:           &pb.PciEndpoint{PhysicalFunction: 0, VirtualFunction: 2},
 					NvmeControllerId: 1,
 					MinLimit:         &pb.QosLimit{RdBandwidthMbs: 1, WrBandwidthMbs: 1},
+					MaxLimit:         &pb.QosLimit{},
 				},
 			},
 			out: &pb.NVMeController{
@@ -330,6 +331,7 @@ func TestFrontEnd_CreateNVMeController(t *testing.T) {
 					PcieId:           &pb.PciEndpoint{PhysicalFunction: 0, VirtualFunction: 2},
 					NvmeControllerId: -1,
 					MinLimit:         &pb.QosLimit{RdBandwidthMbs: 1, WrBandwidthMbs: 1},
+					MaxLimit:         &pb.QosLimit{},
 				},
 				Status: &pb.NVMeControllerStatus{Active: true},
 			},
@@ -517,7 +519,7 @@ func TestFrontEnd_CreateNVMeController(t *testing.T) {
 			defer testEnv.Close()
 			testEnv.opiSpdkServer.nvme.Subsystems[testSubsystem.Spec.Id.Value] = &testSubsystem
 			if test.existingController != nil {
-				testEnv.opiSpdkServer.nvme.Controllers[testControllerWithMaxQos.Spec.Id.Value] = test.existingController
+				testEnv.opiSpdkServer.nvme.Controllers[test.existingController.Spec.Id.Value] = test.existingController
 			}
 
 			response, err := testEnv.opiSpdkServer.CreateNVMeController(testEnv.ctx,
