@@ -409,50 +409,72 @@ func TestMiddleEnd_DeleteEncryptedVolume(t *testing.T) {
 		spdk        []string
 		expectedErr error
 		start       bool
+		existBefore bool
+		existAfter  bool
 	}{
-
 		"nil request": {
 			in:          nil,
 			spdk:        []string{},
 			expectedErr: errMissingArgument,
 			start:       false,
+			existBefore: false,
+			existAfter:  false,
 		},
 		"valid delete encrypted volume request": {
 			in:          &pb.DeleteEncryptedVolumeRequest{Name: bdevName},
 			spdk:        []string{foundBdevResponse, `{"id":%d,"error":{"code":0,"message":""},"result":true}`},
 			expectedErr: nil,
 			start:       true,
+			existBefore: true,
+			existAfter:  false,
 		},
 		"find bdev uuid by name internal SPDK failure": {
 			in:          &pb.DeleteEncryptedVolumeRequest{Name: bdevName},
 			spdk:        []string{`{"id":%d,"error":{"code":-19,"message":"No such device"},"result":null}`},
 			expectedErr: spdk.ErrFailedSpdkCall,
 			start:       true,
+			existBefore: true,
+			existAfter:  true,
 		},
 		"find no bdev uuid by name": {
 			in:          &pb.DeleteEncryptedVolumeRequest{Name: bdevName},
 			spdk:        []string{`{"id":%d,"error":{"code":0,"message":""},"result":[]}`},
 			expectedErr: spdk.ErrUnexpectedSpdkCallResult,
 			start:       true,
+			existBefore: true,
+			existAfter:  true,
 		},
 		"internal SPDK failure": {
 			in:          &pb.DeleteEncryptedVolumeRequest{Name: bdevName},
 			spdk:        []string{foundBdevResponse, `{"id":%d,"error":{"code":1,"message":"some internal error"},"result":true}`},
 			expectedErr: spdk.ErrFailedSpdkCall,
 			start:       true,
+			existBefore: true,
+			existAfter:  true,
 		},
 		"SPDK result false": {
 			in:          &pb.DeleteEncryptedVolumeRequest{Name: bdevName},
 			spdk:        []string{foundBdevResponse, `{"id":%d,"error":{"code":0,"message":""},"result":false}`},
 			expectedErr: spdk.ErrUnexpectedSpdkCallResult,
 			start:       true,
+			existBefore: true,
+			existAfter:  true,
 		},
 		"delete non-existing encrypted volume with missing allowed": {
-			in: &pb.DeleteEncryptedVolumeRequest{Name: bdevName, AllowMissing: true},
-			spdk: []string{foundBdevResponse,
-				`{"id":%d,"error":{"code":-32603,"message":"Could not find a crypto object for a given bdev, set using npi_bdev_set_keys"},"result":null}`},
+			in:          &pb.DeleteEncryptedVolumeRequest{Name: bdevName, AllowMissing: true},
+			spdk:        []string{},
 			expectedErr: nil,
-			start:       true,
+			start:       false,
+			existBefore: false,
+			existAfter:  false,
+		},
+		"delete non-existing encrypted volume without missing allowed": {
+			in:          &pb.DeleteEncryptedVolumeRequest{Name: bdevName, AllowMissing: false},
+			spdk:        []string{},
+			expectedErr: errVolumeNotFound,
+			start:       false,
+			existBefore: false,
+			existAfter:  false,
 		},
 	}
 
@@ -460,11 +482,22 @@ func TestMiddleEnd_DeleteEncryptedVolume(t *testing.T) {
 		t.Run(testName, func(t *testing.T) {
 			testEnv := createTestEnvironment(test.start, test.spdk)
 			defer testEnv.Close()
+			if test.existBefore {
+				testEnv.opiSpdkServer.volumes.encryptedVolumes[test.in.Name] = bdevName
+			}
+			request := proto.Clone(test.in).(*pb.DeleteEncryptedVolumeRequest)
 
-			_, err := testEnv.opiSpdkServer.DeleteEncryptedVolume(testEnv.ctx, test.in)
+			_, err := testEnv.opiSpdkServer.DeleteEncryptedVolume(testEnv.ctx, request)
 
 			if err != test.expectedErr {
 				t.Error("error: expected", test.expectedErr, "received", err)
+			}
+
+			if test.in != nil {
+				_, ok := testEnv.opiSpdkServer.volumes.encryptedVolumes[test.in.Name]
+				if test.existAfter != ok {
+					t.Error("expect Encrypted volume exist", test.existAfter, "received", ok)
+				}
 			}
 		})
 	}
