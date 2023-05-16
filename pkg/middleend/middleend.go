@@ -26,6 +26,7 @@ import (
 
 var (
 	errMissingArgument    = status.Error(codes.InvalidArgument, "missing argument")
+	errAlreadyExists      = status.Error(codes.AlreadyExists, "volume already exists")
 	errNotSupportedCipher = status.Error(codes.Unimplemented, "not supported cipher")
 	errWrongKeySize       = status.Error(codes.InvalidArgument, "invalid key size")
 )
@@ -81,6 +82,13 @@ func (s *Server) CreateEncryptedVolume(_ context.Context, in *pb.CreateEncrypted
 	}
 	in.EncryptedVolume.Name = name
 
+	_, ok := s.volumes.encryptedVolumes[in.EncryptedVolume.Name]
+	if ok {
+		log.Printf("Already existing EncryptedVolume with id %v", in.EncryptedVolume.Name)
+		// it is not possible to check keys and algorithm. Always send error
+		return nil, errAlreadyExists
+	}
+
 	bdevUUID, err := s.getBdevUUIDByName(in.EncryptedVolume.VolumeId.Value)
 	if err != nil {
 		log.Println("Failed to find UUID for bdev", in.EncryptedVolume.VolumeId.Value)
@@ -110,6 +118,8 @@ func (s *Server) CreateEncryptedVolume(_ context.Context, in *pb.CreateEncrypted
 		log.Println("Failed result on SPDK call:", result)
 		return nil, spdk.ErrUnexpectedSpdkCallResult
 	}
+
+	s.volumes.encryptedVolumes[in.EncryptedVolume.Name] = in.EncryptedVolume.VolumeId.Value
 
 	return &pb.EncryptedVolume{
 		Name:     in.EncryptedVolume.Name,
