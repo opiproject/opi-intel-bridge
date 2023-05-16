@@ -143,6 +143,7 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 		expectedInKey []byte
 		expectedErr   error
 		start         bool
+		existBefore   bool
 	}{
 		"nil request": {
 			in:            nil,
@@ -151,6 +152,7 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			expectedInKey: nil,
 			expectedErr:   errMissingArgument,
 			start:         false,
+			existBefore:   false,
 		},
 		"nil EncryptedVolume": {
 			in:            &pb.CreateEncryptedVolumeRequest{EncryptedVolume: nil, EncryptedVolumeId: encryptedVolumeID},
@@ -159,6 +161,7 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			expectedInKey: nil,
 			expectedErr:   errMissingArgument,
 			start:         false,
+			existBefore:   false,
 		},
 		"EncryptedVolume EncryptedVolumeId is ignored": {
 			in: &pb.CreateEncryptedVolumeRequest{EncryptedVolume: &pb.EncryptedVolume{
@@ -175,6 +178,7 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			expectedInKey: make([]byte, len(encryptedVolumeAesXts256.Key)),
 			expectedErr:   nil,
 			start:         true,
+			existBefore:   false,
 		},
 		"empty Key": {
 			in: &pb.CreateEncryptedVolumeRequest{EncryptedVolume: &pb.EncryptedVolume{
@@ -187,6 +191,7 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			expectedInKey: nil,
 			expectedErr:   errMissingArgument,
 			start:         false,
+			existBefore:   false,
 		},
 		"nil VolumeId": {
 			in: &pb.CreateEncryptedVolumeRequest{EncryptedVolume: &pb.EncryptedVolume{
@@ -198,6 +203,7 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			expectedInKey: make([]byte, len(encryptedVolumeAesXts256.Key)),
 			expectedErr:   errMissingArgument,
 			start:         false,
+			existBefore:   false,
 		},
 		"empty VolumeId": {
 			in: &pb.CreateEncryptedVolumeRequest{EncryptedVolume: &pb.EncryptedVolume{
@@ -210,6 +216,7 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			expectedInKey: make([]byte, len(encryptedVolumeAesXts256.Key)),
 			expectedErr:   errMissingArgument,
 			start:         false,
+			existBefore:   false,
 		},
 		"use AES_XTS_128 cipher": {
 			in:            &pb.CreateEncryptedVolumeRequest{EncryptedVolume: &encryptedVolumeAesXts128, EncryptedVolumeId: encryptedVolumeID},
@@ -218,6 +225,7 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			expectedInKey: make([]byte, len(encryptedVolumeAesXts128.Key)),
 			expectedErr:   nil,
 			start:         true,
+			existBefore:   false,
 		},
 		"use AES_XTS_192 cipher": {
 			in:            &pb.CreateEncryptedVolumeRequest{EncryptedVolume: &encryptedVolumeAesXts192, EncryptedVolumeId: encryptedVolumeID},
@@ -226,6 +234,7 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			expectedInKey: make([]byte, len(encryptedVolumeAesXts192.Key)),
 			expectedErr:   errNotSupportedCipher,
 			start:         false,
+			existBefore:   false,
 		},
 		"use AES_XTS_256 cipher": {
 			in:            &pb.CreateEncryptedVolumeRequest{EncryptedVolume: &encryptedVolumeAesXts256, EncryptedVolumeId: encryptedVolumeID},
@@ -234,6 +243,7 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			expectedInKey: make([]byte, len(encryptedVolumeAesXts256.Key)),
 			expectedErr:   nil,
 			start:         true,
+			existBefore:   false,
 		},
 		"use AES_CBC_128 cipher": {
 			in:            &pb.CreateEncryptedVolumeRequest{EncryptedVolume: &encryptedVolumeAesCbc128, EncryptedVolumeId: encryptedVolumeID},
@@ -242,6 +252,7 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			expectedInKey: make([]byte, len(encryptedVolumeAesCbc128.Key)),
 			expectedErr:   errNotSupportedCipher,
 			start:         false,
+			existBefore:   false,
 		},
 		"use AES_CBC_192 cipher": {
 			in:            &pb.CreateEncryptedVolumeRequest{EncryptedVolume: &encryptedVolumeAesCbc192, EncryptedVolumeId: encryptedVolumeID},
@@ -250,6 +261,7 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			expectedInKey: make([]byte, len(encryptedVolumeAesCbc192.Key)),
 			expectedErr:   errNotSupportedCipher,
 			start:         false,
+			existBefore:   false,
 		},
 		"use AES_CBC_256 cipher": {
 			in:            &pb.CreateEncryptedVolumeRequest{EncryptedVolume: &encryptedVolumeAesCbc256, EncryptedVolumeId: encryptedVolumeID},
@@ -258,6 +270,7 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			expectedInKey: make([]byte, len(encryptedVolumeAesCbc256.Key)),
 			expectedErr:   errNotSupportedCipher,
 			start:         false,
+			existBefore:   false,
 		},
 		"use UNSPECIFIED cipher": {
 			in: &pb.CreateEncryptedVolumeRequest{EncryptedVolume: &pb.EncryptedVolume{
@@ -270,6 +283,7 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			expectedInKey: make([]byte, len(encryptedVolumeAesXts256.Key)),
 			expectedErr:   errNotSupportedCipher,
 			start:         false,
+			existBefore:   false,
 		},
 		"key of wrong size for AEX_XTS_256": {
 			in: &pb.CreateEncryptedVolumeRequest{EncryptedVolume: &pb.EncryptedVolume{
@@ -282,6 +296,7 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			expectedInKey: make([]byte, 1),
 			expectedErr:   errWrongKeySize,
 			start:         false,
+			existBefore:   false,
 		},
 		"key of wrong size for AEX_XTS_128": {
 			in: &pb.CreateEncryptedVolumeRequest{EncryptedVolume: &pb.EncryptedVolume{
@@ -294,6 +309,7 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			expectedInKey: make([]byte, 1),
 			expectedErr:   errWrongKeySize,
 			start:         false,
+			existBefore:   false,
 		},
 		"find bdev uuid by name internal SPDK failure": {
 			in:            &pb.CreateEncryptedVolumeRequest{EncryptedVolume: &encryptedVolumeAesXts256, EncryptedVolumeId: encryptedVolumeID},
@@ -302,6 +318,7 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			expectedInKey: make([]byte, len(encryptedVolumeAesXts256.Key)),
 			expectedErr:   spdk.ErrFailedSpdkCall,
 			start:         true,
+			existBefore:   false,
 		},
 		"find no bdev uuid by name": {
 			in:            &pb.CreateEncryptedVolumeRequest{EncryptedVolume: &encryptedVolumeAesXts256, EncryptedVolumeId: encryptedVolumeID},
@@ -310,6 +327,7 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			expectedInKey: make([]byte, len(encryptedVolumeAesXts256.Key)),
 			expectedErr:   spdk.ErrUnexpectedSpdkCallResult,
 			start:         true,
+			existBefore:   false,
 		},
 		"internal SPDK failure": {
 			in:            &pb.CreateEncryptedVolumeRequest{EncryptedVolume: &encryptedVolumeAesXts256, EncryptedVolumeId: encryptedVolumeID},
@@ -318,6 +336,7 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			expectedInKey: make([]byte, len(encryptedVolumeAesXts256.Key)),
 			expectedErr:   spdk.ErrFailedSpdkCall,
 			start:         true,
+			existBefore:   false,
 		},
 		"SPDK result false": {
 			in:            &pb.CreateEncryptedVolumeRequest{EncryptedVolume: &encryptedVolumeAesXts256, EncryptedVolumeId: encryptedVolumeID},
@@ -326,6 +345,16 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			expectedInKey: make([]byte, len(encryptedVolumeAesXts256.Key)),
 			expectedErr:   spdk.ErrUnexpectedSpdkCallResult,
 			start:         true,
+			existBefore:   false,
+		},
+		"volume already exists": {
+			in:            &pb.CreateEncryptedVolumeRequest{EncryptedVolume: &encryptedVolumeAesXts256, EncryptedVolumeId: encryptedVolumeID},
+			out:           nil,
+			spdk:          []string{},
+			expectedInKey: make([]byte, len(encryptedVolumeAesXts256.Key)),
+			expectedErr:   errAlreadyExists,
+			start:         false,
+			existBefore:   true,
 		},
 	}
 
@@ -344,6 +373,10 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			}
 			if test.out != nil {
 				test.out.Name = encryptedVolumeID
+			}
+			if test.existBefore {
+				testEnv.opiSpdkServer.volumes.encryptedVolumes[encryptedVolumeID] =
+					request.EncryptedVolume.VolumeId.Value
 			}
 
 			response, err := testEnv.opiSpdkServer.CreateEncryptedVolume(testEnv.ctx, request)
