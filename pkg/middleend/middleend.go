@@ -10,7 +10,6 @@ import (
 	"log"
 	"runtime"
 	"runtime/debug"
-	"strings"
 
 	"github.com/google/uuid"
 	"github.com/opiproject/gospdk/spdk"
@@ -27,6 +26,7 @@ import (
 var (
 	errMissingArgument    = status.Error(codes.InvalidArgument, "missing argument")
 	errAlreadyExists      = status.Error(codes.AlreadyExists, "volume already exists")
+	errVolumeNotFound     = status.Error(codes.NotFound, "volume not found")
 	errNotSupportedCipher = status.Error(codes.Unimplemented, "not supported cipher")
 	errWrongKeySize       = status.Error(codes.InvalidArgument, "invalid key size")
 )
@@ -171,8 +171,16 @@ func (s *Server) DeleteEncryptedVolume(_ context.Context, in *pb.DeleteEncrypted
 		log.Println("request cannot be empty")
 		return nil, errMissingArgument
 	}
+	underlyingBdev, ok := s.volumes.encryptedVolumes[in.Name]
+	if !ok {
+		if in.AllowMissing {
+			return &emptypb.Empty{}, nil
+		}
+		log.Printf("error: unable to find key %s", in.Name)
+		return nil, errVolumeNotFound
+	}
 
-	bdevUUID, err := s.getBdevUUIDByName(in.Name)
+	bdevUUID, err := s.getBdevUUIDByName(underlyingBdev)
 	if err != nil {
 		log.Println("Failed to find UUID for bdev", in.Name)
 		return nil, err
@@ -183,11 +191,6 @@ func (s *Server) DeleteEncryptedVolume(_ context.Context, in *pb.DeleteEncrypted
 	var result models.NpiBdevClearKeysResult
 	err = s.rpc.Call("npi_bdev_clear_keys", params, &result)
 	if err != nil {
-		cryptoObjMissingErrMsg := "Could not find a crypto object for a given bdev"
-		if in.AllowMissing &&
-			strings.Contains(err.Error(), cryptoObjMissingErrMsg) {
-			return &emptypb.Empty{}, nil
-		}
 		log.Println(err)
 		return nil, spdk.ErrFailedSpdkCall
 	}
@@ -195,6 +198,7 @@ func (s *Server) DeleteEncryptedVolume(_ context.Context, in *pb.DeleteEncrypted
 		log.Println("Failed result on SPDK call:", result)
 		return nil, spdk.ErrUnexpectedSpdkCallResult
 	}
+	delete(s.volumes.encryptedVolumes, in.Name)
 	return &emptypb.Empty{}, nil
 }
 
