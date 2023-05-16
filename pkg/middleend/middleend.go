@@ -30,11 +30,17 @@ var (
 	errWrongKeySize       = status.Error(codes.InvalidArgument, "invalid key size")
 )
 
+type volumeParameters struct {
+	encryptedVolumes map[string]string
+}
+
 // Server contains middleend related OPI services
 type Server struct {
 	pb.MiddleendEncryptionServiceServer
 	pb.MiddleendQosVolumeServiceServer
-	rpc spdk.JSONRPC
+
+	rpc     spdk.JSONRPC
+	volumes volumeParameters
 }
 
 // NewServer creates initialized instance of middleend server
@@ -44,6 +50,7 @@ func NewServer(jsonRPC spdk.JSONRPC) *Server {
 		opiSpdkServer,
 		opiSpdkServer,
 		jsonRPC,
+		volumeParameters{encryptedVolumes: make(map[string]string)},
 	}
 }
 
