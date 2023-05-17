@@ -169,10 +169,10 @@ func TestFrontEnd_CreateNVMeController(t *testing.T) {
 				},
 				Status: &pb.NVMeControllerStatus{Active: true},
 			},
-			spdk:    []string{},
+			spdk:    []string{`{"id":%d,"error":{"code":0,"message":""},"result":true}`},
 			errCode: codes.OK,
 			errMsg:  "",
-			start:   false,
+			start:   true,
 			existingController: &pb.NVMeController{
 				Spec: &pb.NVMeControllerSpec{
 					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Spec.Id.Value},

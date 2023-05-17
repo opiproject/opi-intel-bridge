@@ -47,31 +47,25 @@ func (s *Server) CreateNVMeController(ctx context.Context, in *pb.CreateNVMeCont
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	// opi-spdk-bridge checks only IDs and returns success if a controller
-	// with such id exists ignoring any parameters. Check a controller
-	// exists with the same max/min limits
-	controller, ok := s.nvme.Controllers[in.NvMeControllerId]
-	if ok {
-		if proto.Equal(controller.Spec.MaxLimit, in.NvMeController.Spec.MaxLimit) &&
-			proto.Equal(controller.Spec.MinLimit, in.NvMeController.Spec.MinLimit) {
-			log.Printf("Already existing NVMeController with id %v", in.NvMeControllerId)
-			return controller, nil
-		}
-		log.Printf("Existing NVMeController %v has different QoS limits",
-			in.NvMeController)
-		return nil, status.Errorf(codes.AlreadyExists,
-			"Controller %v exists with different QoS limits", in.NvMeControllerId)
-	}
-
 	log.Printf("Passing request to opi-spdk-bridge")
 	response, err := s.FrontendNvmeServiceServer.CreateNVMeController(ctx, in)
-
 	if err == nil {
+		// response contains different QoS limits. It is an indication that
+		// opi-spdk-bridge returned an already existing controller providing idempotence
+		if !proto.Equal(response.Spec.MaxLimit, in.NvMeController.Spec.MaxLimit) ||
+			!proto.Equal(response.Spec.MinLimit, in.NvMeController.Spec.MinLimit) {
+			log.Printf("Existing NVMeController %v has different QoS limits",
+				in.NvMeController)
+			return nil, status.Errorf(codes.AlreadyExists,
+				"Controller %v exists with different QoS limits", in.NvMeControllerId)
+		}
+
 		if qosErr := s.setNVMeQosLimit(in.NvMeController); qosErr != nil {
-			s.cleanupNVMeControllerCreation(in.NvMeControllerId)
+			s.cleanupNVMeControllerCreation(in.NvMeController.Spec.Id.Value)
 			return nil, qosErr
 		}
 	}
+
 	return response, err
 }
 
