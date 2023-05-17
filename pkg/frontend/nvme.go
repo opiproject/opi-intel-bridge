@@ -43,24 +43,24 @@ func calculateTransportAddr(pci *pb.PciEndpoint) string {
 // CreateNVMeController creates an NVMe controller
 func (s *Server) CreateNVMeController(ctx context.Context, in *pb.CreateNVMeControllerRequest) (*pb.NVMeController, error) {
 	log.Printf("Intel bridge CreateNVMeController received from client: %v", in.NvMeController)
-	if err := s.verifyNVMeController(in.NvMeController); err != nil {
+	if err := s.verifyNVMeControllerOnCreate(in.NvMeController); err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
 	// opi-spdk-bridge checks only IDs and returns success if a controller
 	// with such id exists ignoring any parameters. Check a controller
 	// exists with the same max/min limits
-	controller, ok := s.nvme.Controllers[in.NvMeController.Spec.Id.Value]
+	controller, ok := s.nvme.Controllers[in.NvMeControllerId]
 	if ok {
 		if proto.Equal(controller.Spec.MaxLimit, in.NvMeController.Spec.MaxLimit) &&
 			proto.Equal(controller.Spec.MinLimit, in.NvMeController.Spec.MinLimit) {
-			log.Printf("Already existing NVMeController with id %v", in.NvMeController.Spec.Id.Value)
+			log.Printf("Already existing NVMeController with id %v", in.NvMeControllerId)
 			return controller, nil
 		}
 		log.Printf("Existing NVMeController %v has different QoS limits",
 			in.NvMeController)
 		return nil, status.Errorf(codes.AlreadyExists,
-			"Controller %v exists with different QoS limits", in.NvMeController.Spec.Id.Value)
+			"Controller %v exists with different QoS limits", in.NvMeControllerId)
 	}
 
 	log.Printf("Passing request to opi-spdk-bridge")
@@ -68,7 +68,7 @@ func (s *Server) CreateNVMeController(ctx context.Context, in *pb.CreateNVMeCont
 
 	if err == nil {
 		if qosErr := s.setNVMeQosLimit(in.NvMeController); qosErr != nil {
-			s.cleanupNVMeControllerCreation(in.NvMeController.Spec.Id.Value)
+			s.cleanupNVMeControllerCreation(in.NvMeControllerId)
 			return nil, qosErr
 		}
 	}
@@ -78,7 +78,7 @@ func (s *Server) CreateNVMeController(ctx context.Context, in *pb.CreateNVMeCont
 // UpdateNVMeController updates an NVMe controller
 func (s *Server) UpdateNVMeController(ctx context.Context, in *pb.UpdateNVMeControllerRequest) (*pb.NVMeController, error) {
 	log.Printf("Intel bridge UpdateNVMeController received from client: %v", in)
-	if err := s.verifyNVMeController(in.NvMeController); err != nil {
+	if err := s.verifyNVMeControllerOnUpdate(in.NvMeController); err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
@@ -97,11 +97,23 @@ func (s *Server) UpdateNVMeController(ctx context.Context, in *pb.UpdateNVMeCont
 	return response, err
 }
 
-func (s *Server) verifyNVMeController(controller *pb.NVMeController) error {
-	if controller.Spec.Id == nil || controller.Spec.Id.Value == "" {
-		return fmt.Errorf("id cannot be empty")
+func (s *Server) verifyNVMeControllerOnCreate(controller *pb.NVMeController) error {
+	return s.verifyNVMeController(controller)
+}
+
+func (s *Server) verifyNVMeControllerOnUpdate(controller *pb.NVMeController) error {
+	if err := s.verifyNVMeController(controller); err != nil {
+		return err
 	}
 
+	// Id had to be assigned on create
+	if controller.Spec.Id == nil || controller.Spec.Id.Value == "" {
+		return fmt.Errorf("id cannot be empty on update")
+	}
+	return nil
+}
+
+func (s *Server) verifyNVMeController(controller *pb.NVMeController) error {
 	maxLimit := controller.Spec.MaxLimit
 	if err := s.verifyNVMeControllerMaxLimits(maxLimit); err != nil {
 		return err
