@@ -6,7 +6,7 @@ require (
 	github.com/opiproject/gospdk v0.0.0-20230515120524-37c85998ff39
 	github.com/opiproject/opi-api v0.0.0-20230511183445-d8ac77a12618
 	github.com/opiproject/opi-smbios-bridge v0.1.3-0.20230519175016-c4f24198e7cb
-	github.com/opiproject/opi-spdk-bridge v0.1.2-0.20230517011133-ab01d070a369
+	github.com/opiproject/opi-spdk-bridge v0.1.2-0.20230520082135-d876f95315b4
 	github.com/opiproject/opi-strongswan-bridge v0.1.1
 	google.golang.org/grpc v1.55.0
 	google.golang.org/protobuf v1.30.0
