@@ -12,6 +12,7 @@ import (
 	"runtime/debug"
 	"strings"
 
+	"github.com/google/uuid"
 	"github.com/opiproject/gospdk/spdk"
 	pc "github.com/opiproject/opi-api/common/v1/gen/go"
 	pb "github.com/opiproject/opi-api/storage/v1alpha1/gen/go"
@@ -66,6 +67,12 @@ func (s *Server) CreateEncryptedVolume(_ context.Context, in *pb.CreateEncrypted
 	if err != nil {
 		return nil, err
 	}
+	name := uuid.New().String()
+	if in.EncryptedVolumeId != "" {
+		log.Printf("client provided the ID of a resource %v, ignoring the name field %v", in.EncryptedVolumeId, in.EncryptedVolume.EncryptedVolumeId)
+		name = in.EncryptedVolumeId
+	}
+	in.EncryptedVolume.EncryptedVolumeId = &pc.ObjectKey{Value: name}
 
 	bdevUUID, err := s.getBdevUUIDByName(in.EncryptedVolume.VolumeId.Value)
 	if err != nil {
@@ -110,9 +117,6 @@ func verifyCreateEncryptedVolumeRequestArgs(in *pb.CreateEncryptedVolumeRequest)
 		return errMissingArgument
 	case in.EncryptedVolume == nil:
 		log.Println("encrypted_volume should be specified")
-		return errMissingArgument
-	case in.EncryptedVolume.EncryptedVolumeId == nil || in.EncryptedVolume.EncryptedVolumeId.Value == "":
-		log.Println("encrypted_volume_id should be specified")
 		return errMissingArgument
 	case in.EncryptedVolume.VolumeId == nil || in.EncryptedVolume.VolumeId.Value == "":
 		log.Println("volume_id should be specified")
