@@ -162,14 +162,14 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 		},
 		"EncryptedVolume EncryptedVolumeId is ignored": {
 			in: &pb.CreateEncryptedVolumeRequest{EncryptedVolume: &pb.EncryptedVolume{
-				EncryptedVolumeId: &pc.ObjectKey{Value: "Some-ignored-id-value"},
-				VolumeId:          encryptedVolumeAesXts256.VolumeId,
-				Key:               encryptedVolumeAesXts256.Key,
-				Cipher:            pb.EncryptionType_ENCRYPTION_TYPE_AES_XTS_256,
+				Name:     "Some-ignored-id-value",
+				VolumeId: encryptedVolumeAesXts256.VolumeId,
+				Key:      encryptedVolumeAesXts256.Key,
+				Cipher:   pb.EncryptionType_ENCRYPTION_TYPE_AES_XTS_256,
 			}, EncryptedVolumeId: encryptedVolumeID},
 			out: &pb.EncryptedVolume{
-				EncryptedVolumeId: &pc.ObjectKey{Value: encryptedVolumeID},
-				VolumeId:          encryptedVolumeAesXts256.VolumeId,
+				Name:     encryptedVolumeID,
+				VolumeId: encryptedVolumeAesXts256.VolumeId,
 			},
 			spdk:          []string{foundBdevResponse, `{"id":%d,"error":{"code":0,"message":""},"result":true}`},
 			expectedInKey: make([]byte, len(encryptedVolumeAesXts256.Key)),
@@ -343,7 +343,7 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 				}
 			}
 			if test.out != nil {
-				test.out.EncryptedVolumeId = &pc.ObjectKey{Value: encryptedVolumeID}
+				test.out.Name = encryptedVolumeID
 			}
 
 			response, err := testEnv.opiSpdkServer.CreateEncryptedVolume(testEnv.ctx, request)

@@ -69,10 +69,10 @@ func (s *Server) CreateEncryptedVolume(_ context.Context, in *pb.CreateEncrypted
 	}
 	name := uuid.New().String()
 	if in.EncryptedVolumeId != "" {
-		log.Printf("client provided the ID of a resource %v, ignoring the name field %v", in.EncryptedVolumeId, in.EncryptedVolume.EncryptedVolumeId)
+		log.Printf("client provided the ID of a resource %v, ignoring the name field %v", in.EncryptedVolumeId, in.EncryptedVolume.Name)
 		name = in.EncryptedVolumeId
 	}
-	in.EncryptedVolume.EncryptedVolumeId = &pc.ObjectKey{Value: name}
+	in.EncryptedVolume.Name = name
 
 	bdevUUID, err := s.getBdevUUIDByName(in.EncryptedVolume.VolumeId.Value)
 	if err != nil {
@@ -105,8 +105,8 @@ func (s *Server) CreateEncryptedVolume(_ context.Context, in *pb.CreateEncrypted
 	}
 
 	return &pb.EncryptedVolume{
-		EncryptedVolumeId: &pc.ObjectKey{Value: in.EncryptedVolume.EncryptedVolumeId.Value},
-		VolumeId:          &pc.ObjectKey{Value: in.EncryptedVolume.VolumeId.Value},
+		Name:     in.EncryptedVolume.Name,
+		VolumeId: &pc.ObjectKey{Value: in.EncryptedVolume.VolumeId.Value},
 	}, nil
 }
 

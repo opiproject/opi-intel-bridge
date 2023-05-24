@@ -61,7 +61,7 @@ func (s *Server) CreateNVMeController(ctx context.Context, in *pb.CreateNVMeCont
 		}
 
 		if qosErr := s.setNVMeQosLimit(in.NvMeController); qosErr != nil {
-			s.cleanupNVMeControllerCreation(in.NvMeController.Spec.Id.Value)
+			s.cleanupNVMeControllerCreation(in.NvMeController.Spec.Name)
 			return nil, qosErr
 		}
 	}
@@ -76,7 +76,7 @@ func (s *Server) UpdateNVMeController(ctx context.Context, in *pb.UpdateNVMeCont
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	originalNvmeController := s.nvme.Controllers[in.NvMeController.Spec.Id.Value]
+	originalNvmeController := s.nvme.Controllers[in.NvMeController.Spec.Name]
 	log.Printf("Passing request to opi-spdk-bridge")
 	response, err := s.FrontendNvmeServiceServer.UpdateNVMeController(ctx, in)
 
@@ -84,7 +84,7 @@ func (s *Server) UpdateNVMeController(ctx context.Context, in *pb.UpdateNVMeCont
 		if qosErr := s.setNVMeQosLimit(in.NvMeController); qosErr != nil {
 			log.Println("Failed to set qos settings:", qosErr)
 			log.Println("Restore original controller")
-			s.nvme.Controllers[in.NvMeController.Spec.Id.Value] = originalNvmeController
+			s.nvme.Controllers[in.NvMeController.Spec.Name] = originalNvmeController
 			return nil, qosErr
 		}
 	}
@@ -101,8 +101,8 @@ func (s *Server) verifyNVMeControllerOnUpdate(controller *pb.NVMeController) err
 	}
 
 	// Id had to be assigned on create
-	if controller.Spec.Id == nil || controller.Spec.Id.Value == "" {
-		return fmt.Errorf("id cannot be empty on update")
+	if controller.Spec.Name == "" {
+		return fmt.Errorf("name cannot be empty on update")
 	}
 	return nil
 }
@@ -184,7 +184,7 @@ func (s *Server) verifyNVMeControllerMinMaxLimitCorrespondence(minLimit *pb.QosL
 }
 
 func (s *Server) setNVMeQosLimit(controller *pb.NVMeController) error {
-	log.Printf("Setting QoS limits %v for %v", controller.Spec.MaxLimit, controller.Spec.Id.Value)
+	log.Printf("Setting QoS limits %v for %v", controller.Spec.MaxLimit, controller.Spec.Name)
 	params := models.NpiQosBwIopsLimitParams{
 		Nqn: s.nvme.Subsystems[controller.Spec.SubsystemId.Value].Spec.Nqn,
 	}
