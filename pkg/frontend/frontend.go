@@ -19,7 +19,7 @@ type Server struct {
 	rpc  spdk.JSONRPC
 }
 
-// NewServer creates initialized instance of NVMe server
+// NewServer creates initialized instance of Nvme server
 func NewServer(jsonRPC spdk.JSONRPC) *Server {
 	opiSpdkServer := frontend.NewServerWithSubsystemListener(jsonRPC, NewSubsystemListener())
 	return &Server{
