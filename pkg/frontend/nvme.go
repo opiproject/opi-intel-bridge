@@ -27,7 +27,7 @@ func NewSubsystemListener() frontend.SubsystemListener {
 	return npiSubsystemListener{}
 }
 
-func (c npiSubsystemListener) Params(ctrlr *pb.NVMeController, nqn string) spdk.NvmfSubsystemAddListenerParams {
+func (c npiSubsystemListener) Params(ctrlr *pb.NvmeController, nqn string) spdk.NvmfSubsystemAddListenerParams {
 	result := spdk.NvmfSubsystemAddListenerParams{}
 	result.Nqn = nqn
 	result.ListenAddress.Trtype = "npi"
@@ -40,28 +40,28 @@ func calculateTransportAddr(pci *pb.PciEndpoint) string {
 		"." + strconv.Itoa(int(pci.VirtualFunction))
 }
 
-// CreateNVMeController creates an NVMe controller
-func (s *Server) CreateNVMeController(ctx context.Context, in *pb.CreateNVMeControllerRequest) (*pb.NVMeController, error) {
-	log.Printf("Intel bridge CreateNVMeController received from client: %v", in.NvMeController)
-	if err := s.verifyNVMeControllerOnCreate(in.NvMeController); err != nil {
+// CreateNvmeController creates an Nvme controller
+func (s *Server) CreateNvmeController(ctx context.Context, in *pb.CreateNvmeControllerRequest) (*pb.NvmeController, error) {
+	log.Printf("Intel bridge CreateNvmeController received from client: %v", in.NvmeController)
+	if err := s.verifyNvmeControllerOnCreate(in.NvmeController); err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
 	log.Printf("Passing request to opi-spdk-bridge")
-	response, err := s.FrontendNvmeServiceServer.CreateNVMeController(ctx, in)
+	response, err := s.FrontendNvmeServiceServer.CreateNvmeController(ctx, in)
 	if err == nil {
 		// response contains different QoS limits. It is an indication that
 		// opi-spdk-bridge returned an already existing controller providing idempotence
-		if !proto.Equal(response.Spec.MaxLimit, in.NvMeController.Spec.MaxLimit) ||
-			!proto.Equal(response.Spec.MinLimit, in.NvMeController.Spec.MinLimit) {
-			log.Printf("Existing NVMeController %v has different QoS limits",
-				in.NvMeController)
+		if !proto.Equal(response.Spec.MaxLimit, in.NvmeController.Spec.MaxLimit) ||
+			!proto.Equal(response.Spec.MinLimit, in.NvmeController.Spec.MinLimit) {
+			log.Printf("Existing NvmeController %v has different QoS limits",
+				in.NvmeController)
 			return nil, status.Errorf(codes.AlreadyExists,
-				"Controller %v exists with different QoS limits", in.NvMeControllerId)
+				"Controller %v exists with different QoS limits", in.NvmeControllerId)
 		}
 
-		if qosErr := s.setNVMeQosLimit(in.NvMeController); qosErr != nil {
-			s.cleanupNVMeControllerCreation(in.NvMeController.Spec.Name)
+		if qosErr := s.setNvmeQosLimit(in.NvmeController); qosErr != nil {
+			s.cleanupNvmeControllerCreation(in.NvmeController.Spec.Name)
 			return nil, qosErr
 		}
 	}
@@ -69,34 +69,34 @@ func (s *Server) CreateNVMeController(ctx context.Context, in *pb.CreateNVMeCont
 	return response, err
 }
 
-// UpdateNVMeController updates an NVMe controller
-func (s *Server) UpdateNVMeController(ctx context.Context, in *pb.UpdateNVMeControllerRequest) (*pb.NVMeController, error) {
-	log.Printf("Intel bridge UpdateNVMeController received from client: %v", in)
-	if err := s.verifyNVMeControllerOnUpdate(in.NvMeController); err != nil {
+// UpdateNvmeController updates an Nvme controller
+func (s *Server) UpdateNvmeController(ctx context.Context, in *pb.UpdateNvmeControllerRequest) (*pb.NvmeController, error) {
+	log.Printf("Intel bridge UpdateNvmeController received from client: %v", in)
+	if err := s.verifyNvmeControllerOnUpdate(in.NvmeController); err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	originalNvmeController := s.nvme.Controllers[in.NvMeController.Spec.Name]
+	originalNvmeController := s.nvme.Controllers[in.NvmeController.Spec.Name]
 	log.Printf("Passing request to opi-spdk-bridge")
-	response, err := s.FrontendNvmeServiceServer.UpdateNVMeController(ctx, in)
+	response, err := s.FrontendNvmeServiceServer.UpdateNvmeController(ctx, in)
 
 	if err == nil {
-		if qosErr := s.setNVMeQosLimit(in.NvMeController); qosErr != nil {
+		if qosErr := s.setNvmeQosLimit(in.NvmeController); qosErr != nil {
 			log.Println("Failed to set qos settings:", qosErr)
 			log.Println("Restore original controller")
-			s.nvme.Controllers[in.NvMeController.Spec.Name] = originalNvmeController
+			s.nvme.Controllers[in.NvmeController.Spec.Name] = originalNvmeController
 			return nil, qosErr
 		}
 	}
 	return response, err
 }
 
-func (s *Server) verifyNVMeControllerOnCreate(controller *pb.NVMeController) error {
-	return s.verifyNVMeController(controller)
+func (s *Server) verifyNvmeControllerOnCreate(controller *pb.NvmeController) error {
+	return s.verifyNvmeController(controller)
 }
 
-func (s *Server) verifyNVMeControllerOnUpdate(controller *pb.NVMeController) error {
-	if err := s.verifyNVMeController(controller); err != nil {
+func (s *Server) verifyNvmeControllerOnUpdate(controller *pb.NvmeController) error {
+	if err := s.verifyNvmeController(controller); err != nil {
 		return err
 	}
 
@@ -107,21 +107,21 @@ func (s *Server) verifyNVMeControllerOnUpdate(controller *pb.NVMeController) err
 	return nil
 }
 
-func (s *Server) verifyNVMeController(controller *pb.NVMeController) error {
+func (s *Server) verifyNvmeController(controller *pb.NvmeController) error {
 	maxLimit := controller.Spec.MaxLimit
-	if err := s.verifyNVMeControllerMaxLimits(maxLimit); err != nil {
+	if err := s.verifyNvmeControllerMaxLimits(maxLimit); err != nil {
 		return err
 	}
 
 	minLimit := controller.Spec.MinLimit
-	if err := s.verifyNVMeControllerMinLimits(minLimit); err != nil {
+	if err := s.verifyNvmeControllerMinLimits(minLimit); err != nil {
 		return err
 	}
 
-	return s.verifyNVMeControllerMinMaxLimitCorrespondence(minLimit, maxLimit)
+	return s.verifyNvmeControllerMinMaxLimitCorrespondence(minLimit, maxLimit)
 }
 
-func (s *Server) verifyNVMeControllerMaxLimits(maxLimit *pb.QosLimit) error {
+func (s *Server) verifyNvmeControllerMaxLimits(maxLimit *pb.QosLimit) error {
 	if maxLimit != nil {
 		if maxLimit.RwIopsKiops != 0 {
 			return fmt.Errorf("QoS limit_max rw_iops_kiops is not supported")
@@ -146,7 +146,7 @@ func (s *Server) verifyNVMeControllerMaxLimits(maxLimit *pb.QosLimit) error {
 	return nil
 }
 
-func (s *Server) verifyNVMeControllerMinLimits(minLimit *pb.QosLimit) error {
+func (s *Server) verifyNvmeControllerMinLimits(minLimit *pb.QosLimit) error {
 	if minLimit != nil {
 		if minLimit.RwIopsKiops != 0 {
 			return fmt.Errorf("QoS limit_min rw_iops_kiops is not supported")
@@ -171,7 +171,7 @@ func (s *Server) verifyNVMeControllerMinLimits(minLimit *pb.QosLimit) error {
 	return nil
 }
 
-func (s *Server) verifyNVMeControllerMinMaxLimitCorrespondence(minLimit *pb.QosLimit, maxLimit *pb.QosLimit) error {
+func (s *Server) verifyNvmeControllerMinMaxLimitCorrespondence(minLimit *pb.QosLimit, maxLimit *pb.QosLimit) error {
 	if minLimit != nil && maxLimit != nil {
 		if maxLimit.RdBandwidthMbs != 0 && minLimit.RdBandwidthMbs > maxLimit.RdBandwidthMbs {
 			return fmt.Errorf("QoS limit_min rd_bandwidth_mbs cannot be greater than limit_max rd_bandwidth_mbs")
@@ -183,7 +183,7 @@ func (s *Server) verifyNVMeControllerMinMaxLimitCorrespondence(minLimit *pb.QosL
 	return nil
 }
 
-func (s *Server) setNVMeQosLimit(controller *pb.NVMeController) error {
+func (s *Server) setNvmeQosLimit(controller *pb.NvmeController) error {
 	log.Printf("Setting QoS limits %v for %v", controller.Spec.MaxLimit, controller.Spec.Name)
 	params := models.NpiQosBwIopsLimitParams{
 		Nqn: s.nvme.Subsystems[controller.Spec.SubsystemId.Value].Spec.Nqn,
@@ -217,9 +217,9 @@ func (s *Server) setNVMeQosLimit(controller *pb.NVMeController) error {
 	return nil
 }
 
-func (s *Server) cleanupNVMeControllerCreation(id string) {
-	log.Println("Cleanup failed NVMe controller creation for", id)
-	_, err := s.FrontendNvmeServiceServer.DeleteNVMeController(context.TODO(),
-		&pb.DeleteNVMeControllerRequest{Name: id})
-	log.Println("Cleanup NVMe controller creation:", err)
+func (s *Server) cleanupNvmeControllerCreation(id string) {
+	log.Println("Cleanup failed Nvme controller creation for", id)
+	_, err := s.FrontendNvmeServiceServer.DeleteNvmeController(context.TODO(),
+		&pb.DeleteNvmeControllerRequest{Name: id})
+	log.Println("Cleanup Nvme controller creation:", err)
 }
