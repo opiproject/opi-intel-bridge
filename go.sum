@@ -29,6 +29,8 @@ github.com/opiproject/opi-api v0.0.0-20230525195117-1db0f9cbae90 h1:YUkLBe4aBO2o
 github.com/opiproject/opi-api v0.0.0-20230525195117-1db0f9cbae90/go.mod h1:92pv4ulvvPMuxCJ9ND3aYbmBfEMLx0VCjpkiR7ZTqPY=
 github.com/opiproject/opi-smbios-bridge v0.1.3-0.20230519175016-c4f24198e7cb h1:MGZhazzklC3Zn+00FRMVbJ9vcx9Xjc3qvVXLr+yyDEo=
 github.com/opiproject/opi-smbios-bridge v0.1.3-0.20230519175016-c4f24198e7cb/go.mod h1:c2IfSLP9b6w7P9mL7GO4n4g46wKfLHmkQMgh2kIKRIk=
+github.com/opiproject/opi-smbios-bridge v0.1.3-0.20230527073217-96fc817e987d h1:WK2qrei1ZSJZKiOgQPcPwpTrGQfrr1AQu5YmPb0OVjA=
+github.com/opiproject/opi-smbios-bridge v0.1.3-0.20230527073217-96fc817e987d/go.mod h1:dCSW8ONT/cCaFCg7d8PASbvxjKgja9VRqdQOOCc/RkA=
 github.com/opiproject/opi-spdk-bridge v0.1.2-0.20230524171529-a092002d79ac h1:dUnWpzGIRFp5yDSIGwu7qlDo4/EAAa9sM9NKtfPDEY0=
 github.com/opiproject/opi-spdk-bridge v0.1.2-0.20230524171529-a092002d79ac/go.mod h1:DbUY62oy1DPfclCIliIU7yptRpTtKzFmSdKlqCU+5Qk=
 github.com/opiproject/opi-spdk-bridge v0.1.2-0.20230525213156-537e3dc21323 h1:HJtontDb9cq2+PYhs9SGO/LrtYOaubN62TJ8jzBnBo8=
