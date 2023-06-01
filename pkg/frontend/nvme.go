@@ -61,7 +61,7 @@ func (s *Server) CreateNvmeController(ctx context.Context, in *pb.CreateNvmeCont
 		}
 
 		if qosErr := s.setNvmeQosLimit(in.NvmeController); qosErr != nil {
-			s.cleanupNvmeControllerCreation(in.NvmeController.Spec.Name)
+			s.cleanupNvmeControllerCreation(in.NvmeController.Name)
 			return nil, qosErr
 		}
 	}
@@ -76,7 +76,7 @@ func (s *Server) UpdateNvmeController(ctx context.Context, in *pb.UpdateNvmeCont
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	originalNvmeController := s.nvme.Controllers[in.NvmeController.Spec.Name]
+	originalNvmeController := s.nvme.Controllers[in.NvmeController.Name]
 	log.Printf("Passing request to opi-spdk-bridge")
 	response, err := s.FrontendNvmeServiceServer.UpdateNvmeController(ctx, in)
 
@@ -84,7 +84,7 @@ func (s *Server) UpdateNvmeController(ctx context.Context, in *pb.UpdateNvmeCont
 		if qosErr := s.setNvmeQosLimit(in.NvmeController); qosErr != nil {
 			log.Println("Failed to set qos settings:", qosErr)
 			log.Println("Restore original controller")
-			s.nvme.Controllers[in.NvmeController.Spec.Name] = originalNvmeController
+			s.nvme.Controllers[in.NvmeController.Name] = originalNvmeController
 			return nil, qosErr
 		}
 	}
@@ -101,7 +101,7 @@ func (s *Server) verifyNvmeControllerOnUpdate(controller *pb.NvmeController) err
 	}
 
 	// Id had to be assigned on create
-	if controller.Spec.Name == "" {
+	if controller.Name == "" {
 		return fmt.Errorf("name cannot be empty on update")
 	}
 	return nil
@@ -184,7 +184,7 @@ func (s *Server) verifyNvmeControllerMinMaxLimitCorrespondence(minLimit *pb.QosL
 }
 
 func (s *Server) setNvmeQosLimit(controller *pb.NvmeController) error {
-	log.Printf("Setting QoS limits %v for %v", controller.Spec.MaxLimit, controller.Spec.Name)
+	log.Printf("Setting QoS limits %v for %v", controller.Spec.MaxLimit, controller.Name)
 	params := models.NpiQosBwIopsLimitParams{
 		Nqn: s.nvme.Subsystems[controller.Spec.SubsystemId.Value].Spec.Nqn,
 	}
