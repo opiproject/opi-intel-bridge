@@ -7,6 +7,7 @@ package middleend
 import (
 	"context"
 	"encoding/hex"
+	"fmt"
 	"log"
 	"runtime"
 	"runtime/debug"
@@ -80,7 +81,7 @@ func (s *Server) CreateEncryptedVolume(_ context.Context, in *pb.CreateEncrypted
 		log.Printf("client provided the ID of a resource %v, ignoring the name field %v", in.EncryptedVolumeId, in.EncryptedVolume.Name)
 		name = in.EncryptedVolumeId
 	}
-	in.EncryptedVolume.Name = name
+	in.EncryptedVolume.Name = fmt.Sprintf("//storage.opiproject.org/volumes/%s", name)
 
 	_, ok := s.volumes.encryptedVolumes[in.EncryptedVolume.Name]
 	if ok {
