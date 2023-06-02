@@ -50,7 +50,7 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 		start              bool
 		existingController *pb.NvmeController
 	}{
-		"limit_max rw_iops_kiops is not supported": {
+		"max_limit rw_iops_kiops is not supported": {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
 					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Name},
@@ -62,11 +62,11 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			out:                nil,
 			spdk:               []string{},
 			errCode:            codes.InvalidArgument,
-			errMsg:             "QoS limit_max rw_iops_kiops is not supported",
+			errMsg:             "QoS max_limit rw_iops_kiops is not supported",
 			start:              false,
 			existingController: nil,
 		},
-		"limit_max rw_bandwidth_mbs is not supported": {
+		"max_limit rw_bandwidth_mbs is not supported": {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
 					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Name},
@@ -78,7 +78,7 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			out:                nil,
 			spdk:               []string{},
 			errCode:            codes.InvalidArgument,
-			errMsg:             "QoS limit_max rw_bandwidth_mbs is not supported",
+			errMsg:             "QoS max_limit rw_bandwidth_mbs is not supported",
 			start:              false,
 			existingController: nil,
 		},
@@ -232,7 +232,7 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 				Status: &pb.NvmeControllerStatus{Active: true},
 			},
 		},
-		"limit_min rw_bandwidth_mbs is not supported": {
+		"min_limit rw_bandwidth_mbs is not supported": {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
 					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Name},
@@ -244,11 +244,11 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			out:                nil,
 			spdk:               []string{},
 			errCode:            codes.InvalidArgument,
-			errMsg:             "QoS limit_min rw_bandwidth_mbs is not supported",
+			errMsg:             "QoS min_limit rw_bandwidth_mbs is not supported",
 			start:              false,
 			existingController: nil,
 		},
-		"limit_min rw_iops_kiops is not supported": {
+		"min_limit rw_iops_kiops is not supported": {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
 					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Name},
@@ -260,11 +260,11 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			out:                nil,
 			spdk:               []string{},
 			errCode:            codes.InvalidArgument,
-			errMsg:             "QoS limit_min rw_iops_kiops is not supported",
+			errMsg:             "QoS min_limit rw_iops_kiops is not supported",
 			start:              false,
 			existingController: nil,
 		},
-		"limit_min rd_iops_kiops is not supported": {
+		"min_limit rd_iops_kiops is not supported": {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
 					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Name},
@@ -276,11 +276,11 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			out:                nil,
 			spdk:               []string{},
 			errCode:            codes.InvalidArgument,
-			errMsg:             "QoS limit_min rd_iops_kiops is not supported",
+			errMsg:             "QoS min_limit rd_iops_kiops is not supported",
 			start:              false,
 			existingController: nil,
 		},
-		"limit_min wr_iops_kiops is not supported": {
+		"min_limit wr_iops_kiops is not supported": {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
 					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Name},
@@ -292,7 +292,7 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			out:                nil,
 			spdk:               []string{},
 			errCode:            codes.InvalidArgument,
-			errMsg:             "QoS limit_min wr_iops_kiops is not supported",
+			errMsg:             "QoS min_limit wr_iops_kiops is not supported",
 			start:              false,
 			existingController: nil,
 		},
@@ -324,7 +324,7 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			start:              true,
 			existingController: nil,
 		},
-		"limit_min rd_bandwidth_mbs cannot be greater than limit_max rd_bandwidth_mbs": {
+		"min_limit rd_bandwidth_mbs cannot be greater than max_limit rd_bandwidth_mbs": {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
 					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Name},
@@ -337,11 +337,11 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			out:                nil,
 			spdk:               []string{},
 			errCode:            codes.InvalidArgument,
-			errMsg:             "QoS limit_min rd_bandwidth_mbs cannot be greater than limit_max rd_bandwidth_mbs",
+			errMsg:             "QoS min_limit rd_bandwidth_mbs cannot be greater than max_limit rd_bandwidth_mbs",
 			start:              false,
 			existingController: nil,
 		},
-		"limit_min wr_bandwidth_mbs cannot be greater than limit_max wr_bandwidth_mbs": {
+		"min_limit wr_bandwidth_mbs cannot be greater than max_limit wr_bandwidth_mbs": {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
 					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Name},
@@ -354,7 +354,7 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			out:                nil,
 			spdk:               []string{},
 			errCode:            codes.InvalidArgument,
-			errMsg:             "QoS limit_min wr_bandwidth_mbs cannot be greater than limit_max wr_bandwidth_mbs",
+			errMsg:             "QoS min_limit wr_bandwidth_mbs cannot be greater than max_limit wr_bandwidth_mbs",
 			start:              false,
 			existingController: nil,
 		},
@@ -386,7 +386,7 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			start:              true,
 			existingController: nil,
 		},
-		"limit_max rd_iops_kiops is negative": {
+		"max_limit rd_iops_kiops is negative": {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
 					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Name},
@@ -398,11 +398,11 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			out:                nil,
 			spdk:               []string{},
 			errCode:            codes.InvalidArgument,
-			errMsg:             "QoS limit_max rd_iops_kiops cannot be negative",
+			errMsg:             "QoS max_limit rd_iops_kiops cannot be negative",
 			start:              false,
 			existingController: nil,
 		},
-		"limit_max wr_iops_kiops is negative": {
+		"max_limit wr_iops_kiops is negative": {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
 					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Name},
@@ -414,11 +414,11 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			out:                nil,
 			spdk:               []string{},
 			errCode:            codes.InvalidArgument,
-			errMsg:             "QoS limit_max wr_iops_kiops cannot be negative",
+			errMsg:             "QoS max_limit wr_iops_kiops cannot be negative",
 			start:              false,
 			existingController: nil,
 		},
-		"limit_max rd_bandwidth_mbs is negative": {
+		"max_limit rd_bandwidth_mbs is negative": {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
 					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Name},
@@ -430,11 +430,11 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			out:                nil,
 			spdk:               []string{},
 			errCode:            codes.InvalidArgument,
-			errMsg:             "QoS limit_max rd_bandwidth_mbs cannot be negative",
+			errMsg:             "QoS max_limit rd_bandwidth_mbs cannot be negative",
 			start:              false,
 			existingController: nil,
 		},
-		"limit_max wr_bandwidth_mbs is negative": {
+		"max_limit wr_bandwidth_mbs is negative": {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
 					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Name},
@@ -446,11 +446,11 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			out:                nil,
 			spdk:               []string{},
 			errCode:            codes.InvalidArgument,
-			errMsg:             "QoS limit_max wr_bandwidth_mbs cannot be negative",
+			errMsg:             "QoS max_limit wr_bandwidth_mbs cannot be negative",
 			start:              false,
 			existingController: nil,
 		},
-		"limit_min rd_bandwidth_mbs is negative": {
+		"min_limit rd_bandwidth_mbs is negative": {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
 					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Name},
@@ -462,11 +462,11 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			out:                nil,
 			spdk:               []string{},
 			errCode:            codes.InvalidArgument,
-			errMsg:             "QoS limit_min rd_bandwidth_mbs cannot be negative",
+			errMsg:             "QoS min_limit rd_bandwidth_mbs cannot be negative",
 			start:              false,
 			existingController: nil,
 		},
-		"limit_min wr_bandwidth_mbs is negative": {
+		"min_limit wr_bandwidth_mbs is negative": {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
 					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Name},
@@ -478,7 +478,7 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			out:                nil,
 			spdk:               []string{},
 			errCode:            codes.InvalidArgument,
-			errMsg:             "QoS limit_min wr_bandwidth_mbs cannot be negative",
+			errMsg:             "QoS min_limit wr_bandwidth_mbs cannot be negative",
 			start:              false,
 			existingController: nil,
 		},
@@ -549,7 +549,7 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 		start              bool
 		existingController *pb.NvmeController
 	}{
-		"limit_max rw_iops_kiops is not supported": {
+		"max_limit rw_iops_kiops is not supported": {
 			in: &pb.NvmeController{
 				Name: testControllerID,
 				Spec: &pb.NvmeControllerSpec{
@@ -562,11 +562,11 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 			out:                nil,
 			spdk:               []string{},
 			errCode:            codes.InvalidArgument,
-			errMsg:             "QoS limit_max rw_iops_kiops is not supported",
+			errMsg:             "QoS max_limit rw_iops_kiops is not supported",
 			start:              false,
 			existingController: nil,
 		},
-		"limit_max rw_bandwidth_mbs is not supported": {
+		"max_limit rw_bandwidth_mbs is not supported": {
 			in: &pb.NvmeController{
 				Name: testControllerID,
 				Spec: &pb.NvmeControllerSpec{
@@ -579,11 +579,11 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 			out:                nil,
 			spdk:               []string{},
 			errCode:            codes.InvalidArgument,
-			errMsg:             "QoS limit_max rw_bandwidth_mbs is not supported",
+			errMsg:             "QoS max_limit rw_bandwidth_mbs is not supported",
 			start:              false,
 			existingController: &testControllerWithMaxQos,
 		},
-		"limit_min rw_bandwidth_mbs is not supported": {
+		"min_limit rw_bandwidth_mbs is not supported": {
 			in: &pb.NvmeController{
 				Name: testControllerID,
 				Spec: &pb.NvmeControllerSpec{
@@ -596,11 +596,11 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 			out:                nil,
 			spdk:               []string{},
 			errCode:            codes.InvalidArgument,
-			errMsg:             "QoS limit_min rw_bandwidth_mbs is not supported",
+			errMsg:             "QoS min_limit rw_bandwidth_mbs is not supported",
 			start:              false,
 			existingController: &testControllerWithMaxQos,
 		},
-		"limit_min rw_iops_kiops is not supported": {
+		"min_limit rw_iops_kiops is not supported": {
 			in: &pb.NvmeController{
 				Name: testControllerID,
 				Spec: &pb.NvmeControllerSpec{
@@ -613,11 +613,11 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 			out:                nil,
 			spdk:               []string{},
 			errCode:            codes.InvalidArgument,
-			errMsg:             "QoS limit_min rw_iops_kiops is not supported",
+			errMsg:             "QoS min_limit rw_iops_kiops is not supported",
 			start:              false,
 			existingController: &testControllerWithMaxQos,
 		},
-		"limit_min rd_iops_kiops is not supported": {
+		"min_limit rd_iops_kiops is not supported": {
 			in: &pb.NvmeController{
 				Name: testControllerID,
 				Spec: &pb.NvmeControllerSpec{
@@ -630,11 +630,11 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 			out:                nil,
 			spdk:               []string{},
 			errCode:            codes.InvalidArgument,
-			errMsg:             "QoS limit_min rd_iops_kiops is not supported",
+			errMsg:             "QoS min_limit rd_iops_kiops is not supported",
 			start:              false,
 			existingController: &testControllerWithMaxQos,
 		},
-		"limit_min wr_iops_kiops is not supported": {
+		"min_limit wr_iops_kiops is not supported": {
 			in: &pb.NvmeController{
 				Name: testControllerID,
 				Spec: &pb.NvmeControllerSpec{
@@ -647,11 +647,11 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 			out:                nil,
 			spdk:               []string{},
 			errCode:            codes.InvalidArgument,
-			errMsg:             "QoS limit_min wr_iops_kiops is not supported",
+			errMsg:             "QoS min_limit wr_iops_kiops is not supported",
 			start:              false,
 			existingController: &testControllerWithMaxQos,
 		},
-		"limit_min rd_bandwidth_mbs cannot be greater than limit_max rd_bandwidth_mbs": {
+		"min_limit rd_bandwidth_mbs cannot be greater than max_limit rd_bandwidth_mbs": {
 			in: &pb.NvmeController{
 				Name: testControllerID,
 				Spec: &pb.NvmeControllerSpec{
@@ -665,11 +665,11 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 			out:                nil,
 			spdk:               []string{},
 			errCode:            codes.InvalidArgument,
-			errMsg:             "QoS limit_min rd_bandwidth_mbs cannot be greater than limit_max rd_bandwidth_mbs",
+			errMsg:             "QoS min_limit rd_bandwidth_mbs cannot be greater than max_limit rd_bandwidth_mbs",
 			start:              false,
 			existingController: &testControllerWithMaxQos,
 		},
-		"limit_min wr_bandwidth_mbs cannot be greater than limit_max wr_bandwidth_mbs": {
+		"min_limit wr_bandwidth_mbs cannot be greater than max_limit wr_bandwidth_mbs": {
 			in: &pb.NvmeController{
 				Name: testControllerID,
 				Spec: &pb.NvmeControllerSpec{
@@ -683,11 +683,11 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 			out:                nil,
 			spdk:               []string{},
 			errCode:            codes.InvalidArgument,
-			errMsg:             "QoS limit_min wr_bandwidth_mbs cannot be greater than limit_max wr_bandwidth_mbs",
+			errMsg:             "QoS min_limit wr_bandwidth_mbs cannot be greater than max_limit wr_bandwidth_mbs",
 			start:              false,
 			existingController: &testControllerWithMaxQos,
 		},
-		"limit_max rd_iops_kiops is negative": {
+		"max_limit rd_iops_kiops is negative": {
 			in: &pb.NvmeController{
 				Name: testControllerID,
 				Spec: &pb.NvmeControllerSpec{
@@ -700,11 +700,11 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 			out:                nil,
 			spdk:               []string{},
 			errCode:            codes.InvalidArgument,
-			errMsg:             "QoS limit_max rd_iops_kiops cannot be negative",
+			errMsg:             "QoS max_limit rd_iops_kiops cannot be negative",
 			start:              false,
 			existingController: &testControllerWithMaxQos,
 		},
-		"limit_max wr_iops_kiops is negative": {
+		"max_limit wr_iops_kiops is negative": {
 			in: &pb.NvmeController{
 				Name: testControllerID,
 				Spec: &pb.NvmeControllerSpec{
@@ -717,11 +717,11 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 			out:                nil,
 			spdk:               []string{},
 			errCode:            codes.InvalidArgument,
-			errMsg:             "QoS limit_max wr_iops_kiops cannot be negative",
+			errMsg:             "QoS max_limit wr_iops_kiops cannot be negative",
 			start:              false,
 			existingController: &testControllerWithMaxQos,
 		},
-		"limit_max rd_bandwidth_mbs is negative": {
+		"max_limit rd_bandwidth_mbs is negative": {
 			in: &pb.NvmeController{
 				Name: testControllerID,
 				Spec: &pb.NvmeControllerSpec{
@@ -734,11 +734,11 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 			out:                nil,
 			spdk:               []string{},
 			errCode:            codes.InvalidArgument,
-			errMsg:             "QoS limit_max rd_bandwidth_mbs cannot be negative",
+			errMsg:             "QoS max_limit rd_bandwidth_mbs cannot be negative",
 			start:              false,
 			existingController: &testControllerWithMaxQos,
 		},
-		"limit_max wr_bandwidth_mbs is negative": {
+		"max_limit wr_bandwidth_mbs is negative": {
 			in: &pb.NvmeController{
 				Name: testControllerID,
 				Spec: &pb.NvmeControllerSpec{
@@ -751,11 +751,11 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 			out:                nil,
 			spdk:               []string{},
 			errCode:            codes.InvalidArgument,
-			errMsg:             "QoS limit_max wr_bandwidth_mbs cannot be negative",
+			errMsg:             "QoS max_limit wr_bandwidth_mbs cannot be negative",
 			start:              false,
 			existingController: &testControllerWithMaxQos,
 		},
-		"limit_min rd_bandwidth_mbs is negative": {
+		"min_limit rd_bandwidth_mbs is negative": {
 			in: &pb.NvmeController{
 				Name: testControllerID,
 				Spec: &pb.NvmeControllerSpec{
@@ -768,11 +768,11 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 			out:                nil,
 			spdk:               []string{},
 			errCode:            codes.InvalidArgument,
-			errMsg:             "QoS limit_min rd_bandwidth_mbs cannot be negative",
+			errMsg:             "QoS min_limit rd_bandwidth_mbs cannot be negative",
 			start:              false,
 			existingController: &testControllerWithMaxQos,
 		},
-		"limit_min wr_bandwidth_mbs is negative": {
+		"min_limit wr_bandwidth_mbs is negative": {
 			in: &pb.NvmeController{
 				Name: testControllerID,
 				Spec: &pb.NvmeControllerSpec{
@@ -785,7 +785,7 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 			out:                nil,
 			spdk:               []string{},
 			errCode:            codes.InvalidArgument,
-			errMsg:             "QoS limit_min wr_bandwidth_mbs cannot be negative",
+			errMsg:             "QoS min_limit wr_bandwidth_mbs cannot be negative",
 			start:              false,
 			existingController: &testControllerWithMaxQos,
 		},

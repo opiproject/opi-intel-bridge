@@ -124,23 +124,23 @@ func (s *Server) verifyNvmeController(controller *pb.NvmeController) error {
 func (s *Server) verifyNvmeControllerMaxLimits(maxLimit *pb.QosLimit) error {
 	if maxLimit != nil {
 		if maxLimit.RwIopsKiops != 0 {
-			return fmt.Errorf("QoS limit_max rw_iops_kiops is not supported")
+			return fmt.Errorf("QoS max_limit rw_iops_kiops is not supported")
 		}
 		if maxLimit.RwBandwidthMbs != 0 {
-			return fmt.Errorf("QoS limit_max rw_bandwidth_mbs is not supported")
+			return fmt.Errorf("QoS max_limit rw_bandwidth_mbs is not supported")
 		}
 
 		if maxLimit.RdIopsKiops < 0 {
-			return fmt.Errorf("QoS limit_max rd_iops_kiops cannot be negative")
+			return fmt.Errorf("QoS max_limit rd_iops_kiops cannot be negative")
 		}
 		if maxLimit.WrIopsKiops < 0 {
-			return fmt.Errorf("QoS limit_max wr_iops_kiops cannot be negative")
+			return fmt.Errorf("QoS max_limit wr_iops_kiops cannot be negative")
 		}
 		if maxLimit.RdBandwidthMbs < 0 {
-			return fmt.Errorf("QoS limit_max rd_bandwidth_mbs cannot be negative")
+			return fmt.Errorf("QoS max_limit rd_bandwidth_mbs cannot be negative")
 		}
 		if maxLimit.WrBandwidthMbs < 0 {
-			return fmt.Errorf("QoS limit_max wr_bandwidth_mbs cannot be negative")
+			return fmt.Errorf("QoS max_limit wr_bandwidth_mbs cannot be negative")
 		}
 	}
 	return nil
@@ -149,23 +149,23 @@ func (s *Server) verifyNvmeControllerMaxLimits(maxLimit *pb.QosLimit) error {
 func (s *Server) verifyNvmeControllerMinLimits(minLimit *pb.QosLimit) error {
 	if minLimit != nil {
 		if minLimit.RwIopsKiops != 0 {
-			return fmt.Errorf("QoS limit_min rw_iops_kiops is not supported")
+			return fmt.Errorf("QoS min_limit rw_iops_kiops is not supported")
 		}
 		if minLimit.RwBandwidthMbs != 0 {
-			return fmt.Errorf("QoS limit_min rw_bandwidth_mbs is not supported")
+			return fmt.Errorf("QoS min_limit rw_bandwidth_mbs is not supported")
 		}
 		if minLimit.RdIopsKiops != 0 {
-			return fmt.Errorf("QoS limit_min rd_iops_kiops is not supported")
+			return fmt.Errorf("QoS min_limit rd_iops_kiops is not supported")
 		}
 		if minLimit.WrIopsKiops != 0 {
-			return fmt.Errorf("QoS limit_min wr_iops_kiops is not supported")
+			return fmt.Errorf("QoS min_limit wr_iops_kiops is not supported")
 		}
 
 		if minLimit.RdBandwidthMbs < 0 {
-			return fmt.Errorf("QoS limit_min rd_bandwidth_mbs cannot be negative")
+			return fmt.Errorf("QoS min_limit rd_bandwidth_mbs cannot be negative")
 		}
 		if minLimit.WrBandwidthMbs < 0 {
-			return fmt.Errorf("QoS limit_min wr_bandwidth_mbs cannot be negative")
+			return fmt.Errorf("QoS min_limit wr_bandwidth_mbs cannot be negative")
 		}
 	}
 	return nil
@@ -174,10 +174,10 @@ func (s *Server) verifyNvmeControllerMinLimits(minLimit *pb.QosLimit) error {
 func (s *Server) verifyNvmeControllerMinMaxLimitCorrespondence(minLimit *pb.QosLimit, maxLimit *pb.QosLimit) error {
 	if minLimit != nil && maxLimit != nil {
 		if maxLimit.RdBandwidthMbs != 0 && minLimit.RdBandwidthMbs > maxLimit.RdBandwidthMbs {
-			return fmt.Errorf("QoS limit_min rd_bandwidth_mbs cannot be greater than limit_max rd_bandwidth_mbs")
+			return fmt.Errorf("QoS min_limit rd_bandwidth_mbs cannot be greater than max_limit rd_bandwidth_mbs")
 		}
 		if maxLimit.WrBandwidthMbs != 0 && minLimit.WrBandwidthMbs > maxLimit.WrBandwidthMbs {
-			return fmt.Errorf("QoS limit_min wr_bandwidth_mbs cannot be greater than limit_max wr_bandwidth_mbs")
+			return fmt.Errorf("QoS min_limit wr_bandwidth_mbs cannot be greater than max_limit wr_bandwidth_mbs")
 		}
 	}
 	return nil
