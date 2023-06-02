@@ -7,6 +7,7 @@ package middleend
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"log"
 	"net"
 	"os"
@@ -371,11 +372,12 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 					log.Panic("Failed to copy test structure for CreateEncryptedVolumeRequest")
 				}
 			}
+			fullname := fmt.Sprintf("//storage.opiproject.org/volumes/%s", encryptedVolumeID)
 			if test.out != nil {
-				test.out.Name = encryptedVolumeID
+				test.out.Name = fullname
 			}
 			if test.existBefore {
-				testEnv.opiSpdkServer.volumes.encryptedVolumes[encryptedVolumeID] =
+				testEnv.opiSpdkServer.volumes.encryptedVolumes[fullname] =
 					request.EncryptedVolume.VolumeId.Value
 			}
 
@@ -404,6 +406,7 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 }
 
 func TestMiddleEnd_DeleteEncryptedVolume(t *testing.T) {
+	fullname := fmt.Sprintf("//storage.opiproject.org/volumes/%s", encryptedVolumeID)
 	tests := map[string]struct {
 		in          *pb.DeleteEncryptedVolumeRequest
 		spdk        []string
@@ -421,7 +424,7 @@ func TestMiddleEnd_DeleteEncryptedVolume(t *testing.T) {
 			existAfter:  false,
 		},
 		"valid delete encrypted volume request": {
-			in:          &pb.DeleteEncryptedVolumeRequest{Name: bdevName},
+			in:          &pb.DeleteEncryptedVolumeRequest{Name: fullname},
 			spdk:        []string{foundBdevResponse, `{"id":%d,"error":{"code":0,"message":""},"result":true}`},
 			expectedErr: nil,
 			start:       true,
@@ -429,7 +432,7 @@ func TestMiddleEnd_DeleteEncryptedVolume(t *testing.T) {
 			existAfter:  false,
 		},
 		"find bdev uuid by name internal SPDK failure": {
-			in:          &pb.DeleteEncryptedVolumeRequest{Name: bdevName},
+			in:          &pb.DeleteEncryptedVolumeRequest{Name: fullname},
 			spdk:        []string{`{"id":%d,"error":{"code":-19,"message":"No such device"},"result":null}`},
 			expectedErr: spdk.ErrFailedSpdkCall,
 			start:       true,
@@ -437,7 +440,7 @@ func TestMiddleEnd_DeleteEncryptedVolume(t *testing.T) {
 			existAfter:  true,
 		},
 		"find no bdev uuid by name": {
-			in:          &pb.DeleteEncryptedVolumeRequest{Name: bdevName},
+			in:          &pb.DeleteEncryptedVolumeRequest{Name: fullname},
 			spdk:        []string{`{"id":%d,"error":{"code":0,"message":""},"result":[]}`},
 			expectedErr: spdk.ErrUnexpectedSpdkCallResult,
 			start:       true,
@@ -445,7 +448,7 @@ func TestMiddleEnd_DeleteEncryptedVolume(t *testing.T) {
 			existAfter:  true,
 		},
 		"internal SPDK failure": {
-			in:          &pb.DeleteEncryptedVolumeRequest{Name: bdevName},
+			in:          &pb.DeleteEncryptedVolumeRequest{Name: fullname},
 			spdk:        []string{foundBdevResponse, `{"id":%d,"error":{"code":1,"message":"some internal error"},"result":true}`},
 			expectedErr: spdk.ErrFailedSpdkCall,
 			start:       true,
@@ -453,7 +456,7 @@ func TestMiddleEnd_DeleteEncryptedVolume(t *testing.T) {
 			existAfter:  true,
 		},
 		"SPDK result false": {
-			in:          &pb.DeleteEncryptedVolumeRequest{Name: bdevName},
+			in:          &pb.DeleteEncryptedVolumeRequest{Name: fullname},
 			spdk:        []string{foundBdevResponse, `{"id":%d,"error":{"code":0,"message":""},"result":false}`},
 			expectedErr: spdk.ErrUnexpectedSpdkCallResult,
 			start:       true,
@@ -461,7 +464,7 @@ func TestMiddleEnd_DeleteEncryptedVolume(t *testing.T) {
 			existAfter:  true,
 		},
 		"delete non-existing encrypted volume with missing allowed": {
-			in:          &pb.DeleteEncryptedVolumeRequest{Name: bdevName, AllowMissing: true},
+			in:          &pb.DeleteEncryptedVolumeRequest{Name: fullname, AllowMissing: true},
 			spdk:        []string{},
 			expectedErr: nil,
 			start:       false,
@@ -469,7 +472,7 @@ func TestMiddleEnd_DeleteEncryptedVolume(t *testing.T) {
 			existAfter:  false,
 		},
 		"delete non-existing encrypted volume without missing allowed": {
-			in:          &pb.DeleteEncryptedVolumeRequest{Name: bdevName, AllowMissing: false},
+			in:          &pb.DeleteEncryptedVolumeRequest{Name: fullname, AllowMissing: false},
 			spdk:        []string{},
 			expectedErr: errVolumeNotFound,
 			start:       false,
@@ -483,7 +486,7 @@ func TestMiddleEnd_DeleteEncryptedVolume(t *testing.T) {
 			testEnv := createTestEnvironment(test.start, test.spdk)
 			defer testEnv.Close()
 			if test.existBefore {
-				testEnv.opiSpdkServer.volumes.encryptedVolumes[test.in.Name] = bdevName
+				testEnv.opiSpdkServer.volumes.encryptedVolumes[fullname] = bdevName
 			}
 			request := proto.Clone(test.in).(*pb.DeleteEncryptedVolumeRequest)
 
