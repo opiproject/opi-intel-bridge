@@ -76,12 +76,12 @@ func (s *Server) CreateEncryptedVolume(_ context.Context, in *pb.CreateEncrypted
 	if err != nil {
 		return nil, err
 	}
-	name := uuid.New().String()
+	resourceID := uuid.New().String()
 	if in.EncryptedVolumeId != "" {
 		log.Printf("client provided the ID of a resource %v, ignoring the name field %v", in.EncryptedVolumeId, in.EncryptedVolume.Name)
-		name = in.EncryptedVolumeId
+		resourceID = in.EncryptedVolumeId
 	}
-	in.EncryptedVolume.Name = fmt.Sprintf("//storage.opiproject.org/volumes/%s", name)
+	in.EncryptedVolume.Name = fmt.Sprintf("//storage.opiproject.org/volumes/%s", resourceID)
 
 	_, ok := s.volumes.encryptedVolumes[in.EncryptedVolume.Name]
 	if ok {
