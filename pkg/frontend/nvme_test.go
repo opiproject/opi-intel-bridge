@@ -12,6 +12,7 @@ import (
 	"github.com/opiproject/gospdk/spdk"
 	pc "github.com/opiproject/opi-api/common/v1/gen/go"
 	pb "github.com/opiproject/opi-api/storage/v1alpha1/gen/go"
+	"github.com/opiproject/opi-spdk-bridge/pkg/server"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
@@ -19,12 +20,13 @@ import (
 
 var (
 	testSubsystem = pb.NvmeSubsystem{
-		Name: "subsystem-test",
+		Name: server.ResourceIDToVolumeName("subsystem-test"),
 		Spec: &pb.NvmeSubsystemSpec{
 			Nqn: "nqn.2022-09.io.spdk:opi3",
 		},
 	}
 	testControllerID         = "controller-test"
+	testControllerName       = server.ResourceIDToVolumeName(testControllerID)
 	testControllerWithMaxQos = pb.NvmeController{
 		Spec: &pb.NvmeControllerSpec{
 			SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Name},
@@ -196,7 +198,7 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			out:     nil,
 			spdk:    []string{},
 			errCode: codes.AlreadyExists,
-			errMsg:  fmt.Sprintf("Controller %v exists with different QoS limits", testControllerID),
+			errMsg:  fmt.Sprintf("Controller %v exists with different QoS limits", testControllerName),
 			start:   false,
 			existingController: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
@@ -220,7 +222,7 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			out:     nil,
 			spdk:    []string{},
 			errCode: codes.AlreadyExists,
-			errMsg:  fmt.Sprintf("Controller %v exists with different QoS limits", testControllerID),
+			errMsg:  fmt.Sprintf("Controller %v exists with different QoS limits", testControllerName),
 			start:   false,
 			existingController: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
@@ -486,15 +488,18 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 
 	for testName, test := range tests {
 		t.Run(testName, func(t *testing.T) {
+			test.in = server.ProtoClone(test.in)
 			testEnv := createTestEnvironment(test.start, test.spdk)
 			defer testEnv.Close()
 			testEnv.opiSpdkServer.nvme.Subsystems[testSubsystem.Name] = &testSubsystem
 			if test.existingController != nil {
-				test.existingController.Name = testControllerID
+				test.existingController = server.ProtoClone(test.existingController)
+				test.existingController.Name = testControllerName
 				testEnv.opiSpdkServer.nvme.Controllers[test.existingController.Name] = test.existingController
 			}
 			if test.out != nil {
-				test.out.Name = testControllerID
+				test.out = server.ProtoClone(test.out)
+				test.out.Name = testControllerName
 			}
 
 			response, err := testEnv.opiSpdkServer.CreateNvmeController(testEnv.ctx,
@@ -519,7 +524,7 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 				t.Errorf("expect grpc error status")
 			}
 
-			controller := testEnv.opiSpdkServer.nvme.Controllers[testControllerID]
+			controller := testEnv.opiSpdkServer.nvme.Controllers[testControllerName]
 			if test.existingController != nil {
 				if !proto.Equal(test.existingController, controller) {
 					t.Errorf("expect %v exists", test.existingController)
@@ -551,7 +556,7 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 	}{
 		"max_limit rw_iops_kiops is not supported": {
 			in: &pb.NvmeController{
-				Name: testControllerID,
+				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
 					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Name},
 					PcieId:           &pb.PciEndpoint{PhysicalFunction: 0, VirtualFunction: 2},
@@ -568,7 +573,7 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 		},
 		"max_limit rw_bandwidth_mbs is not supported": {
 			in: &pb.NvmeController{
-				Name: testControllerID,
+				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
 					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Name},
 					PcieId:           &pb.PciEndpoint{PhysicalFunction: 0, VirtualFunction: 2},
@@ -585,7 +590,7 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 		},
 		"min_limit rw_bandwidth_mbs is not supported": {
 			in: &pb.NvmeController{
-				Name: testControllerID,
+				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
 					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Name},
 					PcieId:           &pb.PciEndpoint{PhysicalFunction: 0, VirtualFunction: 2},
@@ -602,7 +607,7 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 		},
 		"min_limit rw_iops_kiops is not supported": {
 			in: &pb.NvmeController{
-				Name: testControllerID,
+				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
 					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Name},
 					PcieId:           &pb.PciEndpoint{PhysicalFunction: 0, VirtualFunction: 2},
@@ -619,7 +624,7 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 		},
 		"min_limit rd_iops_kiops is not supported": {
 			in: &pb.NvmeController{
-				Name: testControllerID,
+				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
 					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Name},
 					PcieId:           &pb.PciEndpoint{PhysicalFunction: 0, VirtualFunction: 2},
@@ -636,7 +641,7 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 		},
 		"min_limit wr_iops_kiops is not supported": {
 			in: &pb.NvmeController{
-				Name: testControllerID,
+				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
 					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Name},
 					PcieId:           &pb.PciEndpoint{PhysicalFunction: 0, VirtualFunction: 2},
@@ -653,7 +658,7 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 		},
 		"min_limit rd_bandwidth_mbs cannot be greater than max_limit rd_bandwidth_mbs": {
 			in: &pb.NvmeController{
-				Name: testControllerID,
+				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
 					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Name},
 					PcieId:           &pb.PciEndpoint{PhysicalFunction: 0, VirtualFunction: 2},
@@ -671,7 +676,7 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 		},
 		"min_limit wr_bandwidth_mbs cannot be greater than max_limit wr_bandwidth_mbs": {
 			in: &pb.NvmeController{
-				Name: testControllerID,
+				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
 					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Name},
 					PcieId:           &pb.PciEndpoint{PhysicalFunction: 0, VirtualFunction: 2},
@@ -689,7 +694,7 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 		},
 		"max_limit rd_iops_kiops is negative": {
 			in: &pb.NvmeController{
-				Name: testControllerID,
+				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
 					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Name},
 					PcieId:           &pb.PciEndpoint{PhysicalFunction: 0, VirtualFunction: 2},
@@ -706,7 +711,7 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 		},
 		"max_limit wr_iops_kiops is negative": {
 			in: &pb.NvmeController{
-				Name: testControllerID,
+				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
 					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Name},
 					PcieId:           &pb.PciEndpoint{PhysicalFunction: 0, VirtualFunction: 2},
@@ -723,7 +728,7 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 		},
 		"max_limit rd_bandwidth_mbs is negative": {
 			in: &pb.NvmeController{
-				Name: testControllerID,
+				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
 					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Name},
 					PcieId:           &pb.PciEndpoint{PhysicalFunction: 0, VirtualFunction: 2},
@@ -740,7 +745,7 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 		},
 		"max_limit wr_bandwidth_mbs is negative": {
 			in: &pb.NvmeController{
-				Name: testControllerID,
+				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
 					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Name},
 					PcieId:           &pb.PciEndpoint{PhysicalFunction: 0, VirtualFunction: 2},
@@ -757,7 +762,7 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 		},
 		"min_limit rd_bandwidth_mbs is negative": {
 			in: &pb.NvmeController{
-				Name: testControllerID,
+				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
 					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Name},
 					PcieId:           &pb.PciEndpoint{PhysicalFunction: 0, VirtualFunction: 2},
@@ -774,7 +779,7 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 		},
 		"min_limit wr_bandwidth_mbs is negative": {
 			in: &pb.NvmeController{
-				Name: testControllerID,
+				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
 					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Name},
 					PcieId:           &pb.PciEndpoint{PhysicalFunction: 0, VirtualFunction: 2},
@@ -791,7 +796,7 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 		},
 		"no qos limits are specified": {
 			in: &pb.NvmeController{
-				Name: testControllerID,
+				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
 					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Name},
 					PcieId:           &pb.PciEndpoint{PhysicalFunction: 0, VirtualFunction: 2},
@@ -799,7 +804,7 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 				},
 			},
 			out: &pb.NvmeController{
-				Name: testControllerID,
+				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
 					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Name},
 					PcieId:           &pb.PciEndpoint{PhysicalFunction: 0, VirtualFunction: 2},
@@ -815,7 +820,7 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 		},
 		"set qos SPDK call failed": {
 			in: &pb.NvmeController{
-				Name: testControllerID,
+				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
 					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Name},
 					PcieId:           &pb.PciEndpoint{PhysicalFunction: 0, VirtualFunction: 2},
@@ -833,7 +838,7 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 		},
 		"set qos SPDK call result false": {
 			in: &pb.NvmeController{
-				Name: testControllerID,
+				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
 					SubsystemId:      &pc.ObjectKey{Value: testSubsystem.Name},
 					PcieId:           &pb.PciEndpoint{PhysicalFunction: 0, VirtualFunction: 2},
@@ -853,11 +858,13 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 
 	for testName, test := range tests {
 		t.Run(testName, func(t *testing.T) {
+			test.in = server.ProtoClone(test.in)
 			testEnv := createTestEnvironment(test.start, test.spdk)
 			defer testEnv.Close()
 			testEnv.opiSpdkServer.nvme.Subsystems[testSubsystem.Name] = &testSubsystem
 			if test.existingController != nil {
-				test.existingController.Name = testControllerID
+				test.existingController = server.ProtoClone(test.existingController)
+				test.existingController.Name = testControllerName
 				testEnv.opiSpdkServer.nvme.Controllers[test.existingController.Name] = test.existingController
 			}
 
