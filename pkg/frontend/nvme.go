@@ -57,7 +57,7 @@ func (s *Server) CreateNvmeController(ctx context.Context, in *pb.CreateNvmeCont
 			log.Printf("Existing NvmeController %v has different QoS limits",
 				in.NvmeController)
 			return nil, status.Errorf(codes.AlreadyExists,
-				"Controller %v exists with different QoS limits", in.NvmeControllerId)
+				"Controller %v exists with different QoS limits", in.NvmeController.Name)
 		}
 
 		if qosErr := s.setNvmeQosLimit(in.NvmeController); qosErr != nil {
@@ -100,7 +100,7 @@ func (s *Server) verifyNvmeControllerOnUpdate(controller *pb.NvmeController) err
 		return err
 	}
 
-	// Id had to be assigned on create
+	// Name had to be assigned on create
 	if controller.Name == "" {
 		return fmt.Errorf("name cannot be empty on update")
 	}
