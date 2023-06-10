@@ -27,6 +27,8 @@ github.com/opiproject/opi-api v0.0.0-20230603003023-432a550f4f6c h1:EqlJl4rjIbCA
 github.com/opiproject/opi-api v0.0.0-20230603003023-432a550f4f6c/go.mod h1:92pv4ulvvPMuxCJ9ND3aYbmBfEMLx0VCjpkiR7ZTqPY=
 github.com/opiproject/opi-smbios-bridge v0.1.3-0.20230527073217-96fc817e987d h1:WK2qrei1ZSJZKiOgQPcPwpTrGQfrr1AQu5YmPb0OVjA=
 github.com/opiproject/opi-smbios-bridge v0.1.3-0.20230527073217-96fc817e987d/go.mod h1:dCSW8ONT/cCaFCg7d8PASbvxjKgja9VRqdQOOCc/RkA=
+github.com/opiproject/opi-smbios-bridge v0.1.3-0.20230605163248-deb37f3c455c h1:dYTl1AxjL3fsecW1ElYQUqow8qlBTUSeTF2oCmOjrrg=
+github.com/opiproject/opi-smbios-bridge v0.1.3-0.20230605163248-deb37f3c455c/go.mod h1:0Wl/0u8I/E9DQPQYhIcZNHc8vbsl2T79SQDtaJBD5Xw=
 github.com/opiproject/opi-spdk-bridge v0.1.2-0.20230607142814-4eabb9f2823b h1:kujRQ3gseA7BzGBcHaTSHxyISrQ4gt6G4XFeXWBMfUU=
 github.com/opiproject/opi-spdk-bridge v0.1.2-0.20230607142814-4eabb9f2823b/go.mod h1:hPZE9Bw/qKBLOJ/gs+fRWk/s7W/MaoCaHjbP7cWPX9A=
 github.com/opiproject/opi-strongswan-bridge v0.1.1 h1:Mz/8AtA0DD8O/H9jCsDw7wuVoWNiqgXICLsD10XWJ+g=
@@ -45,6 +47,7 @@ golang.org/x/sys v0.8.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/text v0.9.0 h1:2sjJmO8cDvYveuX97RDLsxlyUxLl+GHoLxBiRdHllBE=
 golang.org/x/text v0.9.0/go.mod h1:e1OnstbJyHTd6l/uOt8jFFHp6TRDWZR/bV3emEE/zU8=
 golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
+golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
 google.golang.org/genproto v0.0.0-20230530153820-e85fd2cbaebc h1:8DyZCyvI8mE1IdLy/60bS+52xfymkE72wv1asokgtao=
 google.golang.org/genproto v0.0.0-20230530153820-e85fd2cbaebc/go.mod h1:xZnkP7mREFX5MORlOPEzLMr+90PPZQ2QWzrVTWfAq64=
 google.golang.org/genproto/googleapis/api v0.0.0-20230530153820-e85fd2cbaebc h1:kVKPf/IiYSBWEWtkIn6wZXwWGCnLKcC8oWfZvXjsGnM=
