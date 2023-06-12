@@ -531,8 +531,8 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 				}
 			} else {
 				if test.errCode == codes.OK {
-					if !proto.Equal(test.in, controller) {
-						t.Errorf("expect %v exists", test.in)
+					if !proto.Equal(test.out, controller) {
+						t.Errorf("expect %v exists", test.out)
 					}
 				} else {
 					if controller != nil {
@@ -890,8 +890,8 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 
 			controller := testEnv.opiSpdkServer.nvme.Controllers[test.in.Name]
 			if test.errCode == codes.OK {
-				if !proto.Equal(test.in, controller) {
-					t.Errorf("expect new %v exists, found %v", test.in, controller)
+				if !proto.Equal(test.out, controller) {
+					t.Errorf("expect new %v exists, found %v", test.out, controller)
 				}
 			} else {
 				if !proto.Equal(test.existingController, controller) {
