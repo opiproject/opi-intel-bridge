@@ -14,6 +14,7 @@ import (
 	"github.com/opiproject/gospdk/spdk"
 	fe "github.com/opiproject/opi-intel-bridge/pkg/frontend"
 	me "github.com/opiproject/opi-intel-bridge/pkg/middleend"
+	"github.com/opiproject/opi-intel-bridge/pkg/utils"
 	"github.com/opiproject/opi-smbios-bridge/pkg/inventory"
 	"github.com/opiproject/opi-spdk-bridge/pkg/backend"
 	"github.com/opiproject/opi-spdk-bridge/pkg/frontend"
@@ -30,8 +31,13 @@ import (
 func main() {
 	var port int
 	flag.IntVar(&port, "port", 50051, "The Server port")
+
 	var spdkAddress string
 	flag.StringVar(&spdkAddress, "spdk_addr", "/var/tmp/spdk.sock", "Points to SPDK unix socket/tcp socket to interact with")
+
+	var tlsFiles string
+	flag.StringVar(&tlsFiles, "tls", "", "TLS files in server_cert:server_key:ca_cert format.")
+
 	flag.Parse()
 
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
@@ -39,7 +45,23 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	s := grpc.NewServer()
+	var serverOptions []grpc.ServerOption
+	if tlsFiles == "" {
+		log.Println("TLS files are not specified. Use insecure connection.")
+	} else {
+		log.Println("Use TLS certificate files:", tlsFiles)
+		config, err := utils.ParseTLSFiles(tlsFiles)
+		if err != nil {
+			log.Fatal("Failed to parse string with tls paths:", err)
+		}
+		log.Println("TLS config:", config)
+		var option grpc.ServerOption
+		if option, err = utils.SetupTLSCredentials(config); err != nil {
+			log.Fatal("Failed to setup TLS:", err)
+		}
+		serverOptions = append(serverOptions, option)
+	}
+	s := grpc.NewServer(serverOptions...)
 
 	jsonRPC := spdk.NewSpdkJSONRPC(spdkAddress)
 	frontendOpiIntelServer := fe.NewServer(jsonRPC)
