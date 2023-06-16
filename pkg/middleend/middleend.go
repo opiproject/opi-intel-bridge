@@ -19,6 +19,7 @@ import (
 	"github.com/opiproject/opi-intel-bridge/pkg/models"
 	"github.com/opiproject/opi-spdk-bridge/pkg/middleend"
 	"go.einride.tech/aip/fieldbehavior"
+	"go.einride.tech/aip/resourcename"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -27,6 +28,7 @@ import (
 
 var (
 	errMissingArgument    = status.Error(codes.InvalidArgument, "missing argument")
+	errMalformedName      = status.Error(codes.InvalidArgument, "malformed name")
 	errAlreadyExists      = status.Error(codes.AlreadyExists, "volume already exists")
 	errVolumeNotFound     = status.Error(codes.NotFound, "volume not found")
 	errNotSupportedCipher = status.Error(codes.Unimplemented, "not supported cipher")
@@ -168,10 +170,17 @@ func verifyCreateEncryptedVolumeRequestArgs(in *pb.CreateEncryptedVolumeRequest)
 // DeleteEncryptedVolume deletes an encrypted volume
 func (s *Server) DeleteEncryptedVolume(_ context.Context, in *pb.DeleteEncryptedVolumeRequest) (*emptypb.Empty, error) {
 	log.Printf("DeleteEncryptedVolume: Received from client: %v", in)
-	if in == nil {
-		log.Println("request cannot be empty")
+
+	if err := fieldbehavior.ValidateRequiredFields(in); err != nil {
+		log.Printf("error: %v", err)
 		return nil, errMissingArgument
 	}
+
+	if err := resourcename.Validate(in.Name); err != nil {
+		log.Printf("error: %v", err)
+		return nil, errMalformedName
+	}
+
 	underlyingBdev, ok := s.volumes.encryptedVolumes[in.Name]
 	if !ok {
 		if in.AllowMissing {
