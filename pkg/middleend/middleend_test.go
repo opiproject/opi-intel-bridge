@@ -7,7 +7,6 @@ package middleend
 import (
 	"bytes"
 	"context"
-	"fmt"
 	"log"
 	"net"
 	"os"
@@ -372,7 +371,7 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 					log.Panic("Failed to copy test structure for CreateEncryptedVolumeRequest")
 				}
 			}
-			fullname := fmt.Sprintf("//storage.opiproject.org/volumes/%s", encryptedVolumeID)
+			fullname := server.ResourceIDToVolumeName(encryptedVolumeID)
 			if test.out != nil {
 				test.out.Name = fullname
 			}
@@ -406,7 +405,7 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 }
 
 func TestMiddleEnd_DeleteEncryptedVolume(t *testing.T) {
-	fullname := fmt.Sprintf("//storage.opiproject.org/volumes/%s", encryptedVolumeID)
+	fullname := server.ResourceIDToVolumeName(encryptedVolumeID)
 	tests := map[string]struct {
 		in          *pb.DeleteEncryptedVolumeRequest
 		spdk        []string

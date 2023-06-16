@@ -7,7 +7,6 @@ package middleend
 import (
 	"context"
 	"encoding/hex"
-	"fmt"
 	"log"
 	"runtime"
 	"runtime/debug"
@@ -18,6 +17,7 @@ import (
 	pb "github.com/opiproject/opi-api/storage/v1alpha1/gen/go"
 	"github.com/opiproject/opi-intel-bridge/pkg/models"
 	"github.com/opiproject/opi-spdk-bridge/pkg/middleend"
+	"github.com/opiproject/opi-spdk-bridge/pkg/server"
 	"go.einride.tech/aip/fieldbehavior"
 	"go.einride.tech/aip/resourcename"
 
@@ -84,7 +84,7 @@ func (s *Server) CreateEncryptedVolume(_ context.Context, in *pb.CreateEncrypted
 		log.Printf("client provided the ID of a resource %v, ignoring the name field %v", in.EncryptedVolumeId, in.EncryptedVolume.Name)
 		resourceID = in.EncryptedVolumeId
 	}
-	in.EncryptedVolume.Name = fmt.Sprintf("//storage.opiproject.org/volumes/%s", resourceID)
+	in.EncryptedVolume.Name = server.ResourceIDToVolumeName(resourceID)
 
 	_, ok := s.volumes.encryptedVolumes[in.EncryptedVolume.Name]
 	if ok {
