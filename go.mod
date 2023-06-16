@@ -4,10 +4,10 @@ go 1.19
 
 require (
 	github.com/google/uuid v1.3.0
-	github.com/opiproject/gospdk v0.0.0-20230601215713-d912b55f1d0a
-	github.com/opiproject/opi-api v0.0.0-20230603003023-432a550f4f6c
+	github.com/opiproject/gospdk v0.0.0-20230615112113-12a52a623c70
+	github.com/opiproject/opi-api v0.0.0-20230615175343-c311c6c3cd13
 	github.com/opiproject/opi-smbios-bridge v0.1.3-0.20230605163248-deb37f3c455c
-	github.com/opiproject/opi-spdk-bridge v0.1.2-0.20230610072714-7175e5cdc25e
+	github.com/opiproject/opi-spdk-bridge v0.1.2-0.20230616024618-be05fbd936c3
 	github.com/opiproject/opi-strongswan-bridge v0.1.1
 	google.golang.org/grpc v1.55.0
 	google.golang.org/protobuf v1.30.0
@@ -24,9 +24,9 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/strongswan/govici v0.6.0 // indirect
 	go.einride.tech/aip v0.60.0 // indirect
-	golang.org/x/net v0.10.0 // indirect
-	golang.org/x/sys v0.8.0 // indirect
-	golang.org/x/text v0.9.0 // indirect
+	golang.org/x/net v0.11.0 // indirect
+	golang.org/x/sys v0.9.0 // indirect
+	golang.org/x/text v0.10.0 // indirect
 	google.golang.org/genproto v0.0.0-20230530153820-e85fd2cbaebc // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20230530153820-e85fd2cbaebc // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20230530153820-e85fd2cbaebc // indirect
