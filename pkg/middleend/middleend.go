@@ -18,6 +18,7 @@ import (
 	pb "github.com/opiproject/opi-api/storage/v1alpha1/gen/go"
 	"github.com/opiproject/opi-intel-bridge/pkg/models"
 	"github.com/opiproject/opi-spdk-bridge/pkg/middleend"
+	"go.einride.tech/aip/fieldbehavior"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -129,13 +130,12 @@ func (s *Server) CreateEncryptedVolume(_ context.Context, in *pb.CreateEncrypted
 }
 
 func verifyCreateEncryptedVolumeRequestArgs(in *pb.CreateEncryptedVolumeRequest) error {
+	if err := fieldbehavior.ValidateRequiredFields(in); err != nil {
+		log.Printf("error: %v", err)
+		return errMissingArgument
+	}
+
 	switch {
-	case in == nil:
-		log.Println("request cannot be empty")
-		return errMissingArgument
-	case in.EncryptedVolume == nil:
-		log.Println("encrypted_volume should be specified")
-		return errMissingArgument
 	case in.EncryptedVolume.VolumeId == nil || in.EncryptedVolume.VolumeId.Value == "":
 		log.Println("volume_id should be specified")
 		return errMissingArgument
