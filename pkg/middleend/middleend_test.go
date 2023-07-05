@@ -145,6 +145,17 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 		start         bool
 		existBefore   bool
 	}{
+		"illegal resource_id": {
+			in: &pb.CreateEncryptedVolumeRequest{
+				EncryptedVolume: &encryptedVolumeAesXts256, EncryptedVolumeId: "CapitalLettersNotAllowed",
+			},
+			out:           nil,
+			spdk:          []string{},
+			expectedInKey: make([]byte, len(encryptedVolumeAesXts256.Key)),
+			expectedErr:   errMalformedArgument,
+			start:         false,
+			existBefore:   false,
+		},
 		"nil request": {
 			in:            nil,
 			out:           nil,
