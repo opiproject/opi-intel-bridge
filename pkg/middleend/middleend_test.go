@@ -481,7 +481,7 @@ func TestMiddleEnd_DeleteEncryptedVolume(t *testing.T) {
 		"malformed name": {
 			in:          &pb.DeleteEncryptedVolumeRequest{Name: server.ResourceIDToVolumeName("-ABC-DEF"), AllowMissing: false},
 			spdk:        []string{},
-			expectedErr: errMalformedName,
+			expectedErr: errMalformedArgument,
 			start:       false,
 			existBefore: false,
 			existAfter:  false,
