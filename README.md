@@ -187,6 +187,77 @@ echo $PF_BDF > /sys/bus/pci/drivers/nvme/unbind
 echo '(null)' > ./driver_override
 ```
 
+### Mutual TLS setup
+
+In order to pass configuration data to the xPU securely and only by authenticated/allowed clients it is recommended to secure the gRPC port with mutual TLS.
+
+> **Warning** \
+The steps outlined below use self-signed certificates and serve only demonstration purposes. It is up to the integrator of the solution to securely provision the keys and certificates to the server and follow up-to-date crypto recommendations, e.g. [NIST TLS Guidelines](https://csrc.nist.gov/publications/detail/sp/800-52/rev-2/final) and [NIST Cryptographic Standards and Guidelines](https://csrc.nist.gov/Projects/Cryptographic-Standards-and-Guidelines).
+
+The following variables are used in the instructions below:
+
+| Variable    | Description                                                                         |
+| ----------- | ----------------------------------------------------------------------------------- |
+| SAN_IP      | subject alternative name in form of ip address e.g. 10.10.10.10 for TLS certificate |
+| SERVER_CERT | server certificate file path e.g. /etc/opi/server-cert.pem                          |
+| SERVER_KEY  | server key file path e.g. /etc/opi/server-key.pem                                   |
+| CA_CERT     | server CA certificate file path e.g. /etc/opi/ca-cert.pem                           |
+| CLIENT_CERT | client certificate file path e.g. /etc/opi/client-cert.pem                          |
+| CLIENT_KEY  | client key file path e.g. /etc/opi/client-key.pem                                   |
+
+#### Generate certificates/keys
+
+This section describes how to generate TLS self-signed certificates. The root level Certificate Authority (CA) is used to generate server-side key and cert files, and client-side key and cert files. This results in a 1-depth level certificate chain, which will suffice for verification and validation purposes but may not provide sufficient security for production systems. It is highly recommended to use well-known CAs, and generate certificates at multiple depth levels in order to conform to higher security standards.
+
+```bash
+# create config files
+echo "subjectAltName=IP:$SAN_IP" > server-ext.cnf
+echo "subjectAltName=IP:$SAN_IP" > client-ext.cnf
+# generate CA certificate
+openssl req -x509 -newkey rsa:4096 -days 365 -nodes -keyout ca-key.pem -out ca-cert.pem -sha384
+# generate server private key and signing request
+openssl req -newkey rsa:4096 -nodes -keyout server-key.pem -out server-req.pem -sha384
+# use CA's private key to get signed server certificate
+openssl x509 -req -in server-req.pem -days 365 -CA ca-cert.pem -CAkey ca-key.pem -CAcreateserial -out server-cert.pem -extfile server-ext.cnf
+# generate client private key and signing request
+openssl req -newkey rsa:4096 -nodes -keyout client-key.pem -out client-req.pem -sha384
+# use CA's private key to get signed client certificate
+openssl x509 -req -in client-req.pem -days 365 -CA ca-cert.pem -CAkey ca-key.pem -CAcreateserial -out client-cert.pem -extfile client-ext.cnf
+```
+
+copy server related certificates/keys to a dedicated secure location on xPU
+
+```bash
+mkdir /etc/opi
+cp server-cert.pem /etc/opi
+cp server-key.pem /etc/opi
+cp ca-cert.pem /etc/opi
+```
+
+make sure to follow the principle of least privilege for access permissions and change ownership to a dedicated user.
+
+##### Run server
+
+Run bridge binary specifying TLS-related server key/certificate and CA cert
+
+```bash
+./opi-intel-bridge -tls $SERVER_CERT:$SERVER_KEY:$CA_CERT
+```
+
+for container
+
+```bash
+docker run --network=host -v "/var/tmp:/var/tmp" -v "/etc/opi:/etc/opi" ghcr.io/opiproject/opi-intel-bridge:main /opi-intel-bridge -port=$BRIDGE_PORT -tls $SERVER_CERT:$SERVER_KEY:$CA_CERT
+```
+
+##### Send client commands
+
+To send by means of not-containerized grpc_cli:
+
+```bash
+GRPC_DEFAULT_SSL_ROOTS_FILE_PATH="$CA_CERT" grpc_cli --json_input --json_output --channel_creds_type=ssl --ssl_client_cert="$CLIENT_CERT" --ssl_client_key="$CLIENT_KEY" call $BRIDGE_ADDR ListAioControllers "{}"
+```
+
 ## I Want To Contribute
 
 This project welcomes contributions and suggestions.  We are happy to have the Community involved via submission of **Issues and Pull Requests** (with substantive content or even just fixes). We are hoping for the documents, test framework, etc. to become a community process with active engagement.  PRs can be reviewed by any number of people, and a maintainer may accept.
