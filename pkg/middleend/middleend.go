@@ -11,7 +11,6 @@ import (
 	"runtime"
 	"runtime/debug"
 
-	"github.com/google/uuid"
 	"github.com/opiproject/gospdk/spdk"
 	pc "github.com/opiproject/opi-api/common/v1/gen/go"
 	pb "github.com/opiproject/opi-api/storage/v1alpha1/gen/go"
@@ -19,6 +18,7 @@ import (
 	"github.com/opiproject/opi-spdk-bridge/pkg/middleend"
 	"github.com/opiproject/opi-spdk-bridge/pkg/server"
 	"go.einride.tech/aip/fieldbehavior"
+	"go.einride.tech/aip/resourceid"
 	"go.einride.tech/aip/resourcename"
 
 	"google.golang.org/grpc/codes"
@@ -28,7 +28,7 @@ import (
 
 var (
 	errMissingArgument    = status.Error(codes.InvalidArgument, "missing argument")
-	errMalformedName      = status.Error(codes.InvalidArgument, "malformed name")
+	errMalformedArgument  = status.Error(codes.InvalidArgument, "malformed argument")
 	errAlreadyExists      = status.Error(codes.AlreadyExists, "volume already exists")
 	errVolumeNotFound     = status.Error(codes.NotFound, "volume not found")
 	errNotSupportedCipher = status.Error(codes.Unimplemented, "not supported cipher")
@@ -79,8 +79,14 @@ func (s *Server) CreateEncryptedVolume(_ context.Context, in *pb.CreateEncrypted
 	if err != nil {
 		return nil, err
 	}
-	resourceID := uuid.New().String()
+
+	resourceID := resourceid.NewSystemGenerated()
 	if in.EncryptedVolumeId != "" {
+		err := resourceid.ValidateUserSettable(in.EncryptedVolumeId)
+		if err != nil {
+			log.Printf("error: %v", err)
+			return nil, errMalformedArgument
+		}
 		log.Printf("client provided the ID of a resource %v, ignoring the name field %v", in.EncryptedVolumeId, in.EncryptedVolume.Name)
 		resourceID = in.EncryptedVolumeId
 	}
@@ -178,7 +184,7 @@ func (s *Server) DeleteEncryptedVolume(_ context.Context, in *pb.DeleteEncrypted
 
 	if err := resourcename.Validate(in.Name); err != nil {
 		log.Printf("error: %v", err)
-		return nil, errMalformedName
+		return nil, errMalformedArgument
 	}
 
 	underlyingBdev, ok := s.volumes.encryptedVolumes[in.Name]
