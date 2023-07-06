@@ -107,7 +107,7 @@ grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmeController "{nvm
 
 # Connect to storage-target
 grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmeRemoteController "{nvme_remote_controller : {multipath: 'NVME_MULTIPATH_MULTIPATH'}, nvme_remote_controller_id: 'nvmetcp12'}"
-grpc_cli call --json_input --json_output $BRIDGE_ADDR ListNvmeRemoteControllers "{}"
+grpc_cli call --json_input --json_output $BRIDGE_ADDR ListNvmeRemoteControllers "{parent: 'todo'}"
 grpc_cli call --json_input --json_output $BRIDGE_ADDR GetNvmeRemoteController "{name: '//storage.opiproject.org/volumes/nvmetcp12'}"
 grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmePath "{nvme_path : {controller_id: {value: '//storage.opiproject.org/volumes/nvmetcp12'}, traddr:'11.11.11.2', subnqn:'nqn.2016-06.com.opi.spdk.target0', trsvcid:'4444', trtype:'NVME_TRANSPORT_TCP', adrfam:'NVME_ADRFAM_IPV4', hostnqn:'nqn.2014-08.org.nvmexpress:uuid:feb98abe-d51f-40c8-b348-2753f3571d3c'}, nvme_path_id: 'nvmetcp12path0'}"
 grpc_cli call --json_input --json_output $BRIDGE_ADDR ListNvmePaths "{parent : 'todo'}"
