@@ -30,15 +30,15 @@ It is assumed that Intel IPU is already properly set up to be used with Intel OP
 
 The following variables are used throughout this document:
 
-| Variable    | Description                                                                                                                                      |
-| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| BRIDGE_IP   | opi-intel-bridge gRPC listening IP address e.g. 10.10.10.10 or localhost                                                                         |
-| BRIDGE_PORT | opi-intel-bridge gRPC listening port e.g. 50051                                                                                                  |
-| BRIDGE_ADDR | BRIDGE_IP:BRIDGE_PORT                                                                                                                            |
-| PF_BDF      | physical function PCI address e.g. 0000:3b:00.1                                                                                                  |
+| Variable    | Description                                                                                                                                        |
+| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| BRIDGE_IP   | opi-intel-bridge gRPC listening IP address e.g. 10.10.10.10 or localhost                                                                           |
+| BRIDGE_PORT | opi-intel-bridge gRPC listening port e.g. 50051                                                                                                    |
+| BRIDGE_ADDR | BRIDGE_IP:BRIDGE_PORT                                                                                                                              |
+| PF_BDF      | physical function PCI address e.g. 0000:3b:00.1                                                                                                    |
 | VF_BDF      | virtual function PCI address e.g. 0000:40:00.0 can be found in pf's virtfn\<X\> where X equals to virtual_function in CreateNvmeController minus 1 |
-| TARGET_IP   | storage target ip address                                                                                                                        |
-| TARGET_PORT | storage target port                                                                                                                              |
+| TARGET_IP   | storage target ip address                                                                                                                          |
+| TARGET_PORT | storage target port                                                                                                                                |
 
 ### Build and import
 
@@ -86,7 +86,7 @@ opi_api.storage.v1.FrontendVirtioBlkService
 opi_api.storage.v1.FrontendVirtioScsiService
 opi_api.storage.v1.MiddleendEncryptionService
 opi_api.storage.v1.MiddleendQosVolumeService
-opi_api.storage.v1.NVMfRemoteControllerService
+opi_api.storage.v1.NvmeRemoteControllerService
 opi_api.storage.v1.NullDebugService
 ```
 
@@ -106,12 +106,12 @@ grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmeSubsystem "{nvme
 grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmeController "{nvme_controller : {spec : {nvme_controller_id: 2, subsystem_id : { value : '//storage.opiproject.org/volumes/subsystem03' }, pcie_id : {physical_function : 0, virtual_function : 3}, max_nsq:5, max_ncq:5 } }, nvme_controller_id : 'controller3'}"
 
 # Connect to storage-target
-grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNVMfRemoteController "{nv_mf_remote_controller : {multipath: 'NVME_MULTIPATH_MULTIPATH'}, nv_mf_remote_controller_id: 'nvmetcp12'}"
-grpc_cli call --json_input --json_output $BRIDGE_ADDR ListNVMfRemoteControllers "{}"
-grpc_cli call --json_input --json_output $BRIDGE_ADDR GetNVMfRemoteController "{name: '//storage.opiproject.org/volumes/nvmetcp12'}"
-grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNVMfPath "{nv_mf_path : {controller_id: {value: '//storage.opiproject.org/volumes/nvmetcp12'}, traddr:'11.11.11.2', subnqn:'nqn.2016-06.com.opi.spdk.target0', trsvcid:'4444', trtype:'NVME_TRANSPORT_TCP', adrfam:'NVMF_ADRFAM_IPV4', hostnqn:'nqn.2014-08.org.nvmexpress:uuid:feb98abe-d51f-40c8-b348-2753f3571d3c'}, nv_mf_path_id: 'nvmetcp12path0'}"
-grpc_cli call --json_input --json_output $BRIDGE_ADDR ListNVMfPaths "{parent : 'todo'}"
-grpc_cli call --json_input --json_output $BRIDGE_ADDR GetNVMfPath "{name: '//storage.opiproject.org/volumes/nvmetcp12path0'}"
+grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmeRemoteController "{nvme_remote_controller : {multipath: 'NVME_MULTIPATH_MULTIPATH'}, nvme_remote_controller_id: 'nvmetcp12'}"
+grpc_cli call --json_input --json_output $BRIDGE_ADDR ListNvmeRemoteControllers "{}"
+grpc_cli call --json_input --json_output $BRIDGE_ADDR GetNvmeRemoteController "{name: '//storage.opiproject.org/volumes/nvmetcp12'}"
+grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmePath "{nvme_path : {controller_id: {value: '//storage.opiproject.org/volumes/nvmetcp12'}, traddr:'11.11.11.2', subnqn:'nqn.2016-06.com.opi.spdk.target0', trsvcid:'4444', trtype:'NVME_TRANSPORT_TCP', adrfam:'NVME_ADRFAM_IPV4', hostnqn:'nqn.2014-08.org.nvmexpress:uuid:feb98abe-d51f-40c8-b348-2753f3571d3c'}, nvme_path_id: 'nvmetcp12path0'}"
+grpc_cli call --json_input --json_output $BRIDGE_ADDR ListNvmePaths "{parent : 'todo'}"
+grpc_cli call --json_input --json_output $BRIDGE_ADDR GetNvmePath "{name: '//storage.opiproject.org/volumes/nvmetcp12path0'}"
 
 # Create QoS volume
 grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateQosVolume "{'qos_volume' : {'volume_id' : { 'value':'nvmetcp12n1'}, 'max_limit' : { 'rw_iops_kiops': 3 } }, 'qos_volume_id' : 'qosnvmetcp12n1' }"
@@ -135,8 +135,8 @@ grpc_cli call --json_input --json_output $BRIDGE_ADDR DeleteEncryptedVolume "{'n
 grpc_cli call --json_input --json_output $BRIDGE_ADDR DeleteQosVolume "{name : '//storage.opiproject.org/volumes/qosnvmetcp12n1'}"
 
 # Disconnect from storage-target
-grpc_cli call --json_input --json_output $BRIDGE_ADDR DeleteNVMfPath "{name: '//storage.opiproject.org/volumes/nvmetcp12path0'}"
-grpc_cli call --json_input --json_output $BRIDGE_ADDR DeleteNVMfRemoteController "{name: '//storage.opiproject.org/volumes/nvmetcp12'}"
+grpc_cli call --json_input --json_output $BRIDGE_ADDR DeleteNvmePath "{name: '//storage.opiproject.org/volumes/nvmetcp12path0'}"
+grpc_cli call --json_input --json_output $BRIDGE_ADDR DeleteNvmeRemoteController "{name: '//storage.opiproject.org/volumes/nvmetcp12'}"
 
 # Delete VF
 grpc_cli call --json_input --json_output $BRIDGE_ADDR DeleteNvmeController "{name : '//storage.opiproject.org/volumes/controller3'}"
