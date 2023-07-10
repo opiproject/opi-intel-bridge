@@ -33,6 +33,8 @@ github.com/opiproject/opi-smbios-bridge v0.1.3-0.20230703080808-807413f08508 h1:
 github.com/opiproject/opi-smbios-bridge v0.1.3-0.20230703080808-807413f08508/go.mod h1:EClCvtWJfem4oLnk4G6H9y0syYQxeoMrPpz0SQJa4xQ=
 github.com/opiproject/opi-smbios-bridge v0.1.3-0.20230708040512-9629c6975261 h1:bS4M21RQPvru+IAkG8NCtB13jVxro5BDc6Ihl9Es1Dw=
 github.com/opiproject/opi-smbios-bridge v0.1.3-0.20230708040512-9629c6975261/go.mod h1:7S2ndDnloZO6wVayGwKmpHCb2fw055iuLr/mdDZTnHM=
+github.com/opiproject/opi-smbios-bridge v0.1.3-0.20230710063549-c627fa6236c5 h1:l4pDLWKUcX7iI+5kxOkWbJWEHrHBeEqe6UWSC9pzWBk=
+github.com/opiproject/opi-smbios-bridge v0.1.3-0.20230710063549-c627fa6236c5/go.mod h1:4s0LxpJqAMDsnXgRtWCkdHcpbwFvg8YMXACfWm4Ev+A=
 github.com/opiproject/opi-spdk-bridge v0.1.2-0.20230706071707-86f91ce41b01 h1:z6uKTSVsFqJZLvAv7JVyZ5vGiK2RX9Cuo4RiEAbE4q8=
 github.com/opiproject/opi-spdk-bridge v0.1.2-0.20230706071707-86f91ce41b01/go.mod h1:5je/XrLIgLlEK3pAEm5n1YT90t6slIaG/mifRKyMeJQ=
 github.com/opiproject/opi-spdk-bridge v0.1.2-0.20230708123919-f78377f8bfef h1:g1JgkqjqYpqvO0UwSn3p9mhvRQwMAw7G9s6YW8nIfL4=
@@ -62,6 +64,8 @@ google.golang.org/genproto/googleapis/rpc v0.0.0-20230629202037-9506855d4529 h1:
 google.golang.org/genproto/googleapis/rpc v0.0.0-20230629202037-9506855d4529/go.mod h1:66JfowdXAEgad5O9NnYcsNPLCPZJD++2L9X0PCMODrA=
 google.golang.org/grpc v1.56.1 h1:z0dNfjIl0VpaZ9iSVjA6daGatAYwPGstTjt5vkRMFkQ=
 google.golang.org/grpc v1.56.1/go.mod h1:I9bI3vqKfayGqPUAwGdOSu7kt6oIJLixfffKrpXqQ9s=
+google.golang.org/grpc v1.56.2 h1:fVRFRnXvU+x6C4IlHZewvJOVHoOv1TUuQyoRsYnB4bI=
+google.golang.org/grpc v1.56.2/go.mod h1:I9bI3vqKfayGqPUAwGdOSu7kt6oIJLixfffKrpXqQ9s=
 google.golang.org/protobuf v1.26.0-rc.1/go.mod h1:jlhhOSvTdKEhbULTjvd4ARK9grFBp09yW+WbY/TyQbw=
 google.golang.org/protobuf v1.26.0/go.mod h1:9q0QmTI4eRPtz6boOQmLYwt+qCgq0jsYwAQnmE0givc=
 google.golang.org/protobuf v1.31.0 h1:g0LDEJHgrBl9N9r17Ru3sqWhkIx2NB67okBHPwC7hs8=
