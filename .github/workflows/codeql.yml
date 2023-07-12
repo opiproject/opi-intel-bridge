@@ -7,7 +7,12 @@ on:
   pull_request:
     branches: [ main ]
 
+permissions:
+  contents: read
+
 jobs:
   call:
+    permissions:
+      security-events: write
     uses: opiproject/opi-smbios-bridge/.github/workflows/codeql.yml@main
     secrets: inherit
