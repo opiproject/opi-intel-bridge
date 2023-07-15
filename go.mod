@@ -3,7 +3,7 @@ module github.com/opiproject/opi-intel-bridge
 go 1.19
 
 require (
-	github.com/opiproject/gospdk v0.0.0-20230706153333-46d1efd3dfde
+	github.com/opiproject/gospdk v0.0.0-20230714152149-de73bd1ee87d
 	github.com/opiproject/opi-api v0.0.0-20230710063409-f31be32bc7c8
 	github.com/opiproject/opi-smbios-bridge v0.1.3-0.20230710063549-c627fa6236c5
 	github.com/opiproject/opi-spdk-bridge v0.1.2-0.20230710071001-39a2db006055
