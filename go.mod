@@ -6,7 +6,7 @@ require (
 	github.com/opiproject/gospdk v0.0.0-20230714152149-de73bd1ee87d
 	github.com/opiproject/opi-api v0.0.0-20230713203751-f1f72eaaee0e
 	github.com/opiproject/opi-smbios-bridge v0.1.3-0.20230715041832-f751cc6bc477
-	github.com/opiproject/opi-spdk-bridge v0.1.2-0.20230715121009-09c0f6ef925d
+	github.com/opiproject/opi-spdk-bridge v0.1.2-0.20230715185127-b1a5a654d780
 	github.com/opiproject/opi-strongswan-bridge v0.1.1
 	go.einride.tech/aip v0.60.0
 	google.golang.org/grpc v1.56.2
