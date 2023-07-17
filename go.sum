@@ -37,6 +37,8 @@ github.com/opiproject/opi-api v0.0.0-20230710063409-f31be32bc7c8 h1:gG123taBzr8c
 github.com/opiproject/opi-api v0.0.0-20230710063409-f31be32bc7c8/go.mod h1:92pv4ulvvPMuxCJ9ND3aYbmBfEMLx0VCjpkiR7ZTqPY=
 github.com/opiproject/opi-api v0.0.0-20230713203751-f1f72eaaee0e h1:dFlwXYeXuRPKe5w40eDYMpc3+1zCQDXS+9W/5LWCnbU=
 github.com/opiproject/opi-api v0.0.0-20230713203751-f1f72eaaee0e/go.mod h1:92pv4ulvvPMuxCJ9ND3aYbmBfEMLx0VCjpkiR7ZTqPY=
+github.com/opiproject/opi-api v0.0.0-20230717064243-520b62d2f155 h1:I35TX9YBVrl6PlYe1Eima79mA6VS0qohETDUoB6W+Pk=
+github.com/opiproject/opi-api v0.0.0-20230717064243-520b62d2f155/go.mod h1:92pv4ulvvPMuxCJ9ND3aYbmBfEMLx0VCjpkiR7ZTqPY=
 github.com/opiproject/opi-smbios-bridge v0.1.3-0.20230703080808-807413f08508 h1:L4HqSy1A0hVJZcQ9y7HStsGAAAXSqYmXc1ROVBecILI=
 github.com/opiproject/opi-smbios-bridge v0.1.3-0.20230703080808-807413f08508/go.mod h1:EClCvtWJfem4oLnk4G6H9y0syYQxeoMrPpz0SQJa4xQ=
 github.com/opiproject/opi-smbios-bridge v0.1.3-0.20230708040512-9629c6975261 h1:bS4M21RQPvru+IAkG8NCtB13jVxro5BDc6Ihl9Es1Dw=
@@ -55,6 +57,8 @@ github.com/opiproject/opi-spdk-bridge v0.1.2-0.20230715121009-09c0f6ef925d h1:iu
 github.com/opiproject/opi-spdk-bridge v0.1.2-0.20230715121009-09c0f6ef925d/go.mod h1:eQGcZ/lHWPHguRreyf3cy0jwX8vnO2gOS/lJ4YVNuic=
 github.com/opiproject/opi-spdk-bridge v0.1.2-0.20230715185127-b1a5a654d780 h1:BlNIjPraxMV9Fe/HwnU+tcNb1b38uelc4WRBMdmGTpk=
 github.com/opiproject/opi-spdk-bridge v0.1.2-0.20230715185127-b1a5a654d780/go.mod h1:1/u+xF33+fMXF9fLK5mXGCQEp0FZ/c4GJSKcA130v5E=
+github.com/opiproject/opi-spdk-bridge v0.1.2-0.20230717074303-2fd87282ba9d h1:1+IYieF4pHAAgDIWWloY+d2R+8YtbZN1x6HQlLxfX8Y=
+github.com/opiproject/opi-spdk-bridge v0.1.2-0.20230717074303-2fd87282ba9d/go.mod h1:cffIoIPcxa/bLDjjDM5U3stk9Vk0Epx3q1zfOMvCG5Q=
 github.com/opiproject/opi-strongswan-bridge v0.1.1 h1:Mz/8AtA0DD8O/H9jCsDw7wuVoWNiqgXICLsD10XWJ+g=
 github.com/opiproject/opi-strongswan-bridge v0.1.1/go.mod h1:ek3r3zLa9nOfb2a7ybdMJvb5BSGU9I17Xo38UMXfE+k=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
