@@ -393,49 +393,49 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 		},
 	}
 
-	for testName, test := range tests {
+	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			testEnv := createTestEnvironment(test.start, test.spdk)
+			testEnv := createTestEnvironment(tt.start, tt.spdk)
 			defer testEnv.Close()
 			var request *pb.CreateEncryptedVolumeRequest
-			if test.in != nil {
+			if tt.in != nil {
 				var ok bool
 				// make a copy to prevent key overwriting in the original structures
-				request, ok = proto.Clone(test.in).(*pb.CreateEncryptedVolumeRequest)
+				request, ok = proto.Clone(tt.in).(*pb.CreateEncryptedVolumeRequest)
 				if !ok {
 					log.Panic("Failed to copy test structure for CreateEncryptedVolumeRequest")
 				}
 			}
 			fullname := server.ResourceIDToVolumeName(encryptedVolumeID)
-			if test.out != nil {
-				test.out.Name = fullname
+			if tt.out != nil {
+				tt.out.Name = fullname
 			}
-			if test.existBefore {
+			if tt.existBefore {
 				testEnv.opiSpdkServer.volumes.encryptedVolumes[fullname] =
 					request.EncryptedVolume.VolumeId.Value
 			}
 
 			response, err := testEnv.opiSpdkServer.CreateEncryptedVolume(testEnv.ctx, request)
 
-			if !proto.Equal(response, test.out) {
-				t.Error("response: expected", test.out, "received", response)
+			if !proto.Equal(response, tt.out) {
+				t.Error("response: expected", tt.out, "received", response)
 			}
 
 			if er, ok := status.FromError(err); ok {
-				if er.Code() != test.errCode {
-					t.Error("error code: expected", test.errCode, "received", er.Code())
+				if er.Code() != tt.errCode {
+					t.Error("error code: expected", tt.errCode, "received", er.Code())
 				}
-				if er.Message() != test.errMsg {
-					t.Error("error message: expected", test.errMsg, "received", er.Message())
+				if er.Message() != tt.errMsg {
+					t.Error("error message: expected", tt.errMsg, "received", er.Message())
 				}
 			} else {
 				t.Errorf("expect grpc error status")
 			}
 
 			if request.GetEncryptedVolume() != nil {
-				if !bytes.Equal(request.EncryptedVolume.Key, test.expectedInKey) {
+				if !bytes.Equal(request.EncryptedVolume.Key, tt.expectedInKey) {
 					t.Error("input key after operation expected",
-						test.expectedInKey, "received", request.EncryptedVolume.Key)
+						tt.expectedInKey, "received", request.EncryptedVolume.Key)
 				}
 				if request.EncryptedVolume.Cipher != pb.EncryptionType_ENCRYPTION_TYPE_UNSPECIFIED {
 					t.Error("Expect in cipher set to EncryptionType_ENCRYPTION_TYPE_UNSPECIFIED, received",
@@ -539,30 +539,30 @@ func TestMiddleEnd_DeleteEncryptedVolume(t *testing.T) {
 			existAfter:  false,
 		},
 	}
-	for testName, test := range tests {
+	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			testEnv := createTestEnvironment(test.start, test.spdk)
+			testEnv := createTestEnvironment(tt.start, tt.spdk)
 			defer testEnv.Close()
-			if test.existBefore {
+			if tt.existBefore {
 				testEnv.opiSpdkServer.volumes.encryptedVolumes[fullname] = bdevName
 			}
-			request := server.ProtoClone(test.in)
+			request := server.ProtoClone(tt.in)
 
 			_, err := testEnv.opiSpdkServer.DeleteEncryptedVolume(testEnv.ctx, request)
 
 			if er, ok := status.FromError(err); ok {
-				if er.Code() != test.errCode {
-					t.Error("error code: expected", test.errCode, "received", er.Code())
+				if er.Code() != tt.errCode {
+					t.Error("error code: expected", tt.errCode, "received", er.Code())
 				}
-				if er.Message() != test.errMsg {
-					t.Error("error message: expected", test.errMsg, "received", er.Message())
+				if er.Message() != tt.errMsg {
+					t.Error("error message: expected", tt.errMsg, "received", er.Message())
 				}
 			} else {
 				t.Errorf("expect grpc error status")
 			}
-			_, ok := testEnv.opiSpdkServer.volumes.encryptedVolumes[test.in.GetName()]
-			if test.existAfter != ok {
-				t.Error("expect Encrypted volume exist", test.existAfter, "received", ok)
+			_, ok := testEnv.opiSpdkServer.volumes.encryptedVolumes[tt.in.GetName()]
+			if tt.existAfter != ok {
+				t.Error("expect Encrypted volume exist", tt.existAfter, "received", ok)
 			}
 		})
 	}
