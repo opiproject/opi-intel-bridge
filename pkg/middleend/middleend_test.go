@@ -17,7 +17,9 @@ import (
 	pb "github.com/opiproject/opi-api/storage/v1alpha1/gen/go"
 	"github.com/opiproject/opi-spdk-bridge/pkg/server"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/status"
 	"google.golang.org/grpc/test/bufconn"
 	"google.golang.org/protobuf/proto"
 )
@@ -141,7 +143,8 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 		out           *pb.EncryptedVolume
 		spdk          []string
 		expectedInKey []byte
-		expectedErr   error
+		errCode       codes.Code
+		errMsg        string
 		start         bool
 		existBefore   bool
 	}{
@@ -152,7 +155,8 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			out:           nil,
 			spdk:          []string{},
 			expectedInKey: make([]byte, len(encryptedVolumeAesXts256.Key)),
-			expectedErr:   errMalformedArgument,
+			errCode:       status.Convert(errMalformedArgument).Code(),
+			errMsg:        status.Convert(errMalformedArgument).Message(),
 			start:         false,
 			existBefore:   false,
 		},
@@ -161,7 +165,8 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			out:           nil,
 			spdk:          []string{},
 			expectedInKey: nil,
-			expectedErr:   errMissingArgument,
+			errCode:       status.Convert(errMissingArgument).Code(),
+			errMsg:        status.Convert(errMissingArgument).Message(),
 			start:         false,
 			existBefore:   false,
 		},
@@ -170,7 +175,8 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			out:           nil,
 			spdk:          []string{},
 			expectedInKey: nil,
-			expectedErr:   errMissingArgument,
+			errCode:       status.Convert(errMissingArgument).Code(),
+			errMsg:        status.Convert(errMissingArgument).Message(),
 			start:         false,
 			existBefore:   false,
 		},
@@ -187,7 +193,8 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			},
 			spdk:          []string{foundBdevResponse, `{"id":%d,"error":{"code":0,"message":""},"result":true}`},
 			expectedInKey: make([]byte, len(encryptedVolumeAesXts256.Key)),
-			expectedErr:   nil,
+			errCode:       codes.OK,
+			errMsg:        "",
 			start:         true,
 			existBefore:   false,
 		},
@@ -200,7 +207,8 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			out:           nil,
 			spdk:          []string{},
 			expectedInKey: nil,
-			expectedErr:   errMissingArgument,
+			errCode:       status.Convert(errMissingArgument).Code(),
+			errMsg:        status.Convert(errMissingArgument).Message(),
 			start:         false,
 			existBefore:   false,
 		},
@@ -212,7 +220,8 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			out:           nil,
 			spdk:          []string{},
 			expectedInKey: make([]byte, len(encryptedVolumeAesXts256.Key)),
-			expectedErr:   errMissingArgument,
+			errCode:       status.Convert(errMissingArgument).Code(),
+			errMsg:        status.Convert(errMissingArgument).Message(),
 			start:         false,
 			existBefore:   false,
 		},
@@ -225,7 +234,8 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			out:           nil,
 			spdk:          []string{},
 			expectedInKey: make([]byte, len(encryptedVolumeAesXts256.Key)),
-			expectedErr:   errMissingArgument,
+			errCode:       status.Convert(errMissingArgument).Code(),
+			errMsg:        status.Convert(errMissingArgument).Message(),
 			start:         false,
 			existBefore:   false,
 		},
@@ -234,7 +244,8 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			out:           &encryptedVolumeAesXts128InResponse,
 			spdk:          []string{foundBdevResponse, `{"id":%d,"error":{"code":0,"message":""},"result":true}`},
 			expectedInKey: make([]byte, len(encryptedVolumeAesXts128.Key)),
-			expectedErr:   nil,
+			errCode:       codes.OK,
+			errMsg:        "",
 			start:         true,
 			existBefore:   false,
 		},
@@ -243,7 +254,8 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			out:           nil,
 			spdk:          []string{},
 			expectedInKey: make([]byte, len(encryptedVolumeAesXts192.Key)),
-			expectedErr:   errNotSupportedCipher,
+			errCode:       status.Convert(errNotSupportedCipher).Code(),
+			errMsg:        status.Convert(errNotSupportedCipher).Message(),
 			start:         false,
 			existBefore:   false,
 		},
@@ -252,7 +264,8 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			out:           &encryptedVolumeAesXts256InResponse,
 			spdk:          []string{foundBdevResponse, `{"id":%d,"error":{"code":0,"message":""},"result":true}`},
 			expectedInKey: make([]byte, len(encryptedVolumeAesXts256.Key)),
-			expectedErr:   nil,
+			errCode:       codes.OK,
+			errMsg:        "",
 			start:         true,
 			existBefore:   false,
 		},
@@ -261,7 +274,8 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			out:           nil,
 			spdk:          []string{},
 			expectedInKey: make([]byte, len(encryptedVolumeAesCbc128.Key)),
-			expectedErr:   errNotSupportedCipher,
+			errCode:       status.Convert(errNotSupportedCipher).Code(),
+			errMsg:        status.Convert(errNotSupportedCipher).Message(),
 			start:         false,
 			existBefore:   false,
 		},
@@ -270,7 +284,8 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			out:           nil,
 			spdk:          []string{},
 			expectedInKey: make([]byte, len(encryptedVolumeAesCbc192.Key)),
-			expectedErr:   errNotSupportedCipher,
+			errCode:       status.Convert(errNotSupportedCipher).Code(),
+			errMsg:        status.Convert(errNotSupportedCipher).Message(),
 			start:         false,
 			existBefore:   false,
 		},
@@ -279,7 +294,8 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			out:           nil,
 			spdk:          []string{},
 			expectedInKey: make([]byte, len(encryptedVolumeAesCbc256.Key)),
-			expectedErr:   errNotSupportedCipher,
+			errCode:       status.Convert(errNotSupportedCipher).Code(),
+			errMsg:        status.Convert(errNotSupportedCipher).Message(),
 			start:         false,
 			existBefore:   false,
 		},
@@ -292,7 +308,8 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			out:           nil,
 			spdk:          []string{},
 			expectedInKey: make([]byte, len(encryptedVolumeAesXts256.Key)),
-			expectedErr:   errNotSupportedCipher,
+			errCode:       status.Convert(errNotSupportedCipher).Code(),
+			errMsg:        status.Convert(errNotSupportedCipher).Message(),
 			start:         false,
 			existBefore:   false,
 		},
@@ -305,7 +322,8 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			out:           nil,
 			spdk:          []string{},
 			expectedInKey: make([]byte, 1),
-			expectedErr:   errWrongKeySize,
+			errCode:       status.Convert(errWrongKeySize).Code(),
+			errMsg:        status.Convert(errWrongKeySize).Message(),
 			start:         false,
 			existBefore:   false,
 		},
@@ -318,7 +336,8 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			out:           nil,
 			spdk:          []string{},
 			expectedInKey: make([]byte, 1),
-			expectedErr:   errWrongKeySize,
+			errCode:       status.Convert(errWrongKeySize).Code(),
+			errMsg:        status.Convert(errWrongKeySize).Message(),
 			start:         false,
 			existBefore:   false,
 		},
@@ -327,7 +346,8 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			out:           nil,
 			spdk:          []string{`{"id":%d,"error":{"code":-19,"message":"No such device"},"result":null}`},
 			expectedInKey: make([]byte, len(encryptedVolumeAesXts256.Key)),
-			expectedErr:   spdk.ErrFailedSpdkCall,
+			errCode:       status.Convert(spdk.ErrFailedSpdkCall).Code(),
+			errMsg:        status.Convert(spdk.ErrFailedSpdkCall).Message(),
 			start:         true,
 			existBefore:   false,
 		},
@@ -336,7 +356,8 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			out:           nil,
 			spdk:          []string{`{"id":%d,"error":{"code":0,"message":""},"result":[]}`},
 			expectedInKey: make([]byte, len(encryptedVolumeAesXts256.Key)),
-			expectedErr:   spdk.ErrUnexpectedSpdkCallResult,
+			errCode:       status.Convert(spdk.ErrUnexpectedSpdkCallResult).Code(),
+			errMsg:        status.Convert(spdk.ErrUnexpectedSpdkCallResult).Message(),
 			start:         true,
 			existBefore:   false,
 		},
@@ -345,7 +366,8 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			out:           nil,
 			spdk:          []string{foundBdevResponse, `{"id":%d,"error":{"code":1,"message":"some internal error"},"result":true}`},
 			expectedInKey: make([]byte, len(encryptedVolumeAesXts256.Key)),
-			expectedErr:   spdk.ErrFailedSpdkCall,
+			errCode:       status.Convert(spdk.ErrFailedSpdkCall).Code(),
+			errMsg:        status.Convert(spdk.ErrFailedSpdkCall).Message(),
 			start:         true,
 			existBefore:   false,
 		},
@@ -354,7 +376,8 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			out:           nil,
 			spdk:          []string{foundBdevResponse, `{"id":%d,"error":{"code":0,"message":""},"result":false}`},
 			expectedInKey: make([]byte, len(encryptedVolumeAesXts256.Key)),
-			expectedErr:   spdk.ErrUnexpectedSpdkCallResult,
+			errCode:       status.Convert(spdk.ErrUnexpectedSpdkCallResult).Code(),
+			errMsg:        status.Convert(spdk.ErrUnexpectedSpdkCallResult).Message(),
 			start:         true,
 			existBefore:   false,
 		},
@@ -363,7 +386,8 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			out:           nil,
 			spdk:          []string{},
 			expectedInKey: make([]byte, len(encryptedVolumeAesXts256.Key)),
-			expectedErr:   errAlreadyExists,
+			errCode:       status.Convert(errAlreadyExists).Code(),
+			errMsg:        status.Convert(errAlreadyExists).Message(),
 			start:         false,
 			existBefore:   true,
 		},
@@ -393,15 +417,22 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 
 			response, err := testEnv.opiSpdkServer.CreateEncryptedVolume(testEnv.ctx, request)
 
-			wantOut, _ := proto.Marshal(test.out)
-			gotOut, _ := proto.Marshal(response)
-			if !bytes.Equal(wantOut, gotOut) {
+			if !proto.Equal(response, test.out) {
 				t.Error("response: expected", test.out, "received", response)
 			}
-			if err != test.expectedErr {
-				t.Error("error: expected", test.expectedErr, "received", err)
+
+			if er, ok := status.FromError(err); ok {
+				if er.Code() != test.errCode {
+					t.Error("error code: expected", test.errCode, "received", er.Code())
+				}
+				if er.Message() != test.errMsg {
+					t.Error("error message: expected", test.errMsg, "received", er.Message())
+				}
+			} else {
+				t.Errorf("expect grpc error status")
 			}
-			if request != nil && request.EncryptedVolume != nil {
+
+			if request.GetEncryptedVolume() != nil {
 				if !bytes.Equal(request.EncryptedVolume.Key, test.expectedInKey) {
 					t.Error("input key after operation expected",
 						test.expectedInKey, "received", request.EncryptedVolume.Key)
@@ -420,7 +451,8 @@ func TestMiddleEnd_DeleteEncryptedVolume(t *testing.T) {
 	tests := map[string]struct {
 		in          *pb.DeleteEncryptedVolumeRequest
 		spdk        []string
-		expectedErr error
+		errCode     codes.Code
+		errMsg      string
 		start       bool
 		existBefore bool
 		existAfter  bool
@@ -428,7 +460,8 @@ func TestMiddleEnd_DeleteEncryptedVolume(t *testing.T) {
 		"nil request": {
 			in:          nil,
 			spdk:        []string{},
-			expectedErr: errMissingArgument,
+			errCode:     status.Convert(errMissingArgument).Code(),
+			errMsg:      status.Convert(errMissingArgument).Message(),
 			start:       false,
 			existBefore: false,
 			existAfter:  false,
@@ -436,7 +469,8 @@ func TestMiddleEnd_DeleteEncryptedVolume(t *testing.T) {
 		"valid delete encrypted volume request": {
 			in:          &pb.DeleteEncryptedVolumeRequest{Name: fullname},
 			spdk:        []string{foundBdevResponse, `{"id":%d,"error":{"code":0,"message":""},"result":true}`},
-			expectedErr: nil,
+			errCode:     codes.OK,
+			errMsg:      "",
 			start:       true,
 			existBefore: true,
 			existAfter:  false,
@@ -444,7 +478,8 @@ func TestMiddleEnd_DeleteEncryptedVolume(t *testing.T) {
 		"find bdev uuid by name internal SPDK failure": {
 			in:          &pb.DeleteEncryptedVolumeRequest{Name: fullname},
 			spdk:        []string{`{"id":%d,"error":{"code":-19,"message":"No such device"},"result":null}`},
-			expectedErr: spdk.ErrFailedSpdkCall,
+			errCode:     status.Convert(spdk.ErrFailedSpdkCall).Code(),
+			errMsg:      status.Convert(spdk.ErrFailedSpdkCall).Message(),
 			start:       true,
 			existBefore: true,
 			existAfter:  true,
@@ -452,7 +487,8 @@ func TestMiddleEnd_DeleteEncryptedVolume(t *testing.T) {
 		"find no bdev uuid by name": {
 			in:          &pb.DeleteEncryptedVolumeRequest{Name: fullname},
 			spdk:        []string{`{"id":%d,"error":{"code":0,"message":""},"result":[]}`},
-			expectedErr: spdk.ErrUnexpectedSpdkCallResult,
+			errCode:     status.Convert(spdk.ErrUnexpectedSpdkCallResult).Code(),
+			errMsg:      status.Convert(spdk.ErrUnexpectedSpdkCallResult).Message(),
 			start:       true,
 			existBefore: true,
 			existAfter:  true,
@@ -460,7 +496,8 @@ func TestMiddleEnd_DeleteEncryptedVolume(t *testing.T) {
 		"internal SPDK failure": {
 			in:          &pb.DeleteEncryptedVolumeRequest{Name: fullname},
 			spdk:        []string{foundBdevResponse, `{"id":%d,"error":{"code":1,"message":"some internal error"},"result":true}`},
-			expectedErr: spdk.ErrFailedSpdkCall,
+			errCode:     status.Convert(spdk.ErrFailedSpdkCall).Code(),
+			errMsg:      status.Convert(spdk.ErrFailedSpdkCall).Message(),
 			start:       true,
 			existBefore: true,
 			existAfter:  true,
@@ -468,7 +505,8 @@ func TestMiddleEnd_DeleteEncryptedVolume(t *testing.T) {
 		"SPDK result false": {
 			in:          &pb.DeleteEncryptedVolumeRequest{Name: fullname},
 			spdk:        []string{foundBdevResponse, `{"id":%d,"error":{"code":0,"message":""},"result":false}`},
-			expectedErr: spdk.ErrUnexpectedSpdkCallResult,
+			errCode:     status.Convert(spdk.ErrUnexpectedSpdkCallResult).Code(),
+			errMsg:      status.Convert(spdk.ErrUnexpectedSpdkCallResult).Message(),
 			start:       true,
 			existBefore: true,
 			existAfter:  true,
@@ -476,7 +514,8 @@ func TestMiddleEnd_DeleteEncryptedVolume(t *testing.T) {
 		"delete non-existing encrypted volume with missing allowed": {
 			in:          &pb.DeleteEncryptedVolumeRequest{Name: fullname, AllowMissing: true},
 			spdk:        []string{},
-			expectedErr: nil,
+			errCode:     codes.OK,
+			errMsg:      "",
 			start:       false,
 			existBefore: false,
 			existAfter:  false,
@@ -484,7 +523,8 @@ func TestMiddleEnd_DeleteEncryptedVolume(t *testing.T) {
 		"delete non-existing encrypted volume without missing allowed": {
 			in:          &pb.DeleteEncryptedVolumeRequest{Name: fullname, AllowMissing: false},
 			spdk:        []string{},
-			expectedErr: errVolumeNotFound,
+			errCode:     status.Convert(errVolumeNotFound).Code(),
+			errMsg:      status.Convert(errVolumeNotFound).Message(),
 			start:       false,
 			existBefore: false,
 			existAfter:  false,
@@ -492,13 +532,13 @@ func TestMiddleEnd_DeleteEncryptedVolume(t *testing.T) {
 		"malformed name": {
 			in:          &pb.DeleteEncryptedVolumeRequest{Name: server.ResourceIDToVolumeName("-ABC-DEF"), AllowMissing: false},
 			spdk:        []string{},
-			expectedErr: errMalformedArgument,
+			errCode:     status.Convert(errMalformedArgument).Code(),
+			errMsg:      status.Convert(errMalformedArgument).Message(),
 			start:       false,
 			existBefore: false,
 			existAfter:  false,
 		},
 	}
-
 	for testName, test := range tests {
 		t.Run(testName, func(t *testing.T) {
 			testEnv := createTestEnvironment(test.start, test.spdk)
@@ -506,19 +546,23 @@ func TestMiddleEnd_DeleteEncryptedVolume(t *testing.T) {
 			if test.existBefore {
 				testEnv.opiSpdkServer.volumes.encryptedVolumes[fullname] = bdevName
 			}
-			request := proto.Clone(test.in).(*pb.DeleteEncryptedVolumeRequest)
+			request := server.ProtoClone(test.in)
 
 			_, err := testEnv.opiSpdkServer.DeleteEncryptedVolume(testEnv.ctx, request)
 
-			if err != test.expectedErr {
-				t.Error("error: expected", test.expectedErr, "received", err)
-			}
-
-			if test.in != nil {
-				_, ok := testEnv.opiSpdkServer.volumes.encryptedVolumes[test.in.Name]
-				if test.existAfter != ok {
-					t.Error("expect Encrypted volume exist", test.existAfter, "received", ok)
+			if er, ok := status.FromError(err); ok {
+				if er.Code() != test.errCode {
+					t.Error("error code: expected", test.errCode, "received", er.Code())
 				}
+				if er.Message() != test.errMsg {
+					t.Error("error message: expected", test.errMsg, "received", er.Message())
+				}
+			} else {
+				t.Errorf("expect grpc error status")
+			}
+			_, ok := testEnv.opiSpdkServer.volumes.encryptedVolumes[test.in.GetName()]
+			if test.existAfter != ok {
+				t.Error("expect Encrypted volume exist", test.existAfter, "received", ok)
 			}
 		})
 	}
