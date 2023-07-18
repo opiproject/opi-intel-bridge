@@ -485,51 +485,51 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 		},
 	}
 
-	for testName, test := range tests {
+	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			test.in = server.ProtoClone(test.in)
-			testEnv := createTestEnvironment(test.start, test.spdk)
+			tt.in = server.ProtoClone(tt.in)
+			testEnv := createTestEnvironment(tt.start, tt.spdk)
 			defer testEnv.Close()
 			testEnv.opiSpdkServer.nvme.Subsystems[testSubsystem.Name] = &testSubsystem
-			if test.existingController != nil {
-				test.existingController = server.ProtoClone(test.existingController)
-				test.existingController.Name = testControllerName
-				testEnv.opiSpdkServer.nvme.Controllers[test.existingController.Name] = test.existingController
+			if tt.existingController != nil {
+				tt.existingController = server.ProtoClone(tt.existingController)
+				tt.existingController.Name = testControllerName
+				testEnv.opiSpdkServer.nvme.Controllers[tt.existingController.Name] = tt.existingController
 			}
-			if test.out != nil {
-				test.out = server.ProtoClone(test.out)
-				test.out.Name = testControllerName
+			if tt.out != nil {
+				tt.out = server.ProtoClone(tt.out)
+				tt.out.Name = testControllerName
 			}
 
 			response, err := testEnv.opiSpdkServer.CreateNvmeController(testEnv.ctx,
 				&pb.CreateNvmeControllerRequest{
-					NvmeController:   test.in,
+					NvmeController:   tt.in,
 					NvmeControllerId: testControllerID})
 
-			if !proto.Equal(response, test.out) {
-				t.Error("response: expected", test.out, "received", response)
+			if !proto.Equal(response, tt.out) {
+				t.Error("response: expected", tt.out, "received", response)
 			}
 
 			if er, ok := status.FromError(err); ok {
-				if er.Code() != test.errCode {
-					t.Error("error code: expected", test.errCode, "received", er.Code())
+				if er.Code() != tt.errCode {
+					t.Error("error code: expected", tt.errCode, "received", er.Code())
 				}
-				if er.Message() != test.errMsg {
-					t.Error("error message: expected", test.errMsg, "received", er.Message())
+				if er.Message() != tt.errMsg {
+					t.Error("error message: expected", tt.errMsg, "received", er.Message())
 				}
 			} else {
 				t.Errorf("expect grpc error status")
 			}
 
 			controller := testEnv.opiSpdkServer.nvme.Controllers[testControllerName]
-			if test.existingController != nil {
-				if !proto.Equal(test.existingController, controller) {
-					t.Errorf("expect %v exists", test.existingController)
+			if tt.existingController != nil {
+				if !proto.Equal(tt.existingController, controller) {
+					t.Errorf("expect %v exists", tt.existingController)
 				}
 			} else {
-				if test.errCode == codes.OK {
-					if !proto.Equal(test.out, controller) {
-						t.Errorf("expect %v exists", test.out)
+				if tt.errCode == codes.OK {
+					if !proto.Equal(tt.out, controller) {
+						t.Errorf("expect %v exists", tt.out)
 					}
 				} else {
 					if controller != nil {
@@ -853,44 +853,44 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 		},
 	}
 
-	for testName, test := range tests {
+	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			test.in = server.ProtoClone(test.in)
-			testEnv := createTestEnvironment(test.start, test.spdk)
+			tt.in = server.ProtoClone(tt.in)
+			testEnv := createTestEnvironment(tt.start, tt.spdk)
 			defer testEnv.Close()
 			testEnv.opiSpdkServer.nvme.Subsystems[testSubsystem.Name] = &testSubsystem
-			if test.existingController != nil {
-				test.existingController = server.ProtoClone(test.existingController)
-				test.existingController.Name = testControllerName
-				testEnv.opiSpdkServer.nvme.Controllers[test.existingController.Name] = test.existingController
+			if tt.existingController != nil {
+				tt.existingController = server.ProtoClone(tt.existingController)
+				tt.existingController.Name = testControllerName
+				testEnv.opiSpdkServer.nvme.Controllers[tt.existingController.Name] = tt.existingController
 			}
 
 			response, err := testEnv.opiSpdkServer.UpdateNvmeController(testEnv.ctx,
-				&pb.UpdateNvmeControllerRequest{NvmeController: test.in})
+				&pb.UpdateNvmeControllerRequest{NvmeController: tt.in})
 
-			if !proto.Equal(response, test.out) {
-				t.Error("response: expected", test.out, "received", response)
+			if !proto.Equal(response, tt.out) {
+				t.Error("response: expected", tt.out, "received", response)
 			}
 
 			if er, ok := status.FromError(err); ok {
-				if er.Code() != test.errCode {
-					t.Error("error code: expected", test.errCode, "received", er.Code())
+				if er.Code() != tt.errCode {
+					t.Error("error code: expected", tt.errCode, "received", er.Code())
 				}
-				if er.Message() != test.errMsg {
-					t.Error("error message: expected", test.errMsg, "received", er.Message())
+				if er.Message() != tt.errMsg {
+					t.Error("error message: expected", tt.errMsg, "received", er.Message())
 				}
 			} else {
 				t.Errorf("expect grpc error status")
 			}
 
-			controller := testEnv.opiSpdkServer.nvme.Controllers[test.in.Name]
-			if test.errCode == codes.OK {
-				if !proto.Equal(test.out, controller) {
-					t.Errorf("expect new %v exists, found %v", test.out, controller)
+			controller := testEnv.opiSpdkServer.nvme.Controllers[tt.in.Name]
+			if tt.errCode == codes.OK {
+				if !proto.Equal(tt.out, controller) {
+					t.Errorf("expect new %v exists, found %v", tt.out, controller)
 				}
 			} else {
-				if !proto.Equal(test.existingController, controller) {
-					t.Errorf("expect original %v exists, found %v", test.existingController, controller)
+				if !proto.Equal(tt.existingController, controller) {
+					t.Errorf("expect original %v exists, found %v", tt.existingController, controller)
 				}
 			}
 		})
