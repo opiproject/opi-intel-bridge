@@ -75,22 +75,22 @@ func TestServer_ParseTLSFiles(t *testing.T) {
 			caCert:     "",
 		},
 	}
-	for name, test := range tests {
+	for name, tt := range tests {
 		t.Run(name, func(t *testing.T) {
-			config, err := ParseTLSFiles(test.tlsStr)
+			config, err := ParseTLSFiles(tt.tlsStr)
 
-			if (err != nil) != test.expectErr {
-				t.Error("Expect error", test.expectErr, "received", err)
+			if (err != nil) != tt.expectErr {
+				t.Error("Expect error", tt.expectErr, "received", err)
 			}
-			if !test.expectErr {
-				if config.ServerCertPath != test.serverCert {
-					t.Error("Expect", test.serverCert, "received", config.ServerCertPath)
+			if !tt.expectErr {
+				if config.ServerCertPath != tt.serverCert {
+					t.Error("Expect", tt.serverCert, "received", config.ServerCertPath)
 				}
-				if config.ServerKeyPath != test.serverKey {
-					t.Error("Expect", test.serverKey, "received", config.ServerKeyPath)
+				if config.ServerKeyPath != tt.serverKey {
+					t.Error("Expect", tt.serverKey, "received", config.ServerKeyPath)
 				}
-				if config.CaCertPath != test.caCert {
-					t.Error("Expect", test.caCert, "received", config.CaCertPath)
+				if config.CaCertPath != tt.caCert {
+					t.Error("Expect", tt.caCert, "received", config.CaCertPath)
 				}
 			}
 		})
@@ -148,11 +148,11 @@ func TestServer_SetupTLSCredentials(t *testing.T) {
 			validCaCert: true,
 		},
 	}
-	for name, test := range tests {
+	for name, tt := range tests {
 		t.Run(name, func(t *testing.T) {
 			caCert := make([]byte, len(validCa))
 			copy(caCert, validCa)
-			if !test.validCaCert {
+			if !tt.validCaCert {
 				caCert[0] = caCert[0] - 1
 			}
 
@@ -161,15 +161,15 @@ func TestServer_SetupTLSCredentials(t *testing.T) {
 				ServerKeyPath:  "b",
 				CaCertPath:     "c",
 			}, func(s1, s2 string) (tls.Certificate, error) {
-				return tls.Certificate{}, test.loadKeyErr
+				return tls.Certificate{}, tt.loadKeyErr
 			}, func(s string) ([]byte, error) {
-				return caCert, test.readFileErr
+				return caCert, tt.readFileErr
 			})
 
-			if (err != nil) != test.expectErr {
-				t.Error("Expect error", test.expectErr, "received", err)
+			if (err != nil) != tt.expectErr {
+				t.Error("Expect error", tt.expectErr, "received", err)
 			}
-			if !test.expectErr && out == nil {
+			if !tt.expectErr && out == nil {
 				t.Error("Expect not nil server option, received nil")
 			}
 		})
