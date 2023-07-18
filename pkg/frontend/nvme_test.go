@@ -5,7 +5,6 @@
 package frontend
 
 import (
-	"bytes"
 	"fmt"
 	"testing"
 
@@ -507,9 +506,7 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 					NvmeController:   test.in,
 					NvmeControllerId: testControllerID})
 
-			marshalledOut, _ := proto.Marshal(test.out)
-			marshalledResponse, _ := proto.Marshal(response)
-			if !bytes.Equal(marshalledOut, marshalledResponse) {
+			if !proto.Equal(response, test.out) {
 				t.Error("response: expected", test.out, "received", response)
 			}
 
@@ -871,9 +868,7 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 			response, err := testEnv.opiSpdkServer.UpdateNvmeController(testEnv.ctx,
 				&pb.UpdateNvmeControllerRequest{NvmeController: test.in})
 
-			marshalledOut, _ := proto.Marshal(test.out)
-			marshalledResponse, _ := proto.Marshal(response)
-			if !bytes.Equal(marshalledOut, marshalledResponse) {
+			if !proto.Equal(response, test.out) {
 				t.Error("response: expected", test.out, "received", response)
 			}
 
