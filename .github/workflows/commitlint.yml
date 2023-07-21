@@ -1,26 +1,13 @@
 name: Commitlint
 
 on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
   pull_request:
-    branches:
-      - main
-
-permissions:
-  contents: read
+    branches: [ main ]
 
 jobs:
-  commitlint:
-    if: ${{ github.event.pull_request.merged != true }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Setup Node
-        uses: actions/setup-node@v2
-        with:
-          node-version: 20.x
-      - name: Install dependencies
-        run: npm i -g @commitlint/cli @commitlint/config-conventional
-      - name: Validate all commits from PR
-        run: commitlint --config ./.commitlintrc.json --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }} --verbose
+  call:
+    uses: opiproject/opi-smbios-bridge/.github/workflows/commitlint.yml@main
+    secrets: inherit
