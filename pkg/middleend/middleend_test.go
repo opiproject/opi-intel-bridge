@@ -46,10 +46,10 @@ func (e *testEnv) Close() {
 	server.CloseGrpcConnection(e.conn)
 }
 
-func createTestEnvironment(startSpdkServer bool, spdkResponses []string) *testEnv {
+func createTestEnvironment(spdkResponses []string) *testEnv {
 	env := &testEnv{}
 	env.testSocket = server.GenerateSocketName("middleend")
-	env.ln, env.jsonRPC = server.CreateTestSpdkServer(env.testSocket, startSpdkServer, spdkResponses)
+	env.ln, env.jsonRPC = server.CreateTestSpdkServer(env.testSocket, spdkResponses)
 	env.opiSpdkServer = NewServer(env.jsonRPC)
 
 	ctx := context.Background()
@@ -145,7 +145,6 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 		expectedInKey []byte
 		errCode       codes.Code
 		errMsg        string
-		start         bool
 		existBefore   bool
 	}{
 		"illegal resource_id": {
@@ -157,7 +156,6 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			expectedInKey: make([]byte, len(encryptedVolumeAesXts256.Key)),
 			errCode:       status.Convert(errMalformedArgument).Code(),
 			errMsg:        status.Convert(errMalformedArgument).Message(),
-			start:         false,
 			existBefore:   false,
 		},
 		"nil request": {
@@ -167,7 +165,6 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			expectedInKey: nil,
 			errCode:       status.Convert(errMissingArgument).Code(),
 			errMsg:        status.Convert(errMissingArgument).Message(),
-			start:         false,
 			existBefore:   false,
 		},
 		"nil EncryptedVolume": {
@@ -177,7 +174,6 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			expectedInKey: nil,
 			errCode:       status.Convert(errMissingArgument).Code(),
 			errMsg:        status.Convert(errMissingArgument).Message(),
-			start:         false,
 			existBefore:   false,
 		},
 		"EncryptedVolume EncryptedVolumeId is ignored": {
@@ -195,7 +191,6 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			expectedInKey: make([]byte, len(encryptedVolumeAesXts256.Key)),
 			errCode:       codes.OK,
 			errMsg:        "",
-			start:         true,
 			existBefore:   false,
 		},
 		"empty Key": {
@@ -209,7 +204,6 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			expectedInKey: nil,
 			errCode:       status.Convert(errMissingArgument).Code(),
 			errMsg:        status.Convert(errMissingArgument).Message(),
-			start:         false,
 			existBefore:   false,
 		},
 		"nil VolumeId": {
@@ -222,7 +216,6 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			expectedInKey: make([]byte, len(encryptedVolumeAesXts256.Key)),
 			errCode:       status.Convert(errMissingArgument).Code(),
 			errMsg:        status.Convert(errMissingArgument).Message(),
-			start:         false,
 			existBefore:   false,
 		},
 		"empty VolumeId": {
@@ -236,7 +229,6 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			expectedInKey: make([]byte, len(encryptedVolumeAesXts256.Key)),
 			errCode:       status.Convert(errMissingArgument).Code(),
 			errMsg:        status.Convert(errMissingArgument).Message(),
-			start:         false,
 			existBefore:   false,
 		},
 		"use AES_XTS_128 cipher": {
@@ -246,7 +238,6 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			expectedInKey: make([]byte, len(encryptedVolumeAesXts128.Key)),
 			errCode:       codes.OK,
 			errMsg:        "",
-			start:         true,
 			existBefore:   false,
 		},
 		"use AES_XTS_192 cipher": {
@@ -256,7 +247,6 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			expectedInKey: make([]byte, len(encryptedVolumeAesXts192.Key)),
 			errCode:       status.Convert(errNotSupportedCipher).Code(),
 			errMsg:        status.Convert(errNotSupportedCipher).Message(),
-			start:         false,
 			existBefore:   false,
 		},
 		"use AES_XTS_256 cipher": {
@@ -266,7 +256,6 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			expectedInKey: make([]byte, len(encryptedVolumeAesXts256.Key)),
 			errCode:       codes.OK,
 			errMsg:        "",
-			start:         true,
 			existBefore:   false,
 		},
 		"use AES_CBC_128 cipher": {
@@ -276,7 +265,6 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			expectedInKey: make([]byte, len(encryptedVolumeAesCbc128.Key)),
 			errCode:       status.Convert(errNotSupportedCipher).Code(),
 			errMsg:        status.Convert(errNotSupportedCipher).Message(),
-			start:         false,
 			existBefore:   false,
 		},
 		"use AES_CBC_192 cipher": {
@@ -286,7 +274,6 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			expectedInKey: make([]byte, len(encryptedVolumeAesCbc192.Key)),
 			errCode:       status.Convert(errNotSupportedCipher).Code(),
 			errMsg:        status.Convert(errNotSupportedCipher).Message(),
-			start:         false,
 			existBefore:   false,
 		},
 		"use AES_CBC_256 cipher": {
@@ -296,7 +283,6 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			expectedInKey: make([]byte, len(encryptedVolumeAesCbc256.Key)),
 			errCode:       status.Convert(errNotSupportedCipher).Code(),
 			errMsg:        status.Convert(errNotSupportedCipher).Message(),
-			start:         false,
 			existBefore:   false,
 		},
 		"use UNSPECIFIED cipher": {
@@ -310,7 +296,6 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			expectedInKey: make([]byte, len(encryptedVolumeAesXts256.Key)),
 			errCode:       status.Convert(errNotSupportedCipher).Code(),
 			errMsg:        status.Convert(errNotSupportedCipher).Message(),
-			start:         false,
 			existBefore:   false,
 		},
 		"key of wrong size for AEX_XTS_256": {
@@ -324,7 +309,6 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			expectedInKey: make([]byte, 1),
 			errCode:       status.Convert(errWrongKeySize).Code(),
 			errMsg:        status.Convert(errWrongKeySize).Message(),
-			start:         false,
 			existBefore:   false,
 		},
 		"key of wrong size for AEX_XTS_128": {
@@ -338,7 +322,6 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			expectedInKey: make([]byte, 1),
 			errCode:       status.Convert(errWrongKeySize).Code(),
 			errMsg:        status.Convert(errWrongKeySize).Message(),
-			start:         false,
 			existBefore:   false,
 		},
 		"find bdev uuid by name internal SPDK failure": {
@@ -348,7 +331,6 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			expectedInKey: make([]byte, len(encryptedVolumeAesXts256.Key)),
 			errCode:       status.Convert(spdk.ErrFailedSpdkCall).Code(),
 			errMsg:        status.Convert(spdk.ErrFailedSpdkCall).Message(),
-			start:         true,
 			existBefore:   false,
 		},
 		"find no bdev uuid by name": {
@@ -358,7 +340,6 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			expectedInKey: make([]byte, len(encryptedVolumeAesXts256.Key)),
 			errCode:       status.Convert(spdk.ErrUnexpectedSpdkCallResult).Code(),
 			errMsg:        status.Convert(spdk.ErrUnexpectedSpdkCallResult).Message(),
-			start:         true,
 			existBefore:   false,
 		},
 		"internal SPDK failure": {
@@ -368,7 +349,6 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			expectedInKey: make([]byte, len(encryptedVolumeAesXts256.Key)),
 			errCode:       status.Convert(spdk.ErrFailedSpdkCall).Code(),
 			errMsg:        status.Convert(spdk.ErrFailedSpdkCall).Message(),
-			start:         true,
 			existBefore:   false,
 		},
 		"SPDK result false": {
@@ -378,7 +358,6 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			expectedInKey: make([]byte, len(encryptedVolumeAesXts256.Key)),
 			errCode:       status.Convert(spdk.ErrUnexpectedSpdkCallResult).Code(),
 			errMsg:        status.Convert(spdk.ErrUnexpectedSpdkCallResult).Message(),
-			start:         true,
 			existBefore:   false,
 		},
 		"volume already exists": {
@@ -388,14 +367,13 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			expectedInKey: make([]byte, len(encryptedVolumeAesXts256.Key)),
 			errCode:       status.Convert(errAlreadyExists).Code(),
 			errMsg:        status.Convert(errAlreadyExists).Message(),
-			start:         false,
 			existBefore:   true,
 		},
 	}
 
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			testEnv := createTestEnvironment(tt.start, tt.spdk)
+			testEnv := createTestEnvironment(tt.spdk)
 			defer testEnv.Close()
 			var request *pb.CreateEncryptedVolumeRequest
 			if tt.in != nil {
@@ -453,7 +431,6 @@ func TestMiddleEnd_DeleteEncryptedVolume(t *testing.T) {
 		spdk        []string
 		errCode     codes.Code
 		errMsg      string
-		start       bool
 		existBefore bool
 		existAfter  bool
 	}{
@@ -462,7 +439,6 @@ func TestMiddleEnd_DeleteEncryptedVolume(t *testing.T) {
 			spdk:        []string{},
 			errCode:     status.Convert(errMissingArgument).Code(),
 			errMsg:      status.Convert(errMissingArgument).Message(),
-			start:       false,
 			existBefore: false,
 			existAfter:  false,
 		},
@@ -471,7 +447,6 @@ func TestMiddleEnd_DeleteEncryptedVolume(t *testing.T) {
 			spdk:        []string{foundBdevResponse, `{"id":%d,"error":{"code":0,"message":""},"result":true}`},
 			errCode:     codes.OK,
 			errMsg:      "",
-			start:       true,
 			existBefore: true,
 			existAfter:  false,
 		},
@@ -480,7 +455,6 @@ func TestMiddleEnd_DeleteEncryptedVolume(t *testing.T) {
 			spdk:        []string{`{"id":%d,"error":{"code":-19,"message":"No such device"},"result":null}`},
 			errCode:     status.Convert(spdk.ErrFailedSpdkCall).Code(),
 			errMsg:      status.Convert(spdk.ErrFailedSpdkCall).Message(),
-			start:       true,
 			existBefore: true,
 			existAfter:  true,
 		},
@@ -489,7 +463,6 @@ func TestMiddleEnd_DeleteEncryptedVolume(t *testing.T) {
 			spdk:        []string{`{"id":%d,"error":{"code":0,"message":""},"result":[]}`},
 			errCode:     status.Convert(spdk.ErrUnexpectedSpdkCallResult).Code(),
 			errMsg:      status.Convert(spdk.ErrUnexpectedSpdkCallResult).Message(),
-			start:       true,
 			existBefore: true,
 			existAfter:  true,
 		},
@@ -498,7 +471,6 @@ func TestMiddleEnd_DeleteEncryptedVolume(t *testing.T) {
 			spdk:        []string{foundBdevResponse, `{"id":%d,"error":{"code":1,"message":"some internal error"},"result":true}`},
 			errCode:     status.Convert(spdk.ErrFailedSpdkCall).Code(),
 			errMsg:      status.Convert(spdk.ErrFailedSpdkCall).Message(),
-			start:       true,
 			existBefore: true,
 			existAfter:  true,
 		},
@@ -507,7 +479,6 @@ func TestMiddleEnd_DeleteEncryptedVolume(t *testing.T) {
 			spdk:        []string{foundBdevResponse, `{"id":%d,"error":{"code":0,"message":""},"result":false}`},
 			errCode:     status.Convert(spdk.ErrUnexpectedSpdkCallResult).Code(),
 			errMsg:      status.Convert(spdk.ErrUnexpectedSpdkCallResult).Message(),
-			start:       true,
 			existBefore: true,
 			existAfter:  true,
 		},
@@ -516,7 +487,6 @@ func TestMiddleEnd_DeleteEncryptedVolume(t *testing.T) {
 			spdk:        []string{},
 			errCode:     codes.OK,
 			errMsg:      "",
-			start:       false,
 			existBefore: false,
 			existAfter:  false,
 		},
@@ -525,7 +495,6 @@ func TestMiddleEnd_DeleteEncryptedVolume(t *testing.T) {
 			spdk:        []string{},
 			errCode:     status.Convert(errVolumeNotFound).Code(),
 			errMsg:      status.Convert(errVolumeNotFound).Message(),
-			start:       false,
 			existBefore: false,
 			existAfter:  false,
 		},
@@ -534,14 +503,13 @@ func TestMiddleEnd_DeleteEncryptedVolume(t *testing.T) {
 			spdk:        []string{},
 			errCode:     status.Convert(errMalformedArgument).Code(),
 			errMsg:      status.Convert(errMalformedArgument).Message(),
-			start:       false,
 			existBefore: false,
 			existAfter:  false,
 		},
 	}
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			testEnv := createTestEnvironment(tt.start, tt.spdk)
+			testEnv := createTestEnvironment(tt.spdk)
 			defer testEnv.Close()
 			if tt.existBefore {
 				testEnv.opiSpdkServer.volumes.encryptedVolumes[fullname] = bdevName
