@@ -23,6 +23,8 @@ github.com/mitchellh/go-homedir v1.1.0 h1:lukF9ziXFxDFPkA1vsr5zpc1XuPDn/wFntq5mG
 github.com/mitchellh/go-homedir v1.1.0/go.mod h1:SfyaCUpYCn1Vlf4IUYiD9fPX4A5wJrkLzIz1N1q0pr0=
 github.com/opiproject/gospdk v0.0.0-20230714152149-de73bd1ee87d h1:H+E4ITds+AW3j7PHLbhAz3C+OPGJGREJUdmTo9YOviE=
 github.com/opiproject/gospdk v0.0.0-20230714152149-de73bd1ee87d/go.mod h1:RqA5Ix7+x0Is8UckJE+6Ji5kCfk6yujWWaTMoRlZv3w=
+github.com/opiproject/gospdk v0.0.0-20230721162442-5187c4c6663b h1:MYk4lS7uUpJwT89WJgjqg9RCXywslytpBDmZcWy626I=
+github.com/opiproject/gospdk v0.0.0-20230721162442-5187c4c6663b/go.mod h1:RqA5Ix7+x0Is8UckJE+6Ji5kCfk6yujWWaTMoRlZv3w=
 github.com/opiproject/opi-api v0.0.0-20230717064243-520b62d2f155 h1:I35TX9YBVrl6PlYe1Eima79mA6VS0qohETDUoB6W+Pk=
 github.com/opiproject/opi-api v0.0.0-20230717064243-520b62d2f155/go.mod h1:92pv4ulvvPMuxCJ9ND3aYbmBfEMLx0VCjpkiR7ZTqPY=
 github.com/opiproject/opi-api v0.0.0-20230721161716-ea8314a63ccb h1:N8wK6C6A7Y4fr9SECSvTTUMhcD2xZ6t2W+/NO9vy768=
