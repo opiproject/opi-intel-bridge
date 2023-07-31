@@ -186,7 +186,7 @@ func (s *Server) verifyNvmeControllerMinMaxLimitCorrespondence(minLimit *pb.QosL
 func (s *Server) setNvmeQosLimit(controller *pb.NvmeController) error {
 	log.Printf("Setting QoS limits %v for %v", controller.Spec.MaxLimit, controller.Name)
 	params := models.NpiQosBwIopsLimitParams{
-		Nqn: s.nvme.Subsystems[controller.Spec.SubsystemId.Value].Spec.Nqn,
+		Nqn: s.nvme.Subsystems[controller.Spec.SubsystemNameRef].Spec.Nqn,
 	}
 
 	maxLimit := controller.Spec.MaxLimit
