@@ -123,7 +123,7 @@ grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateEncryptedVolume "{'e
 grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmeNamespace "{nvme_namespace : {spec : {subsystem_name_ref : '//storage.opiproject.org/volumes/subsystem2', volume_name_ref : 'nvmetcp12n1', 'host_nsid' : '10', uuid:{value : '1b4e28ba-2fa1-11d2-883f-b9a761bde3fb'}, nguid: '1b4e28ba-2fa1-11d2-883f-b9a761bde3fb', eui64: 1967554867335598546 } }, nvme_namespace_id: 'namespace1'}"
 grpc_cli call --json_input --json_output $BRIDGE_ADDR ListNvmeNamespaces "{parent : '//storage.opiproject.org/volumes/subsystem2'}"
 grpc_cli call --json_input --json_output $BRIDGE_ADDR GetNvmeNamespace "{name : '//storage.opiproject.org/volumes/namespace1'}"
-grpc_cli call --json_input --json_output $BRIDGE_ADDR NvmeNamespaceStats "{name : '//storage.opiproject.org/volumes/namespace1'}"
+grpc_cli call --json_input --json_output $BRIDGE_ADDR StatsNvmeNamespace "{name : '//storage.opiproject.org/volumes/namespace1'}"
 
 # Delete namespace
 grpc_cli call --json_input --json_output $BRIDGE_ADDR DeleteNvmeNamespace "{name : '//storage.opiproject.org/volumes/namespace1'}"
