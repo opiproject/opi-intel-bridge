@@ -12,7 +12,6 @@ import (
 	"runtime/debug"
 
 	"github.com/opiproject/gospdk/spdk"
-	pc "github.com/opiproject/opi-api/common/v1/gen/go"
 	pb "github.com/opiproject/opi-api/storage/v1alpha1/gen/go"
 	"github.com/opiproject/opi-intel-bridge/pkg/models"
 	"github.com/opiproject/opi-spdk-bridge/pkg/middleend"
@@ -99,9 +98,9 @@ func (s *Server) CreateEncryptedVolume(_ context.Context, in *pb.CreateEncrypted
 		return nil, errAlreadyExists
 	}
 
-	bdevUUID, err := s.getBdevUUIDByName(in.EncryptedVolume.VolumeId.Value)
+	bdevUUID, err := s.getBdevUUIDByName(in.EncryptedVolume.VolumeNameRef)
 	if err != nil {
-		log.Println("Failed to find UUID for bdev", in.EncryptedVolume.VolumeId.Value)
+		log.Println("Failed to find UUID for bdev", in.EncryptedVolume.VolumeNameRef)
 		return nil, err
 	}
 
@@ -129,11 +128,11 @@ func (s *Server) CreateEncryptedVolume(_ context.Context, in *pb.CreateEncrypted
 		return nil, spdk.ErrUnexpectedSpdkCallResult
 	}
 
-	s.volumes.encryptedVolumes[in.EncryptedVolume.Name] = in.EncryptedVolume.VolumeId.Value
+	s.volumes.encryptedVolumes[in.EncryptedVolume.Name] = in.EncryptedVolume.VolumeNameRef
 
 	return &pb.EncryptedVolume{
-		Name:     in.EncryptedVolume.Name,
-		VolumeId: &pc.ObjectKey{Value: in.EncryptedVolume.VolumeId.Value},
+		Name:          in.EncryptedVolume.Name,
+		VolumeNameRef: in.EncryptedVolume.VolumeNameRef,
 	}, nil
 }
 
@@ -144,8 +143,8 @@ func verifyCreateEncryptedVolumeRequestArgs(in *pb.CreateEncryptedVolumeRequest)
 	}
 
 	switch {
-	case in.EncryptedVolume.VolumeId == nil || in.EncryptedVolume.VolumeId.Value == "":
-		log.Println("volume_id should be specified")
+	case in.EncryptedVolume.VolumeNameRef == "":
+		log.Println("volume name should be specified")
 		return errMissingArgument
 	case len(in.EncryptedVolume.Key) == 0:
 		log.Println("key cannot be empty")

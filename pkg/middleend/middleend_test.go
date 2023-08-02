@@ -13,7 +13,6 @@ import (
 	"testing"
 
 	"github.com/opiproject/gospdk/spdk"
-	pc "github.com/opiproject/opi-api/common/v1/gen/go"
 	pb "github.com/opiproject/opi-api/storage/v1alpha1/gen/go"
 	"github.com/opiproject/opi-spdk-bridge/pkg/server"
 	"google.golang.org/grpc"
@@ -98,42 +97,42 @@ var (
 	encryptedVolumeID = "encrypted-volume-id"
 	// Volumes for supported algorithms
 	encryptedVolumeAesXts256 = pb.EncryptedVolume{
-		VolumeId: &pc.ObjectKey{Value: bdevName},
-		Key:      keyOf512bits,
-		Cipher:   pb.EncryptionType_ENCRYPTION_TYPE_AES_XTS_256,
+		VolumeNameRef: bdevName,
+		Key:           keyOf512bits,
+		Cipher:        pb.EncryptionType_ENCRYPTION_TYPE_AES_XTS_256,
 	}
 	encryptedVolumeAesXts256InResponse = pb.EncryptedVolume{
-		VolumeId: encryptedVolumeAesXts256.VolumeId,
+		VolumeNameRef: encryptedVolumeAesXts256.VolumeNameRef,
 	}
 	encryptedVolumeAesXts128 = pb.EncryptedVolume{
-		VolumeId: &pc.ObjectKey{Value: bdevName},
-		Key:      keyOf256Bits,
-		Cipher:   pb.EncryptionType_ENCRYPTION_TYPE_AES_XTS_128,
+		VolumeNameRef: bdevName,
+		Key:           keyOf256Bits,
+		Cipher:        pb.EncryptionType_ENCRYPTION_TYPE_AES_XTS_128,
 	}
 	encryptedVolumeAesXts128InResponse = pb.EncryptedVolume{
-		VolumeId: encryptedVolumeAesXts128.VolumeId,
+		VolumeNameRef: encryptedVolumeAesXts128.VolumeNameRef,
 	}
 
 	// Volumes for not supported algorithms
 	encryptedVolumeAesXts192 = pb.EncryptedVolume{
-		VolumeId: &pc.ObjectKey{Value: bdevName},
-		Key:      keyOf384Bits,
-		Cipher:   pb.EncryptionType_ENCRYPTION_TYPE_AES_XTS_192,
+		VolumeNameRef: bdevName,
+		Key:           keyOf384Bits,
+		Cipher:        pb.EncryptionType_ENCRYPTION_TYPE_AES_XTS_192,
 	}
 	encryptedVolumeAesCbc128 = pb.EncryptedVolume{
-		VolumeId: &pc.ObjectKey{Value: bdevName},
-		Key:      keyOf128Bits,
-		Cipher:   pb.EncryptionType_ENCRYPTION_TYPE_AES_CBC_128,
+		VolumeNameRef: bdevName,
+		Key:           keyOf128Bits,
+		Cipher:        pb.EncryptionType_ENCRYPTION_TYPE_AES_CBC_128,
 	}
 	encryptedVolumeAesCbc192 = pb.EncryptedVolume{
-		VolumeId: &pc.ObjectKey{Value: bdevName},
-		Key:      keyOf192Bits,
-		Cipher:   pb.EncryptionType_ENCRYPTION_TYPE_AES_CBC_192,
+		VolumeNameRef: bdevName,
+		Key:           keyOf192Bits,
+		Cipher:        pb.EncryptionType_ENCRYPTION_TYPE_AES_CBC_192,
 	}
 	encryptedVolumeAesCbc256 = pb.EncryptedVolume{
-		VolumeId: &pc.ObjectKey{Value: bdevName},
-		Key:      keyOf256Bits,
-		Cipher:   pb.EncryptionType_ENCRYPTION_TYPE_AES_CBC_256,
+		VolumeNameRef: bdevName,
+		Key:           keyOf256Bits,
+		Cipher:        pb.EncryptionType_ENCRYPTION_TYPE_AES_CBC_256,
 	}
 )
 
@@ -178,14 +177,14 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 		},
 		"EncryptedVolume EncryptedVolumeId is ignored": {
 			in: &pb.CreateEncryptedVolumeRequest{EncryptedVolume: &pb.EncryptedVolume{
-				Name:     "Some-ignored-id-value",
-				VolumeId: encryptedVolumeAesXts256.VolumeId,
-				Key:      encryptedVolumeAesXts256.Key,
-				Cipher:   pb.EncryptionType_ENCRYPTION_TYPE_AES_XTS_256,
+				Name:          "Some-ignored-id-value",
+				VolumeNameRef: encryptedVolumeAesXts256.VolumeNameRef,
+				Key:           encryptedVolumeAesXts256.Key,
+				Cipher:        pb.EncryptionType_ENCRYPTION_TYPE_AES_XTS_256,
 			}, EncryptedVolumeId: encryptedVolumeID},
 			out: &pb.EncryptedVolume{
-				Name:     encryptedVolumeID,
-				VolumeId: encryptedVolumeAesXts256.VolumeId,
+				Name:          encryptedVolumeID,
+				VolumeNameRef: encryptedVolumeAesXts256.VolumeNameRef,
 			},
 			spdk:          []string{foundBdevResponse, `{"id":%d,"error":{"code":0,"message":""},"result":true}`},
 			expectedInKey: make([]byte, len(encryptedVolumeAesXts256.Key)),
@@ -195,9 +194,9 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 		},
 		"empty Key": {
 			in: &pb.CreateEncryptedVolumeRequest{EncryptedVolume: &pb.EncryptedVolume{
-				VolumeId: encryptedVolumeAesXts256.VolumeId,
-				Cipher:   pb.EncryptionType_ENCRYPTION_TYPE_AES_XTS_256,
-				Key:      make([]byte, 0),
+				VolumeNameRef: encryptedVolumeAesXts256.VolumeNameRef,
+				Cipher:        pb.EncryptionType_ENCRYPTION_TYPE_AES_XTS_256,
+				Key:           make([]byte, 0),
 			}, EncryptedVolumeId: encryptedVolumeID},
 			out:           nil,
 			spdk:          []string{},
@@ -220,9 +219,9 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 		},
 		"empty VolumeId": {
 			in: &pb.CreateEncryptedVolumeRequest{EncryptedVolume: &pb.EncryptedVolume{
-				VolumeId: &pc.ObjectKey{Value: ""},
-				Key:      encryptedVolumeAesXts256.Key,
-				Cipher:   pb.EncryptionType_ENCRYPTION_TYPE_AES_XTS_256,
+				VolumeNameRef: "",
+				Key:           encryptedVolumeAesXts256.Key,
+				Cipher:        pb.EncryptionType_ENCRYPTION_TYPE_AES_XTS_256,
 			}, EncryptedVolumeId: encryptedVolumeID},
 			out:           nil,
 			spdk:          []string{},
@@ -287,9 +286,9 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 		},
 		"use UNSPECIFIED cipher": {
 			in: &pb.CreateEncryptedVolumeRequest{EncryptedVolume: &pb.EncryptedVolume{
-				VolumeId: encryptedVolumeAesXts256.VolumeId,
-				Key:      encryptedVolumeAesXts256.Key,
-				Cipher:   pb.EncryptionType_ENCRYPTION_TYPE_UNSPECIFIED,
+				VolumeNameRef: encryptedVolumeAesXts256.VolumeNameRef,
+				Key:           encryptedVolumeAesXts256.Key,
+				Cipher:        pb.EncryptionType_ENCRYPTION_TYPE_UNSPECIFIED,
 			}, EncryptedVolumeId: encryptedVolumeID},
 			out:           nil,
 			spdk:          []string{},
@@ -300,9 +299,9 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 		},
 		"key of wrong size for AEX_XTS_256": {
 			in: &pb.CreateEncryptedVolumeRequest{EncryptedVolume: &pb.EncryptedVolume{
-				VolumeId: encryptedVolumeAesXts256.VolumeId,
-				Key:      []byte("1"),
-				Cipher:   pb.EncryptionType_ENCRYPTION_TYPE_AES_XTS_256,
+				VolumeNameRef: encryptedVolumeAesXts256.VolumeNameRef,
+				Key:           []byte("1"),
+				Cipher:        pb.EncryptionType_ENCRYPTION_TYPE_AES_XTS_256,
 			}, EncryptedVolumeId: encryptedVolumeID},
 			out:           nil,
 			spdk:          []string{},
@@ -313,9 +312,9 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 		},
 		"key of wrong size for AEX_XTS_128": {
 			in: &pb.CreateEncryptedVolumeRequest{EncryptedVolume: &pb.EncryptedVolume{
-				VolumeId: encryptedVolumeAesXts128.VolumeId,
-				Key:      []byte("1"),
-				Cipher:   encryptedVolumeAesXts128.Cipher,
+				VolumeNameRef: encryptedVolumeAesXts128.VolumeNameRef,
+				Key:           []byte("1"),
+				Cipher:        encryptedVolumeAesXts128.Cipher,
 			}, EncryptedVolumeId: encryptedVolumeID},
 			out:           nil,
 			spdk:          []string{},
@@ -390,7 +389,7 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			}
 			if tt.existBefore {
 				testEnv.opiSpdkServer.volumes.encryptedVolumes[fullname] =
-					request.EncryptedVolume.VolumeId.Value
+					request.EncryptedVolume.VolumeNameRef
 			}
 
 			response, err := testEnv.opiSpdkServer.CreateEncryptedVolume(testEnv.ctx, request)
