@@ -37,3 +37,11 @@ type NpiQosBwIopsLimitParams struct {
 
 // NpiQosBwIopsLimitResult is the result of setting QoS limits
 type NpiQosBwIopsLimitResult bool
+
+// MevVhostCreateBlkControllerParams holds parameters to create a virtio-blk device
+type MevVhostCreateBlkControllerParams struct {
+	Ctrlr     string `json:"ctrlr"`
+	DevName   string `json:"dev_name"`
+	Transport string `json:"transport"`
+	VqCount   int    `json:"vq_count,omitempty"`
+}
