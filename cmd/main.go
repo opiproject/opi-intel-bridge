@@ -70,7 +70,7 @@ func main() {
 	middleendOpiIntelServer := me.NewServer(jsonRPC)
 
 	pb.RegisterFrontendNvmeServiceServer(s, frontendOpiIntelServer)
-	pb.RegisterFrontendVirtioBlkServiceServer(s, frontendOpiSpdkServer)
+	pb.RegisterFrontendVirtioBlkServiceServer(s, frontendOpiIntelServer)
 	pb.RegisterFrontendVirtioScsiServiceServer(s, frontendOpiSpdkServer)
 	pb.RegisterNvmeRemoteControllerServiceServer(s, backendOpiSpdkServer)
 	pb.RegisterNullVolumeServiceServer(s, backendOpiSpdkServer)
