@@ -32,7 +32,7 @@ services:
     depends_on:
       opi-intel-server:
         condition: service_healthy
-    command: storagetest --addr=opi-intel-server:50051
+    command: storage test --addr=opi-intel-server:50051
 
 networks:
   opi:
