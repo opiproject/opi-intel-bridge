@@ -23,8 +23,8 @@ github.com/mitchellh/go-homedir v1.1.0 h1:lukF9ziXFxDFPkA1vsr5zpc1XuPDn/wFntq5mG
 github.com/mitchellh/go-homedir v1.1.0/go.mod h1:SfyaCUpYCn1Vlf4IUYiD9fPX4A5wJrkLzIz1N1q0pr0=
 github.com/opiproject/gospdk v0.0.0-20230731070525-a0690f165942 h1:+9S6U136A+EpnJnYYJT/VkbFb8BKe26uuwQJdOzxAMA=
 github.com/opiproject/gospdk v0.0.0-20230731070525-a0690f165942/go.mod h1:1ZsRuKwCpQWpS7V+f6F6f1LmSWmVhj2GZMvDKYHeZhc=
-github.com/opiproject/opi-api v0.0.0-20230803153709-1e58d25ae2be h1:YwIWGD+r0FHjuAjLq+ISExvm39bBpipZdAYe0cM5D9I=
-github.com/opiproject/opi-api v0.0.0-20230803153709-1e58d25ae2be/go.mod h1:92pv4ulvvPMuxCJ9ND3aYbmBfEMLx0VCjpkiR7ZTqPY=
+github.com/opiproject/opi-api v0.0.0-20230809161856-96752bda2dcb h1:gXBjSsO0uUpg1JwRoCpZWg6WMrKa+NWBgUO8VMyZN6M=
+github.com/opiproject/opi-api v0.0.0-20230809161856-96752bda2dcb/go.mod h1:92pv4ulvvPMuxCJ9ND3aYbmBfEMLx0VCjpkiR7ZTqPY=
 github.com/opiproject/opi-smbios-bridge v0.1.3-0.20230805042604-553cfde59973 h1:6CIeO2OdZEB1PgFb/nhw/gCBgVULUaAbRbhMQ+MuF0A=
 github.com/opiproject/opi-smbios-bridge v0.1.3-0.20230805042604-553cfde59973/go.mod h1:WEAVj/uS7DsNb8Kilrrsz2Qlfn4REReKnSu8bLgQKtA=
 github.com/opiproject/opi-spdk-bridge v0.1.2-0.20230805100532-d9af8e4fcaf1 h1:ilSHtZrulxsntJUOwdcgilGGgUcF4EE5tQHxUMtbTls=
