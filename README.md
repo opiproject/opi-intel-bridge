@@ -97,7 +97,7 @@ or specify commands manually
 grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmeSubsystem "{nvme_subsystem : {spec : {nqn: 'nqn.2022-09.io.spdk:opitest2', serial_number: 'myserial2', model_number: 'mymodel2', max_namespaces: 11} }, nvme_subsystem_id : 'subsystem2' }"
 grpc_cli call --json_input --json_output $BRIDGE_ADDR ListNvmeSubsystems "{parent : 'todo'}"
 grpc_cli call --json_input --json_output $BRIDGE_ADDR GetNvmeSubsystem "{name : '//storage.opiproject.org/volumes/subsystem2'}"
-grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmeController "{nvme_controller : {spec : {nvme_controller_id: 2, subsystem_name_ref : '//storage.opiproject.org/volumes/subsystem2', pcie_id : {physical_function : 0}, max_nsq:5, max_ncq:5 } }, nvme_controller_id : 'controller1'}"
+grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmeController "{nvme_controller : {spec : {nvme_controller_id: 2, subsystem_name_ref : '//storage.opiproject.org/volumes/subsystem2', pcie_id : {physical_function : 0, virtual_function : 0, port_id: 0}, max_nsq:5, max_ncq:5 } }, nvme_controller_id : 'controller1'}"
 grpc_cli call --json_input --json_output $BRIDGE_ADDR ListNvmeControllers "{parent : '//storage.opiproject.org/volumes/subsystem2'}"
 grpc_cli call --json_input --json_output $BRIDGE_ADDR GetNvmeController "{name : '//storage.opiproject.org/volumes/controller1'}"
 
