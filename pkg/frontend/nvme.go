@@ -36,8 +36,8 @@ func (c npiSubsystemListener) Params(ctrlr *pb.NvmeController, nqn string) spdk.
 }
 
 func calculateTransportAddr(pci *pb.PciEndpoint) string {
-	return strconv.Itoa(int(pci.PhysicalFunction)) +
-		"." + strconv.Itoa(int(pci.VirtualFunction))
+	return strconv.Itoa(int(pci.PhysicalFunction.Value)) +
+		"." + strconv.Itoa(int(pci.VirtualFunction.Value))
 }
 
 // CreateNvmeController creates an Nvme controller
