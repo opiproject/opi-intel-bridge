@@ -5,7 +5,7 @@ go 1.19
 require (
 	github.com/opiproject/gospdk v0.0.0-20230731070525-a0690f165942
 	github.com/opiproject/opi-api v0.0.0-20230811153555-425899c0550b
-	github.com/opiproject/opi-smbios-bridge v0.1.3-0.20230805042604-553cfde59973
+	github.com/opiproject/opi-smbios-bridge v0.1.3-0.20230807070801-0ee45a8dece6
 	github.com/opiproject/opi-spdk-bridge v0.1.2-0.20230811191607-5ace0d138685
 	github.com/opiproject/opi-strongswan-bridge v0.1.1
 	go.einride.tech/aip v0.61.0
