@@ -49,6 +49,8 @@ github.com/opiproject/opi-spdk-bridge v0.1.2-0.20230811191607-5ace0d138685 h1:Kb
 github.com/opiproject/opi-spdk-bridge v0.1.2-0.20230811191607-5ace0d138685/go.mod h1:OvhBvZe2bv6hbYq/R8giTf62kiD4VlFIkh2wRyav4ko=
 github.com/opiproject/opi-spdk-bridge v0.1.2-0.20230812093937-389aad73c019 h1:O56Alq83av3+Fhczoehst0KgAILtuvIVEdZ2A0jR3RU=
 github.com/opiproject/opi-spdk-bridge v0.1.2-0.20230812093937-389aad73c019/go.mod h1:4f8w831a3UduOg041lMb/FEfx+qJ0g0MgeT+qwi0eQM=
+github.com/opiproject/opi-spdk-bridge v0.1.2-0.20230812165922-95022f2282e3 h1:cZ+lYQSYIAFKrZ/HcbLWUOF9I+2IrHbfT8lQr/xVuXo=
+github.com/opiproject/opi-spdk-bridge v0.1.2-0.20230812165922-95022f2282e3/go.mod h1:zTFTcfyTG9PNu+/GwGYpwefGyjkE7C/dKxMaEOB6oaE=
 github.com/opiproject/opi-strongswan-bridge v0.1.1 h1:Mz/8AtA0DD8O/H9jCsDw7wuVoWNiqgXICLsD10XWJ+g=
 github.com/opiproject/opi-strongswan-bridge v0.1.1/go.mod h1:ek3r3zLa9nOfb2a7ybdMJvb5BSGU9I17Xo38UMXfE+k=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
