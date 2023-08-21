@@ -1,0 +1,21 @@
+name: EClint
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+  eclint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: snow-actions/eclint@v1.0.1
+        with:
+          args: 'check'
+
