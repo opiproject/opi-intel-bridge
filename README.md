@@ -263,3 +263,6 @@ GRPC_DEFAULT_SSL_ROOTS_FILE_PATH="$CA_CERT" grpc_cli --json_input --json_output 
 This project welcomes contributions and suggestions.  We are happy to have the Community involved via submission of **Issues and Pull Requests** (with substantive content or even just fixes). We are hoping for the documents, test framework, etc. to become a community process with active engagement.  PRs can be reviewed by any number of people, and a maintainer may accept.
 
 See [CONTRIBUTING](https://github.com/opiproject/opi/blob/main/CONTRIBUTING.md) and [GitHub Basic Process](https://github.com/opiproject/opi/blob/main/doc-github-rules.md) for more details.
+
+For reporting security vulnerabilities related to this repo and/or Intel IPU
+usage with OPI, please refer to the instructions under [Security.md](https://github.com/opiproject/opi-intel-bridge/blob/main/SECURITY.md).
