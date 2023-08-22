@@ -264,5 +264,4 @@ This project welcomes contributions and suggestions.  We are happy to have the C
 
 See [CONTRIBUTING](https://github.com/opiproject/opi/blob/main/CONTRIBUTING.md) and [GitHub Basic Process](https://github.com/opiproject/opi/blob/main/doc-github-rules.md) for more details.
 
-For reporting security vulnerabilities related to this repo and/or Intel IPU
-usage with OPI, please refer to the instructions under [Security.md](https://github.com/opiproject/opi-intel-bridge/blob/main/SECURITY.md).
+For reporting security vulnerabilities see [SECURITY.md](https://github.com/opiproject/opi-intel-bridge/blob/main/SECURITY.md).
