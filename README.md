@@ -35,8 +35,9 @@ The following variables are used throughout this document:
 | BRIDGE_IP   | opi-intel-bridge gRPC listening IP address e.g. 10.10.10.10 or localhost                                                                           |
 | BRIDGE_PORT | opi-intel-bridge gRPC listening port e.g. 50051                                                                                                    |
 | BRIDGE_ADDR | BRIDGE_IP:BRIDGE_PORT                                                                                                                              |
-| PF_BDF      | physical function PCI address e.g. 0000:3b:00.1                                                                                                    |
-| VF_BDF      | virtual function PCI address e.g. 0000:40:00.0 can be found in pf's virtfn\<X\> where X equals to virtual_function in CreateNvmeController minus 1 |
+| NVME_PF_BDF | physical function PCI address e.g. 0000:3b:00.1 for Nvme                                                                                           |
+| NVME_VF_BDF | virtual function PCI address e.g. 0000:40:00.0 can be found in pf's virtfn\<X\> where X equals to virtual_function in CreateNvmeController minus 1 |
+| BLK_PF_BDF  | physical function PCI address e.g. 0000:af:01.0 for virtio-blk                                                                                     |
 | TARGET_IP   | storage target ip address                                                                                                                          |
 | TARGET_PORT | storage target port                                                                                                                                |
 
@@ -93,7 +94,7 @@ opi_api.storage.v1.NullDebugService
 or specify commands manually
 
 ```bash
-# PF creation
+# Nvme PF creation
 grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmeSubsystem "{nvme_subsystem : {spec : {nqn: 'nqn.2022-09.io.spdk:opitest2', serial_number: 'myserial2', model_number: 'mymodel2', max_namespaces: 11} }, nvme_subsystem_id : 'subsystem2' }"
 grpc_cli call --json_input --json_output $BRIDGE_ADDR ListNvmeSubsystems "{parent : 'todo'}"
 grpc_cli call --json_input --json_output $BRIDGE_ADDR GetNvmeSubsystem "{name : '//storage.opiproject.org/volumes/subsystem2'}"
@@ -101,7 +102,7 @@ grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmeController "{nvm
 grpc_cli call --json_input --json_output $BRIDGE_ADDR ListNvmeControllers "{parent : '//storage.opiproject.org/volumes/subsystem2'}"
 grpc_cli call --json_input --json_output $BRIDGE_ADDR GetNvmeController "{name : '//storage.opiproject.org/volumes/controller1'}"
 
-# VF creation on PF0
+# Nvme VF creation on PF0
 grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmeSubsystem "{nvme_subsystem : {spec : {nqn: 'nqn.2022-09.io.spdk:opitest3', serial_number: 'mev-opi-serial', model_number: 'mev-opi-model', max_namespaces: 11} }, nvme_subsystem_id : 'subsystem03' }"
 grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmeController "{nvme_controller : {spec : {nvme_controller_id: 2, subsystem_name_ref : '//storage.opiproject.org/volumes/subsystem03', pcie_id : {physical_function : 0, virtual_function : 3}, max_nsq:5, max_ncq:5 } }, nvme_controller_id : 'controller3'}"
 
@@ -112,6 +113,9 @@ grpc_cli call --json_input --json_output $BRIDGE_ADDR GetNvmeRemoteController "{
 grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmePath "{nvme_path : {controller_name_ref: '//storage.opiproject.org/volumes/nvmetcp12', traddr:'11.11.11.2', subnqn:'nqn.2016-06.com.opi.spdk.target0', trsvcid:'4444', trtype:'NVME_TRANSPORT_TCP', adrfam:'NVME_ADRFAM_IPV4', hostnqn:'nqn.2014-08.org.nvmexpress:uuid:feb98abe-d51f-40c8-b348-2753f3571d3c'}, nvme_path_id: 'nvmetcp12path0'}"
 grpc_cli call --json_input --json_output $BRIDGE_ADDR ListNvmePaths "{parent : 'todo'}"
 grpc_cli call --json_input --json_output $BRIDGE_ADDR GetNvmePath "{name: '//storage.opiproject.org/volumes/nvmetcp12path0'}"
+
+# Virtio-blk PF creation (virtio-blk requires a volume, that's why it is created after connection to storage-target)
+grpc_cli --json_input --json_output call $BRIDGE_ADDR CreateVirtioBlk "{virtio_blk_id: 'virtioblk0', virtio_blk : { volume_name_ref: 'nvmetcp12n0', pcie_id: { physical_function: '0', virtual_function: '0', port_id: '0'}}}"
 
 # Create QoS volume
 grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateQosVolume "{'qos_volume' : {'volume_name_ref' :'nvmetcp12n1', 'max_limit' : { 'rw_iops_kiops': 3 } }, 'qos_volume_id' : 'qosnvmetcp12n1' }"
@@ -134,29 +138,32 @@ grpc_cli call --json_input --json_output $BRIDGE_ADDR DeleteEncryptedVolume "{'n
 # Delete QoS volume
 grpc_cli call --json_input --json_output $BRIDGE_ADDR DeleteQosVolume "{name : '//storage.opiproject.org/volumes/qosnvmetcp12n1'}"
 
+# Delete virtio-blk PF
+grpc_cli call --json_input --json_output $BRIDGE_ADDR DeleteVirtioBlk "{ name: '//storage.opiproject.org/volumes/virtioblk0'}"
+
 # Disconnect from storage-target
 grpc_cli call --json_input --json_output $BRIDGE_ADDR DeleteNvmePath "{name: '//storage.opiproject.org/volumes/nvmetcp12path0'}"
 grpc_cli call --json_input --json_output $BRIDGE_ADDR DeleteNvmeRemoteController "{name: '//storage.opiproject.org/volumes/nvmetcp12'}"
 
-# Delete VF
+# Delete Nvme VF
 grpc_cli call --json_input --json_output $BRIDGE_ADDR DeleteNvmeController "{name : '//storage.opiproject.org/volumes/controller3'}"
 grpc_cli call --json_input --json_output $BRIDGE_ADDR DeleteNvmeSubsystem "{name : '//storage.opiproject.org/volumes/subsystem03'}"
 
-# Delete PF
+# Delete Nvme PF
 grpc_cli call --json_input --json_output $BRIDGE_ADDR DeleteNvmeController "{name : '//storage.opiproject.org/volumes/controller1'}"
 grpc_cli call --json_input --json_output $BRIDGE_ADDR DeleteNvmeSubsystem "{name : '//storage.opiproject.org/volumes/subsystem2'}"
 ```
 
-To observe devices on host:
+To observe Nvme devices on host:
 
 After PF is created
 
 ```bash
 # Bind driver to PF
 modprobe nvme
-cd /sys/bus/pci/devices/$PF_BDF
+cd /sys/bus/pci/devices/$NVME_PF_BDF
 echo 'nvme' > ./driver_override
-echo $PF_BDF > /sys/bus/pci/drivers/nvme/bind
+echo $NVME_PF_BDF > /sys/bus/pci/drivers/nvme/bind
 
 # Allocate resources and prepare for VF creation
 echo 0 > ./sriov_drivers_autoprobe
@@ -166,25 +173,34 @@ echo 4 > ./sriov_numvfs
 After VF is created
 
 ```bash
-cd /sys/bus/pci/devices/$PF_BDF
+cd /sys/bus/pci/devices/$NVME_PF_BDF
 echo 'nvme' > ./virtfn0/driver_override
-echo $VF_BDF > /sys/bus/pci/drivers/nvme/bind
+echo $NVME_VF_BDF > /sys/bus/pci/drivers/nvme/bind
 ```
 
 Before VF is deleted
 
 ```bash
-cd /sys/bus/pci/devices/$PF_BDF
-echo $VF_BDF > /sys/bus/pci/drivers/nvme/unbind
+cd /sys/bus/pci/devices/$NVME_PF_BDF
+echo $NVME_VF_BDF > /sys/bus/pci/drivers/nvme/unbind
 echo '(null)' > ./virtfn2/driver_override
 ```
 
 Before PF is deleted
 
 ```bash
-cd /sys/bus/pci/devices/$PF_BDF
-echo $PF_BDF > /sys/bus/pci/drivers/nvme/unbind
+cd /sys/bus/pci/devices/$NVME_PF_BDF
+echo $NVME_PF_BDF > /sys/bus/pci/drivers/nvme/unbind
 echo '(null)' > ./driver_override
+```
+
+To observe Virtio-blk devices on host:
+
+After PF is created
+
+```bash
+echo 1 > /sys/bus/pci/devices/$BLK_PF_BDF/remove
+echo 1 > /sys/bus/pci/rescan
 ```
 
 ### Mutual TLS setup
