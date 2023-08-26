@@ -15,6 +15,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3.5.3
-      - uses: snow-actions/eclint@56ba6042c5325b7b5c4d0ff719b2a2aff9bc28d7 # v1.0.1
+      - uses: snow-actions/eclint@73be49ca24c9def5248c40e4b2fd1976c9d58a3a # v1.0.1
         with:
           args: 'check'
