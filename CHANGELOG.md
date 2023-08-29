@@ -16,6 +16,8 @@ Entries in this file are grouped into several categories:
 
 ## [Unreleased]
 
+* Add virtio-blk support ([#234](https://github.com/opiproject/opi-intel-bridge/pull/234)).
+
 ## [0.1.0] - 2023-07-14
 
 ### Added
