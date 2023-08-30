@@ -18,6 +18,12 @@ import (
 	"google.golang.org/grpc/test/bufconn"
 )
 
+var checkGlobalTestProtoObjectsNotChanged = server.CheckTestProtoObjectsNotChanged(
+	testPciEndpoint,
+	&testSubsystem,
+	&testControllerWithMaxQos,
+)
+
 type frontendClient struct {
 	pb.FrontendNvmeServiceClient
 }
