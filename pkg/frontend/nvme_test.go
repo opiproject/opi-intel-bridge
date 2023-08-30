@@ -47,6 +47,7 @@ var (
 )
 
 func TestFrontEnd_CreateNvmeController(t *testing.T) {
+	t.Cleanup(checkGlobalTestProtoObjectsNotChanged(t, t.Name()))
 	tests := map[string]struct {
 		in                 *pb.NvmeController
 		out                *pb.NvmeController
@@ -523,6 +524,7 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 }
 
 func TestFrontEnd_UpdateNvmeController(t *testing.T) {
+	t.Cleanup(checkGlobalTestProtoObjectsNotChanged(t, t.Name()))
 	tests := map[string]struct {
 		in                 *pb.NvmeController
 		out                *pb.NvmeController

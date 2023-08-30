@@ -134,9 +134,21 @@ var (
 		Key:           keyOf256Bits,
 		Cipher:        pb.EncryptionType_ENCRYPTION_TYPE_AES_CBC_256,
 	}
+
+	checkGlobalTestProtoObjectsNotChanged = server.CheckTestProtoObjectsNotChanged(
+		&encryptedVolumeAesXts256,
+		&encryptedVolumeAesXts256InResponse,
+		&encryptedVolumeAesXts128,
+		&encryptedVolumeAesXts128InResponse,
+		&encryptedVolumeAesXts192,
+		&encryptedVolumeAesCbc128,
+		&encryptedVolumeAesCbc192,
+		&encryptedVolumeAesCbc256,
+	)
 )
 
 func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
+	t.Cleanup(checkGlobalTestProtoObjectsNotChanged(t, t.Name()))
 	tests := map[string]struct {
 		in            *pb.CreateEncryptedVolumeRequest
 		out           *pb.EncryptedVolume
@@ -376,15 +388,12 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			defer testEnv.Close()
 			var request *pb.CreateEncryptedVolumeRequest
 			if tt.in != nil {
-				var ok bool
 				// make a copy to prevent key overwriting in the original structures
-				request, ok = proto.Clone(tt.in).(*pb.CreateEncryptedVolumeRequest)
-				if !ok {
-					log.Panic("Failed to copy test structure for CreateEncryptedVolumeRequest")
-				}
+				request = server.ProtoClone(tt.in)
 			}
 			fullname := server.ResourceIDToVolumeName(encryptedVolumeID)
 			if tt.out != nil {
+				tt.out = server.ProtoClone(tt.out)
 				tt.out.Name = fullname
 			}
 			if tt.existBefore {
@@ -424,6 +433,7 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 }
 
 func TestMiddleEnd_DeleteEncryptedVolume(t *testing.T) {
+	t.Cleanup(checkGlobalTestProtoObjectsNotChanged(t, t.Name()))
 	fullname := server.ResourceIDToVolumeName(encryptedVolumeID)
 	tests := map[string]struct {
 		in          *pb.DeleteEncryptedVolumeRequest
