@@ -19,7 +19,7 @@ import (
 )
 
 var checkGlobalTestProtoObjectsNotChanged = server.CheckTestProtoObjectsNotChanged(
-	testPciEndpoint,
+	&testPciEndpoint,
 	&testSubsystem,
 	&testControllerWithMaxQos,
 )
