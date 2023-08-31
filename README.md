@@ -104,7 +104,7 @@ grpc_cli call --json_input --json_output $BRIDGE_ADDR GetNvmeController "{name :
 
 # Nvme VF creation on PF0
 grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmeSubsystem "{nvme_subsystem : {spec : {nqn: 'nqn.2022-09.io.spdk:opitest3', serial_number: 'mev-opi-serial', model_number: 'mev-opi-model', max_namespaces: 11} }, nvme_subsystem_id : 'subsystem03' }"
-grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmeController "{nvme_controller : {spec : {nvme_controller_id: 2, subsystem_name_ref : '//storage.opiproject.org/volumes/subsystem03', pcie_id : {physical_function : 0, virtual_function : 3}, max_nsq:5, max_ncq:5 } }, nvme_controller_id : 'controller3'}"
+grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmeController "{nvme_controller : {spec : {nvme_controller_id: 2, subsystem_name_ref : '//storage.opiproject.org/volumes/subsystem03', pcie_id : {physical_function : 0, virtual_function : 3, port_id: 0 }, max_nsq:5, max_ncq:5 } }, nvme_controller_id : 'controller3'}"
 
 # Connect to storage-target
 grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmeRemoteController "{nvme_remote_controller : {multipath: 'NVME_MULTIPATH_MULTIPATH'}, nvme_remote_controller_id: 'nvmetcp12'}"
@@ -118,7 +118,7 @@ grpc_cli call --json_input --json_output $BRIDGE_ADDR GetNvmePath "{name: '//sto
 grpc_cli --json_input --json_output call $BRIDGE_ADDR CreateVirtioBlk "{virtio_blk_id: 'virtioblk0', virtio_blk : { volume_name_ref: 'nvmetcp12n0', pcie_id: { physical_function: '0', virtual_function: '0', port_id: '0'}}}"
 
 # Create QoS volume
-grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateQosVolume "{'qos_volume' : {'volume_name_ref' :'nvmetcp12n1', 'max_limit' : { 'rw_iops_kiops': 3 } }, 'qos_volume_id' : 'qosnvmetcp12n1' }"
+grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateQosVolume "{'qos_volume' : {'volume_name_ref' :'nvmetcp12n1', 'limits' : { 'max': {'rw_iops_kiops': 3} } }, 'qos_volume_id' : 'qosnvmetcp12n1' }"
 
 # Create encrypted volume
 grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateEncryptedVolume "{'encrypted_volume': { 'cipher': 'ENCRYPTION_TYPE_AES_XTS_128', 'volume_name_ref': 'nvmetcp12n1', 'key': 'MDAwMTAyMDMwNDA1MDYwNzA4MDkwYTBiMGMwZDBlMGY='}, 'encrypted_volume_id': 'encnvmetcp12n1' }"
