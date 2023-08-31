@@ -142,15 +142,6 @@ func verifyCreateEncryptedVolumeRequestArgs(in *pb.CreateEncryptedVolumeRequest)
 		return errMissingArgument
 	}
 
-	switch {
-	case in.EncryptedVolume.VolumeNameRef == "":
-		log.Println("volume name should be specified")
-		return errMissingArgument
-	case len(in.EncryptedVolume.Key) == 0:
-		log.Println("key cannot be empty")
-		return errMissingArgument
-	}
-
 	keyLengthInBits := len(in.EncryptedVolume.Key) * 8
 	expectedKeyLengthInBits := 0
 	switch {
