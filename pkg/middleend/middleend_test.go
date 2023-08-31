@@ -293,8 +293,8 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			out:           nil,
 			spdk:          []string{},
 			expectedInKey: make([]byte, len(encryptedVolumeAesXts256.Key)),
-			errCode:       status.Convert(errNotSupportedCipher).Code(),
-			errMsg:        status.Convert(errNotSupportedCipher).Message(),
+			errCode:       status.Convert(errMissingArgument).Code(),
+			errMsg:        status.Convert(errMissingArgument).Message(),
 			existBefore:   false,
 		},
 		"key of wrong size for AEX_XTS_256": {
