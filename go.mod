@@ -7,13 +7,13 @@ require (
 	github.com/onsi/ginkgo/v2 v2.12.0
 	github.com/opiproject/gospdk v0.0.0-20230812114418-14a6e1aa7495
 	github.com/opiproject/opi-api v0.0.0-20230908135156-02d38276b0f2
-	github.com/opiproject/opi-smbios-bridge v0.1.3-0.20230909044635-a6c01d4a8b19
+	github.com/opiproject/opi-smbios-bridge v0.1.3-0.20230910233509-b3fbab9fd9f5
 	github.com/opiproject/opi-spdk-bridge v0.1.2-0.20230909130854-d8fa1b589594
 	github.com/opiproject/opi-strongswan-bridge v0.1.1
 	github.com/vektra/mockery/v2 v2.33.2
 	go.einride.tech/aip v0.62.0
 	golang.org/x/tools v0.13.0
-	google.golang.org/grpc v1.57.0
+	google.golang.org/grpc v1.58.0
 	google.golang.org/protobuf v1.31.0
 )
 
