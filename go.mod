@@ -10,7 +10,7 @@ require (
 	github.com/opiproject/opi-smbios-bridge v0.1.3-0.20230910233509-b3fbab9fd9f5
 	github.com/opiproject/opi-spdk-bridge v0.1.2-0.20230910232010-e7164569acc3
 	github.com/opiproject/opi-strongswan-bridge v0.1.1
-	github.com/vektra/mockery/v2 v2.33.2
+	github.com/vektra/mockery v1.1.2
 	go.einride.tech/aip v0.62.0
 	golang.org/x/tools v0.13.0
 	google.golang.org/grpc v1.58.0
@@ -130,7 +130,6 @@ require (
 	github.com/nishanths/predeclared v0.2.2 // indirect
 	github.com/nunnatsa/ginkgolinter v0.13.5 // indirect
 	github.com/olekukonko/tablewriter v0.0.5 // indirect
-	github.com/pelletier/go-toml v1.9.5 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.6 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
