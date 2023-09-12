@@ -63,14 +63,22 @@ On xPU run
 ```bash
 $ docker run --rm -it -v /var/tmp/:/var/tmp/ -p $BRIDGE_PORT:$BRIDGE_PORT ghcr.io/opiproject/opi-intel-bridge:main
 
-2023/07/03 11:04:30 Connection to SPDK will be via: unix detected from /var/tmp/spdk.sock
-2023/07/03 11:04:30 server listening at [::]:50051
+2023/09/12 20:29:05 TLS files are not specified. Use insecure connection.
+2023/09/12 20:29:05 Connection to SPDK will be via: unix detected from /var/tmp/spdk.sock
+2023/09/12 20:29:05 gRPC server listening at [::]:50051
+2023/09/12 20:29:05 HTTP Server listening at 8082
 ```
 
 To send commands to the bridge, grpc_cli tool is used. It can be used as a containerized or a native version. If containerized version is preferable, then an alias can be defined as follows
 
 ```bash
 alias grpc_cli="docker run --network=host --rm -it namely/grpc-cli"
+```
+
+In addition HTTP is supported via grpc gateway, for example:
+
+```bash
+curl -kL http://10.10.10.10:8082/v1/inventory/1/inventory/2
 ```
 
 On management machine run below command to check bridge availability and reflection capabilities

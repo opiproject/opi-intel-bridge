@@ -9,13 +9,14 @@ services:
     build:
       context: .
     ports:
+      - "8082:8082"
       - "50051:50051"
     networks:
       - opi
     depends_on:
       redis:
         condition: service_healthy
-    command: /opi-intel-bridge -port=50051 -spdk_addr /var/tmp/spdk.sock
+    command: /opi-intel-bridge -grpc_port=50051 -http_port=8082 -spdk_addr /var/tmp/spdk.sock
     healthcheck:
       test: grpcurl -plaintext localhost:50051 list || exit 1
 
@@ -25,6 +26,15 @@ services:
       - opi
     healthcheck:
       test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+
+  opi-gw-test:
+    image: curlimages/curl:8.2.1
+    networks:
+      - opi
+    depends_on:
+      opi-intel-server:
+        condition: service_healthy
+    command: curl -qkL http://opi-intel-server:8082/v1/inventory/1/inventory/2
 
   opi-test:
     image: docker.io/namely/grpc-cli
