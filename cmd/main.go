@@ -6,10 +6,13 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"log"
 	"net"
+	"net/http"
+	"time"
 
 	"github.com/opiproject/gospdk/spdk"
 	fe "github.com/opiproject/opi-intel-bridge/pkg/frontend"
@@ -25,12 +28,18 @@ import (
 	pb "github.com/opiproject/opi-api/storage/v1alpha1/gen/go"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
+
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 )
 
 func main() {
-	var port int
-	flag.IntVar(&port, "port", 50051, "The Server port")
+	var grpcPort int
+	flag.IntVar(&grpcPort, "grpc_port", 50051, "The gRPC server port")
+
+	var httpPort int
+	flag.IntVar(&httpPort, "http_port", 8082, "The HTTP server port")
 
 	var spdkAddress string
 	flag.StringVar(&spdkAddress, "spdk_addr", "/var/tmp/spdk.sock", "Points to SPDK unix socket/tcp socket to interact with")
@@ -40,7 +49,12 @@ func main() {
 
 	flag.Parse()
 
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
+	go runGatewayServer(grpcPort, httpPort)
+	runGrpcServer(grpcPort, spdkAddress, tlsFiles)
+}
+
+func runGrpcServer(grpcPort int, spdkAddress string, tlsFiles string) {
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", grpcPort))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
@@ -82,8 +96,36 @@ func main() {
 
 	reflection.Register(s)
 
-	log.Printf("server listening at %v", lis.Addr())
+	log.Printf("gRPC server listening at %v", lis.Addr())
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
+	}
+}
+
+func runGatewayServer(grpcPort int, httpPort int) {
+	ctx := context.Background()
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
+	// Register gRPC server endpoint
+	// Note: Make sure the gRPC server is running properly and accessible
+	mux := runtime.NewServeMux()
+	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
+	err := pc.RegisterInventorySvcHandlerFromEndpoint(ctx, mux, fmt.Sprintf(":%d", grpcPort), opts)
+	if err != nil {
+		log.Panic("cannot register handler server")
+	}
+
+	// Start HTTP server (and proxy calls to gRPC server endpoint)
+	log.Printf("HTTP Server listening at %v", httpPort)
+	server := &http.Server{
+		Addr:         fmt.Sprintf(":%d", httpPort),
+		Handler:      mux,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
+	}
+	err = server.ListenAndServe()
+	if err != nil {
+		log.Panic("cannot start HTTP gateway server")
 	}
 }
