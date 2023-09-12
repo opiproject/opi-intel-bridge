@@ -19,6 +19,7 @@ RUN go build -v -o /opi-intel-bridge ./cmd/...
 
 # second stage to reduce image size
 FROM alpine:3.18@sha256:7144f7bab3d4c2648d7e59409f15ec52a18006a128c733fcff20d3a4a54ba44a
+RUN apk add --no-cache --no-check-certificate hwdata && rm -rf /var/cache/apk/*
 COPY --from=builder /opi-intel-bridge /
 COPY --from=docker.io/fullstorydev/grpcurl:v1.8.7-alpine /bin/grpcurl /usr/local/bin/
 EXPOSE 50051
