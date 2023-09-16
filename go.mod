@@ -10,7 +10,7 @@ require (
 	github.com/opiproject/opi-smbios-bridge v0.1.3-0.20230916044337-529b43a24315
 	github.com/opiproject/opi-spdk-bridge v0.1.2-0.20230916173721-5d053ad605ac
 	github.com/opiproject/opi-strongswan-bridge v0.1.1
-	github.com/vektra/mockery v1.1.2
+	github.com/vektra/mockery/v2 v2.33.3
 	go.einride.tech/aip v0.62.0
 	golang.org/x/tools v0.13.0
 	google.golang.org/grpc v1.58.1
