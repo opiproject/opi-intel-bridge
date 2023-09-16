@@ -5,7 +5,7 @@ go 1.19
 require (
 	github.com/golangci/golangci-lint v1.54.2
 	github.com/onsi/ginkgo/v2 v2.12.0
-	github.com/opiproject/gospdk v0.0.0-20230812114418-14a6e1aa7495
+	github.com/opiproject/gospdk v0.0.0-20230914142619-45032a5cfc90
 	github.com/opiproject/opi-api v0.0.0-20230908135156-02d38276b0f2
 	github.com/opiproject/opi-smbios-bridge v0.1.3-0.20230910233509-b3fbab9fd9f5
 	github.com/opiproject/opi-spdk-bridge v0.1.2-0.20230910232010-e7164569acc3
