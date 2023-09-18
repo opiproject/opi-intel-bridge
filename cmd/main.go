@@ -14,10 +14,10 @@ import (
 	"github.com/opiproject/gospdk/spdk"
 	fe "github.com/opiproject/opi-intel-bridge/pkg/frontend"
 	me "github.com/opiproject/opi-intel-bridge/pkg/middleend"
-	"github.com/opiproject/opi-intel-bridge/pkg/utils"
 	"github.com/opiproject/opi-smbios-bridge/pkg/inventory"
 	"github.com/opiproject/opi-spdk-bridge/pkg/backend"
 	"github.com/opiproject/opi-spdk-bridge/pkg/frontend"
+	utils "github.com/opiproject/opi-spdk-bridge/pkg/server"
 	"github.com/opiproject/opi-strongswan-bridge/pkg/ipsec"
 
 	pc "github.com/opiproject/opi-api/common/v1/gen/go"
