@@ -104,15 +104,15 @@ or specify commands manually
 ```bash
 # Nvme PF creation
 grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmeSubsystem "{nvme_subsystem : {spec : {nqn: 'nqn.2022-09.io.spdk:opitest2', serial_number: 'myserial2', model_number: 'mymodel2', max_namespaces: 11} }, nvme_subsystem_id : 'subsystem2' }"
-grpc_cli call --json_input --json_output $BRIDGE_ADDR ListNvmeSubsystems "{parent : 'todo'}"
-grpc_cli call --json_input --json_output $BRIDGE_ADDR GetNvmeSubsystem "{name : '//storage.opiproject.org/volumes/subsystem2'}"
-grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmeController "{nvme_controller : {spec : {nvme_controller_id: 2, subsystem_name_ref : '//storage.opiproject.org/volumes/subsystem2', pcie_id : {physical_function : 0, virtual_function : 0, port_id: 0}, max_nsq:5, max_ncq:5 } }, nvme_controller_id : 'controller1'}"
-grpc_cli call --json_input --json_output $BRIDGE_ADDR ListNvmeControllers "{parent : '//storage.opiproject.org/volumes/subsystem2'}"
-grpc_cli call --json_input --json_output $BRIDGE_ADDR GetNvmeController "{name : '//storage.opiproject.org/volumes/controller1'}"
+grpc_cli call --json_input --json_output $BRIDGE_ADDR ListNvmeSubsystems "{}"
+grpc_cli call --json_input --json_output $BRIDGE_ADDR GetNvmeSubsystem "{name : '//storage.opiproject.org/subsystems/subsystem2'}"
+grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmeController "{parent: '//storage.opiproject.org/subsystems/subsystem2', nvme_controller : {spec : {nvme_controller_id: 2, pcie_id : {physical_function : 0, virtual_function : 0, port_id: 0}, max_nsq:5, max_ncq:5 } }, nvme_controller_id : 'controller1'}"
+grpc_cli call --json_input --json_output $BRIDGE_ADDR ListNvmeControllers "{parent : '//storage.opiproject.org/subsystems/subsystem2'}"
+grpc_cli call --json_input --json_output $BRIDGE_ADDR GetNvmeController "{name : '//storage.opiproject.org/subsystems/subsystem2/controllers/controller1'}"
 
 # Nvme VF creation on PF0
 grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmeSubsystem "{nvme_subsystem : {spec : {nqn: 'nqn.2022-09.io.spdk:opitest3', serial_number: 'mev-opi-serial', model_number: 'mev-opi-model', max_namespaces: 11} }, nvme_subsystem_id : 'subsystem03' }"
-grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmeController "{nvme_controller : {spec : {nvme_controller_id: 2, subsystem_name_ref : '//storage.opiproject.org/volumes/subsystem03', pcie_id : {physical_function : 0, virtual_function : 3, port_id: 0 }, max_nsq:5, max_ncq:5 } }, nvme_controller_id : 'controller3'}"
+grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmeController "{parent: '//storage.opiproject.org/subsystems/subsystem03', nvme_controller : {spec : {nvme_controller_id: 2, pcie_id : {physical_function : 0, virtual_function : 3, port_id: 0 }, max_nsq:5, max_ncq:5 } }, nvme_controller_id : 'controller3'}"
 
 # Connect to storage-target
 grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmeRemoteController "{nvme_remote_controller : {multipath: 'NVME_MULTIPATH_MULTIPATH'}, nvme_remote_controller_id: 'nvmetcp12'}"
@@ -132,13 +132,13 @@ grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateQosVolume "{'qos_vol
 grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateEncryptedVolume "{'encrypted_volume': { 'cipher': 'ENCRYPTION_TYPE_AES_XTS_128', 'volume_name_ref': 'nvmetcp12n1', 'key': 'MDAwMTAyMDMwNDA1MDYwNzA4MDkwYTBiMGMwZDBlMGY='}, 'encrypted_volume_id': 'encnvmetcp12n1' }"
 
 # Create namespace
-grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmeNamespace "{nvme_namespace : {spec : {subsystem_name_ref : '//storage.opiproject.org/volumes/subsystem2', volume_name_ref : 'nvmetcp12n1', 'host_nsid' : '10', uuid:{value : '1b4e28ba-2fa1-11d2-883f-b9a761bde3fb'}, nguid: '1b4e28ba-2fa1-11d2-883f-b9a761bde3fb', eui64: 1967554867335598546 } }, nvme_namespace_id: 'namespace1'}"
-grpc_cli call --json_input --json_output $BRIDGE_ADDR ListNvmeNamespaces "{parent : '//storage.opiproject.org/volumes/subsystem2'}"
-grpc_cli call --json_input --json_output $BRIDGE_ADDR GetNvmeNamespace "{name : '//storage.opiproject.org/volumes/namespace1'}"
-grpc_cli call --json_input --json_output $BRIDGE_ADDR StatsNvmeNamespace "{name : '//storage.opiproject.org/volumes/namespace1'}"
+grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmeNamespace "{parent: '//storage.opiproject.org/subsystems/subsystem2', nvme_namespace : {spec : {volume_name_ref : 'nvmetcp12n1', 'host_nsid' : '10', uuid:{value : '1b4e28ba-2fa1-11d2-883f-b9a761bde3fb'}, nguid: '1b4e28ba-2fa1-11d2-883f-b9a761bde3fb', eui64: 1967554867335598546 } }, nvme_namespace_id: 'namespace1'}"
+grpc_cli call --json_input --json_output $BRIDGE_ADDR ListNvmeNamespaces "{parent : '//storage.opiproject.org/subsystems/subsystem2'}"
+grpc_cli call --json_input --json_output $BRIDGE_ADDR GetNvmeNamespace "{name : '//storage.opiproject.org/subsystems/subsystem2/namespaces/namespace1'}"
+grpc_cli call --json_input --json_output $BRIDGE_ADDR StatsNvmeNamespace "{name : '//storage.opiproject.org/subsystems/subsystem2/namespaces/namespace1'}"
 
 # Delete namespace
-grpc_cli call --json_input --json_output $BRIDGE_ADDR DeleteNvmeNamespace "{name : '//storage.opiproject.org/volumes/namespace1'}"
+grpc_cli call --json_input --json_output $BRIDGE_ADDR DeleteNvmeNamespace "{name : '//storage.opiproject.org/subsystems/subsystem2/namespaces/namespace1'}"
 
 # Delete encrypted volume
 grpc_cli call --json_input --json_output $BRIDGE_ADDR DeleteEncryptedVolume "{'name': '//storage.opiproject.org/volumes/encnvmetcp12n1'}"
@@ -154,12 +154,12 @@ grpc_cli call --json_input --json_output $BRIDGE_ADDR DeleteNvmePath "{name: '//
 grpc_cli call --json_input --json_output $BRIDGE_ADDR DeleteNvmeRemoteController "{name: '//storage.opiproject.org/volumes/nvmetcp12'}"
 
 # Delete Nvme VF
-grpc_cli call --json_input --json_output $BRIDGE_ADDR DeleteNvmeController "{name : '//storage.opiproject.org/volumes/controller3'}"
-grpc_cli call --json_input --json_output $BRIDGE_ADDR DeleteNvmeSubsystem "{name : '//storage.opiproject.org/volumes/subsystem03'}"
+grpc_cli call --json_input --json_output $BRIDGE_ADDR DeleteNvmeController "{name : '//storage.opiproject.org/subsystems/subsystem03/controllers/controller3'}"
+grpc_cli call --json_input --json_output $BRIDGE_ADDR DeleteNvmeSubsystem "{name : '//storage.opiproject.org/subsystems/subsystem03'}"
 
 # Delete Nvme PF
-grpc_cli call --json_input --json_output $BRIDGE_ADDR DeleteNvmeController "{name : '//storage.opiproject.org/volumes/controller1'}"
-grpc_cli call --json_input --json_output $BRIDGE_ADDR DeleteNvmeSubsystem "{name : '//storage.opiproject.org/volumes/subsystem2'}"
+grpc_cli call --json_input --json_output $BRIDGE_ADDR DeleteNvmeController "{name : '//storage.opiproject.org/subsystems/subsystem2/controllers/controller1'}"
+grpc_cli call --json_input --json_output $BRIDGE_ADDR DeleteNvmeSubsystem "{name : '//storage.opiproject.org/subsystems/subsystem2'}"
 ```
 
 To observe Nvme devices on host:
