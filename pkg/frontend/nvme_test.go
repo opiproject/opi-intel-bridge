@@ -10,6 +10,7 @@ import (
 
 	"github.com/opiproject/gospdk/spdk"
 	pb "github.com/opiproject/opi-api/storage/v1alpha1/gen/go"
+	"github.com/opiproject/opi-spdk-bridge/pkg/frontend"
 	"github.com/opiproject/opi-spdk-bridge/pkg/server"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -23,17 +24,19 @@ var (
 		VirtualFunction:  wrapperspb.Int32(2),
 		PortId:           wrapperspb.Int32(0),
 	}
-	testSubsystem = pb.NvmeSubsystem{
-		Name: server.ResourceIDToVolumeName("subsystem-test"),
+	testSubsystemID = "subsystem-test"
+	testSubsystem   = pb.NvmeSubsystem{
+		Name: frontend.ResourceIDToSubsystemName(testSubsystemID),
 		Spec: &pb.NvmeSubsystemSpec{
 			Nqn: "nqn.2022-09.io.spdk:opi3",
 		},
 	}
-	testControllerID         = "controller-test"
-	testControllerName       = server.ResourceIDToVolumeName(testControllerID)
+	testControllerID   = "controller-test"
+	testControllerName = frontend.ResourceIDToControllerName(
+		testSubsystemID, testControllerID,
+	)
 	testControllerWithMaxQos = pb.NvmeController{
 		Spec: &pb.NvmeControllerSpec{
-			SubsystemNameRef: testSubsystem.Name,
 			PcieId:           &testPciEndpoint,
 			NvmeControllerId: proto.Int32(1),
 			MaxLimit: &pb.QosLimit{
@@ -59,7 +62,6 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 		"max_limit rw_iops_kiops is not supported": {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: testSubsystem.Name,
 					PcieId:           &testPciEndpoint,
 					NvmeControllerId: proto.Int32(1),
 					MaxLimit:         &pb.QosLimit{RwIopsKiops: 1},
@@ -74,7 +76,6 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 		"max_limit rw_bandwidth_mbs is not supported": {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: testSubsystem.Name,
 					PcieId:           &testPciEndpoint,
 					NvmeControllerId: proto.Int32(1),
 					MaxLimit:         &pb.QosLimit{RwBandwidthMbs: 1},
@@ -112,7 +113,6 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			in: &testControllerWithMaxQos,
 			out: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: testSubsystem.Name,
 					PcieId:           &testPciEndpoint,
 					NvmeControllerId: proto.Int32(-1),
 					MaxLimit:         &pb.QosLimit{RdIopsKiops: 1, WrIopsKiops: 1, RdBandwidthMbs: 1, WrBandwidthMbs: 1},
@@ -129,14 +129,12 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 		"no qos limits are specified": {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: testSubsystem.Name,
 					PcieId:           &testPciEndpoint,
 					NvmeControllerId: proto.Int32(1),
 				},
 			},
 			out: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: testSubsystem.Name,
 					PcieId:           &testPciEndpoint,
 					NvmeControllerId: proto.Int32(-1),
 				},
@@ -152,7 +150,6 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 		"controller with the same qos limits exists": {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: testSubsystem.Name,
 					PcieId:           &testPciEndpoint,
 					NvmeControllerId: proto.Int32(1),
 					MinLimit:         &pb.QosLimit{RdBandwidthMbs: 1, WrBandwidthMbs: 1},
@@ -161,7 +158,6 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			},
 			out: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: testSubsystem.Name,
 					PcieId:           &testPciEndpoint,
 					NvmeControllerId: proto.Int32(-1),
 					MinLimit:         &pb.QosLimit{RdBandwidthMbs: 1, WrBandwidthMbs: 1},
@@ -174,7 +170,6 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			errMsg:  "",
 			existingController: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: testSubsystem.Name,
 					PcieId:           &testPciEndpoint,
 					NvmeControllerId: proto.Int32(-1),
 					MinLimit:         &pb.QosLimit{RdBandwidthMbs: 1, WrBandwidthMbs: 1},
@@ -186,7 +181,6 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 		"controller with different max qos limits exists": {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: testSubsystem.Name,
 					PcieId:           &testPciEndpoint,
 					NvmeControllerId: proto.Int32(1),
 					MaxLimit:         &pb.QosLimit{RdIopsKiops: 12321, WrIopsKiops: 1, RdBandwidthMbs: 1, WrBandwidthMbs: 1},
@@ -198,7 +192,6 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			errMsg:  fmt.Sprintf("Controller %v exists with different QoS limits", testControllerName),
 			existingController: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: testSubsystem.Name,
 					PcieId:           &testPciEndpoint,
 					NvmeControllerId: proto.Int32(-1),
 					MaxLimit:         &pb.QosLimit{RdIopsKiops: 1, WrIopsKiops: 1, RdBandwidthMbs: 1, WrBandwidthMbs: 1},
@@ -209,7 +202,6 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 		"controller with different min qos limits exists": {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: testSubsystem.Name,
 					PcieId:           &testPciEndpoint,
 					NvmeControllerId: proto.Int32(1),
 					MinLimit:         &pb.QosLimit{RdBandwidthMbs: 12321, WrBandwidthMbs: 1},
@@ -221,7 +213,6 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			errMsg:  fmt.Sprintf("Controller %v exists with different QoS limits", testControllerName),
 			existingController: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: testSubsystem.Name,
 					PcieId:           &testPciEndpoint,
 					NvmeControllerId: proto.Int32(-1),
 					MinLimit:         &pb.QosLimit{RdBandwidthMbs: 1, WrBandwidthMbs: 1},
@@ -232,7 +223,6 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 		"min_limit rw_bandwidth_mbs is not supported": {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: testSubsystem.Name,
 					PcieId:           &testPciEndpoint,
 					NvmeControllerId: proto.Int32(1),
 					MinLimit:         &pb.QosLimit{RwBandwidthMbs: 1},
@@ -247,7 +237,6 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 		"min_limit rw_iops_kiops is not supported": {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: testSubsystem.Name,
 					PcieId:           &testPciEndpoint,
 					NvmeControllerId: proto.Int32(1),
 					MinLimit:         &pb.QosLimit{RwIopsKiops: 1},
@@ -262,7 +251,6 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 		"min_limit rd_iops_kiops is not supported": {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: testSubsystem.Name,
 					PcieId:           &testPciEndpoint,
 					NvmeControllerId: proto.Int32(1),
 					MinLimit:         &pb.QosLimit{RdIopsKiops: 1},
@@ -277,7 +265,6 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 		"min_limit wr_iops_kiops is not supported": {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: testSubsystem.Name,
 					PcieId:           &testPciEndpoint,
 					NvmeControllerId: proto.Int32(1),
 					MinLimit:         &pb.QosLimit{WrIopsKiops: 1},
@@ -292,7 +279,6 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 		"allowed min qos limits": {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: testSubsystem.Name,
 					PcieId:           &testPciEndpoint,
 					NvmeControllerId: proto.Int32(1),
 					MinLimit:         &pb.QosLimit{RdBandwidthMbs: 1, WrBandwidthMbs: 1},
@@ -301,7 +287,6 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			},
 			out: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: testSubsystem.Name,
 					PcieId:           &testPciEndpoint,
 					NvmeControllerId: proto.Int32(-1),
 					MinLimit:         &pb.QosLimit{RdBandwidthMbs: 1, WrBandwidthMbs: 1},
@@ -319,7 +304,6 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 		"min_limit rd_bandwidth_mbs cannot be greater than max_limit rd_bandwidth_mbs": {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: testSubsystem.Name,
 					PcieId:           &testPciEndpoint,
 					NvmeControllerId: proto.Int32(1),
 					MinLimit:         &pb.QosLimit{RdBandwidthMbs: 2},
@@ -335,7 +319,6 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 		"min_limit wr_bandwidth_mbs cannot be greater than max_limit wr_bandwidth_mbs": {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: testSubsystem.Name,
 					PcieId:           &testPciEndpoint,
 					NvmeControllerId: proto.Int32(1),
 					MinLimit:         &pb.QosLimit{WrBandwidthMbs: 2},
@@ -351,7 +334,6 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 		"allowed min and max qos limits": {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: testSubsystem.Name,
 					PcieId:           &testPciEndpoint,
 					NvmeControllerId: proto.Int32(1),
 					MaxLimit:         &pb.QosLimit{RdIopsKiops: 2, WrIopsKiops: 2, RdBandwidthMbs: 2, WrBandwidthMbs: 2},
@@ -360,7 +342,6 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			},
 			out: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: testSubsystem.Name,
 					PcieId:           &testPciEndpoint,
 					NvmeControllerId: proto.Int32(-1),
 					MaxLimit:         &pb.QosLimit{RdIopsKiops: 2, WrIopsKiops: 2, RdBandwidthMbs: 2, WrBandwidthMbs: 2},
@@ -378,7 +359,6 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 		"max_limit rd_iops_kiops is negative": {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: testSubsystem.Name,
 					PcieId:           &testPciEndpoint,
 					NvmeControllerId: proto.Int32(1),
 					MaxLimit:         &pb.QosLimit{RdIopsKiops: -1},
@@ -393,7 +373,6 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 		"max_limit wr_iops_kiops is negative": {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: testSubsystem.Name,
 					PcieId:           &testPciEndpoint,
 					NvmeControllerId: proto.Int32(1),
 					MaxLimit:         &pb.QosLimit{WrIopsKiops: -1},
@@ -408,7 +387,6 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 		"max_limit rd_bandwidth_mbs is negative": {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: testSubsystem.Name,
 					PcieId:           &testPciEndpoint,
 					NvmeControllerId: proto.Int32(1),
 					MaxLimit:         &pb.QosLimit{RdBandwidthMbs: -1},
@@ -423,7 +401,6 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 		"max_limit wr_bandwidth_mbs is negative": {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: testSubsystem.Name,
 					PcieId:           &testPciEndpoint,
 					NvmeControllerId: proto.Int32(1),
 					MaxLimit:         &pb.QosLimit{WrBandwidthMbs: -1},
@@ -438,7 +415,6 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 		"min_limit rd_bandwidth_mbs is negative": {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: testSubsystem.Name,
 					PcieId:           &testPciEndpoint,
 					NvmeControllerId: proto.Int32(1),
 					MinLimit:         &pb.QosLimit{RdBandwidthMbs: -1},
@@ -453,7 +429,6 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 		"min_limit wr_bandwidth_mbs is negative": {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: testSubsystem.Name,
 					PcieId:           &testPciEndpoint,
 					NvmeControllerId: proto.Int32(1),
 					MinLimit:         &pb.QosLimit{WrBandwidthMbs: -1},
@@ -485,6 +460,7 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 
 			response, err := testEnv.opiSpdkServer.CreateNvmeController(testEnv.ctx,
 				&pb.CreateNvmeControllerRequest{
+					Parent:           testSubsystem.Name,
 					NvmeController:   tt.in,
 					NvmeControllerId: testControllerID})
 
@@ -537,7 +513,6 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 			in: &pb.NvmeController{
 				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: testSubsystem.Name,
 					PcieId:           &testPciEndpoint,
 					NvmeControllerId: proto.Int32(1),
 					MaxLimit:         &pb.QosLimit{RwIopsKiops: 1},
@@ -553,7 +528,6 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 			in: &pb.NvmeController{
 				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: testSubsystem.Name,
 					PcieId:           &testPciEndpoint,
 					NvmeControllerId: proto.Int32(1),
 					MaxLimit:         &pb.QosLimit{RwBandwidthMbs: 1},
@@ -569,7 +543,6 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 			in: &pb.NvmeController{
 				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: testSubsystem.Name,
 					PcieId:           &testPciEndpoint,
 					NvmeControllerId: proto.Int32(1),
 					MinLimit:         &pb.QosLimit{RwBandwidthMbs: 1},
@@ -585,7 +558,6 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 			in: &pb.NvmeController{
 				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: testSubsystem.Name,
 					PcieId:           &testPciEndpoint,
 					NvmeControllerId: proto.Int32(1),
 					MinLimit:         &pb.QosLimit{RwIopsKiops: 1},
@@ -601,7 +573,6 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 			in: &pb.NvmeController{
 				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: testSubsystem.Name,
 					PcieId:           &testPciEndpoint,
 					NvmeControllerId: proto.Int32(1),
 					MinLimit:         &pb.QosLimit{RdIopsKiops: 1},
@@ -617,7 +588,6 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 			in: &pb.NvmeController{
 				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: testSubsystem.Name,
 					PcieId:           &testPciEndpoint,
 					NvmeControllerId: proto.Int32(1),
 					MinLimit:         &pb.QosLimit{WrIopsKiops: 1},
@@ -633,7 +603,6 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 			in: &pb.NvmeController{
 				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: testSubsystem.Name,
 					PcieId:           &testPciEndpoint,
 					NvmeControllerId: proto.Int32(1),
 					MinLimit:         &pb.QosLimit{RdBandwidthMbs: 2},
@@ -650,7 +619,6 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 			in: &pb.NvmeController{
 				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: testSubsystem.Name,
 					PcieId:           &testPciEndpoint,
 					NvmeControllerId: proto.Int32(1),
 					MinLimit:         &pb.QosLimit{WrBandwidthMbs: 2},
@@ -667,7 +635,6 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 			in: &pb.NvmeController{
 				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: testSubsystem.Name,
 					PcieId:           &testPciEndpoint,
 					NvmeControllerId: proto.Int32(1),
 					MaxLimit:         &pb.QosLimit{RdIopsKiops: -1},
@@ -683,7 +650,6 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 			in: &pb.NvmeController{
 				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: testSubsystem.Name,
 					PcieId:           &testPciEndpoint,
 					NvmeControllerId: proto.Int32(1),
 					MaxLimit:         &pb.QosLimit{WrIopsKiops: -1},
@@ -699,7 +665,6 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 			in: &pb.NvmeController{
 				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: testSubsystem.Name,
 					PcieId:           &testPciEndpoint,
 					NvmeControllerId: proto.Int32(1),
 					MaxLimit:         &pb.QosLimit{RdBandwidthMbs: -1},
@@ -715,7 +680,6 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 			in: &pb.NvmeController{
 				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: testSubsystem.Name,
 					PcieId:           &testPciEndpoint,
 					NvmeControllerId: proto.Int32(1),
 					MaxLimit:         &pb.QosLimit{WrBandwidthMbs: -1},
@@ -731,7 +695,6 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 			in: &pb.NvmeController{
 				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: testSubsystem.Name,
 					PcieId:           &testPciEndpoint,
 					NvmeControllerId: proto.Int32(1),
 					MinLimit:         &pb.QosLimit{RdBandwidthMbs: -1},
@@ -747,7 +710,6 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 			in: &pb.NvmeController{
 				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: testSubsystem.Name,
 					PcieId:           &testPciEndpoint,
 					NvmeControllerId: proto.Int32(1),
 					MinLimit:         &pb.QosLimit{WrBandwidthMbs: -1},
@@ -763,7 +725,6 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 			in: &pb.NvmeController{
 				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: testSubsystem.Name,
 					PcieId:           &testPciEndpoint,
 					NvmeControllerId: proto.Int32(1),
 				},
@@ -771,7 +732,6 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 			out: &pb.NvmeController{
 				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: testSubsystem.Name,
 					PcieId:           &testPciEndpoint,
 					NvmeControllerId: proto.Int32(1),
 				},
@@ -786,7 +746,6 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 			in: &pb.NvmeController{
 				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: testSubsystem.Name,
 					PcieId:           &testPciEndpoint,
 					NvmeControllerId: proto.Int32(1),
 					MaxLimit:         &pb.QosLimit{RdIopsKiops: 10},
@@ -803,7 +762,6 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 			in: &pb.NvmeController{
 				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
-					SubsystemNameRef: testSubsystem.Name,
 					PcieId:           &testPciEndpoint,
 					NvmeControllerId: proto.Int32(1),
 					MaxLimit:         &pb.QosLimit{RdIopsKiops: 10},
