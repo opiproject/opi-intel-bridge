@@ -7,9 +7,9 @@ require (
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.18.0
 	github.com/onsi/ginkgo/v2 v2.12.0
 	github.com/opiproject/gospdk v0.0.0-20230914142619-45032a5cfc90
-	github.com/opiproject/opi-api v0.0.0-20230912155417-7e8775405e73
+	github.com/opiproject/opi-api v0.0.0-20230920191024-23b8e653e458
 	github.com/opiproject/opi-smbios-bridge v0.1.3-0.20230916044337-529b43a24315
-	github.com/opiproject/opi-spdk-bridge v0.1.2-0.20230916173721-5d053ad605ac
+	github.com/opiproject/opi-spdk-bridge v0.1.2-0.20230921171410-3751e76f2f08
 	github.com/opiproject/opi-strongswan-bridge v0.1.1
 	github.com/vektra/mockery/v2 v2.33.3
 	go.einride.tech/aip v0.62.0
