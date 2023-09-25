@@ -30,16 +30,17 @@ It is assumed that Intel IPU is already properly set up to be used with Intel OP
 
 The following variables are used throughout this document:
 
-| Variable    | Description                                                                                                                                        |
-| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| BRIDGE_IP   | opi-intel-bridge gRPC listening IP address e.g. 10.10.10.10 or localhost                                                                           |
-| BRIDGE_PORT | opi-intel-bridge gRPC listening port e.g. 50051                                                                                                    |
-| BRIDGE_ADDR | BRIDGE_IP:BRIDGE_PORT                                                                                                                              |
-| NVME_PF_BDF | physical function PCI address e.g. 0000:3b:00.1 for Nvme                                                                                           |
-| NVME_VF_BDF | virtual function PCI address e.g. 0000:40:00.0 can be found in pf's virtfn\<X\> where X equals to virtual_function in CreateNvmeController minus 1 |
-| BLK_PF_BDF  | physical function PCI address e.g. 0000:af:01.0 for virtio-blk                                                                                     |
-| TARGET_IP   | storage target ip address                                                                                                                          |
-| TARGET_PORT | storage target port                                                                                                                                |
+| Variable         | Description                                                                                                                                        |
+| -----------------| -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| BRIDGE_IP        | opi-intel-bridge gRPC listening IP address e.g. 10.10.10.10 or localhost                                                                           |
+| BRIDGE_PORT      | opi-intel-bridge gRPC listening port e.g. 50051                                                                                                    |
+| BRIDGE_ADDR      | BRIDGE_IP:BRIDGE_PORT                                                                                                                              |
+| BRIDGE_HTTP_PORT | opi-intel-bridge http gateway port e.g. 8082                                                                                                       |
+| NVME_PF_BDF      | physical function PCI address e.g. 0000:3b:00.1 for Nvme                                                                                           |
+| NVME_VF_BDF      | virtual function PCI address e.g. 0000:40:00.0 can be found in pf's virtfn\<X\> where X equals to virtual_function in CreateNvmeController minus 1 |
+| BLK_PF_BDF       | physical function PCI address e.g. 0000:af:01.0 for virtio-blk                                                                                     |
+| TARGET_IP        | storage target ip address                                                                                                                          |
+| TARGET_PORT      | storage target port                                                                                                                                |
 
 ### Build and import
 
@@ -61,7 +62,7 @@ import "github.com/opiproject/opi-intel-bridge/pkg/middleend"
 On xPU run
 
 ```bash
-$ docker run --rm -it -v /var/tmp/:/var/tmp/ -p $BRIDGE_PORT:$BRIDGE_PORT ghcr.io/opiproject/opi-intel-bridge:main
+$ docker run --rm -it -v /var/tmp/:/var/tmp/ -p $BRIDGE_PORT:$BRIDGE_PORT -p $BRIDGE_HTTP_PORT:$BRIDGE_HTTP_PORT ghcr.io/opiproject/opi-intel-bridge:main /opi-intel-bridge -grpc_port=$BRIDGE_PORT -http_port=$BRIDGE_HTTP_PORT
 
 2023/09/12 20:29:05 TLS files are not specified. Use insecure connection.
 2023/09/12 20:29:05 Connection to SPDK will be via: unix detected from /var/tmp/spdk.sock
@@ -273,13 +274,13 @@ make sure to follow the principle of least privilege for access permissions and 
 Run bridge binary specifying TLS-related server key/certificate and CA cert
 
 ```bash
-./opi-intel-bridge -tls $SERVER_CERT:$SERVER_KEY:$CA_CERT
+./opi-intel-bridge -grpc_port=$BRIDGE_PORT -http_port=$BRIDGE_HTTP_PORT -tls $SERVER_CERT:$SERVER_KEY:$CA_CERT
 ```
 
 for container
 
 ```bash
-docker run --network=host -v "/var/tmp:/var/tmp" -v "/etc/opi:/etc/opi" ghcr.io/opiproject/opi-intel-bridge:main /opi-intel-bridge -port=$BRIDGE_PORT -tls $SERVER_CERT:$SERVER_KEY:$CA_CERT
+docker run --network=host -v "/var/tmp:/var/tmp" -v "/etc/opi:/etc/opi" ghcr.io/opiproject/opi-intel-bridge:main /opi-intel-bridge -grpc_port=$BRIDGE_PORT -http_port=$BRIDGE_HTTP_PORT -tls $SERVER_CERT:$SERVER_KEY:$CA_CERT
 ```
 
 ##### Send client commands
