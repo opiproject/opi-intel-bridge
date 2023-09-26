@@ -6,6 +6,7 @@ package frontend
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"strconv"
@@ -28,6 +29,16 @@ func NewNvmeNpiTransport() frontend.NvmeTransport {
 }
 
 func (c nvmeNpiTransport) Params(ctrlr *pb.NvmeController, nqn string) (spdk.NvmfSubsystemAddListenerParams, error) {
+	if ctrlr.Spec.PcieId.PortId.Value != 0 {
+		return spdk.NvmfSubsystemAddListenerParams{},
+			errors.New("only port 0 is supported")
+	}
+
+	if ctrlr.Spec.PcieId.PhysicalFunction.Value != 0 {
+		return spdk.NvmfSubsystemAddListenerParams{},
+			errors.New("only physical_function 0 is supported")
+	}
+
 	result := spdk.NvmfSubsystemAddListenerParams{}
 	result.Nqn = nqn
 	result.ListenAddress.Trtype = "npi"
