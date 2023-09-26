@@ -15,7 +15,7 @@ import (
 	pb "github.com/opiproject/opi-api/storage/v1alpha1/gen/go"
 	"github.com/opiproject/opi-intel-bridge/pkg/models"
 	"github.com/opiproject/opi-spdk-bridge/pkg/middleend"
-	"github.com/opiproject/opi-spdk-bridge/pkg/server"
+	"github.com/opiproject/opi-spdk-bridge/pkg/utils"
 	"go.einride.tech/aip/fieldbehavior"
 	"go.einride.tech/aip/resourceid"
 	"go.einride.tech/aip/resourcename"
@@ -89,7 +89,7 @@ func (s *Server) CreateEncryptedVolume(_ context.Context, in *pb.CreateEncrypted
 		log.Printf("client provided the ID of a resource %v, ignoring the name field %v", in.EncryptedVolumeId, in.EncryptedVolume.Name)
 		resourceID = in.EncryptedVolumeId
 	}
-	in.EncryptedVolume.Name = server.ResourceIDToVolumeName(resourceID)
+	in.EncryptedVolume.Name = utils.ResourceIDToVolumeName(resourceID)
 
 	_, ok := s.volumes.encryptedVolumes[in.EncryptedVolume.Name]
 	if ok {

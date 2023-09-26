@@ -12,13 +12,13 @@ import (
 
 	"github.com/opiproject/gospdk/spdk"
 	pb "github.com/opiproject/opi-api/storage/v1alpha1/gen/go"
-	"github.com/opiproject/opi-spdk-bridge/pkg/server"
+	"github.com/opiproject/opi-spdk-bridge/pkg/utils"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/test/bufconn"
 )
 
-var checkGlobalTestProtoObjectsNotChanged = server.CheckTestProtoObjectsNotChanged(
+var checkGlobalTestProtoObjectsNotChanged = utils.CheckTestProtoObjectsNotChanged(
 	&testPciEndpoint,
 	&testSubsystem,
 	&testControllerWithMaxQos,
@@ -39,17 +39,17 @@ type testEnv struct {
 }
 
 func (e *testEnv) Close() {
-	server.CloseListener(e.ln)
+	utils.CloseListener(e.ln)
 	if err := os.RemoveAll(e.testSocket); err != nil {
 		log.Fatal(err)
 	}
-	server.CloseGrpcConnection(e.conn)
+	utils.CloseGrpcConnection(e.conn)
 }
 
 func createTestEnvironment(spdkResponses []string) *testEnv {
 	env := &testEnv{}
-	env.testSocket = server.GenerateSocketName("frontend")
-	env.ln, env.jsonRPC = server.CreateTestSpdkServer(env.testSocket, spdkResponses)
+	env.testSocket = utils.GenerateSocketName("frontend")
+	env.ln, env.jsonRPC = utils.CreateTestSpdkServer(env.testSocket, spdkResponses)
 	env.opiSpdkServer = NewServer(env.jsonRPC)
 
 	ctx := context.Background()

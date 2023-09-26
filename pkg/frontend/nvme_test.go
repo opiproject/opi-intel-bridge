@@ -11,7 +11,7 @@ import (
 	"github.com/opiproject/gospdk/spdk"
 	pb "github.com/opiproject/opi-api/storage/v1alpha1/gen/go"
 	"github.com/opiproject/opi-spdk-bridge/pkg/frontend"
-	"github.com/opiproject/opi-spdk-bridge/pkg/server"
+	"github.com/opiproject/opi-spdk-bridge/pkg/utils"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
@@ -478,17 +478,17 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			tt.in = server.ProtoClone(tt.in)
+			tt.in = utils.ProtoClone(tt.in)
 			testEnv := createTestEnvironment(tt.spdk)
 			defer testEnv.Close()
 			testEnv.opiSpdkServer.nvme.Subsystems[testSubsystem.Name] = &testSubsystem
 			if tt.existingController != nil {
-				tt.existingController = server.ProtoClone(tt.existingController)
+				tt.existingController = utils.ProtoClone(tt.existingController)
 				tt.existingController.Name = testControllerName
 				testEnv.opiSpdkServer.nvme.Controllers[tt.existingController.Name] = tt.existingController
 			}
 			if tt.out != nil {
-				tt.out = server.ProtoClone(tt.out)
+				tt.out = utils.ProtoClone(tt.out)
 				tt.out.Name = testControllerName
 			}
 
@@ -812,12 +812,12 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 
 	for testName, tt := range tests {
 		t.Run(testName, func(t *testing.T) {
-			tt.in = server.ProtoClone(tt.in)
+			tt.in = utils.ProtoClone(tt.in)
 			testEnv := createTestEnvironment(tt.spdk)
 			defer testEnv.Close()
 			testEnv.opiSpdkServer.nvme.Subsystems[testSubsystem.Name] = &testSubsystem
 			if tt.existingController != nil {
-				tt.existingController = server.ProtoClone(tt.existingController)
+				tt.existingController = utils.ProtoClone(tt.existingController)
 				tt.existingController.Name = testControllerName
 				testEnv.opiSpdkServer.nvme.Controllers[tt.existingController.Name] = tt.existingController
 			}
