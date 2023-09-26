@@ -23,7 +23,7 @@ type Server struct {
 // NewServer creates initialized instance of Nvme server
 func NewServer(jsonRPC spdk.JSONRPC) *Server {
 	opiSpdkServer := frontend.NewCustomizedServer(
-		jsonRPC, NewSubsystemListener(), NewMevBlkTransport())
+		jsonRPC, NewNvmeNpiTransport(), NewMevBlkTransport())
 	return &Server{
 		opiSpdkServer,
 		opiSpdkServer,
