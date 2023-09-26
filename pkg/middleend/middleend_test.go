@@ -14,7 +14,7 @@ import (
 
 	"github.com/opiproject/gospdk/spdk"
 	pb "github.com/opiproject/opi-api/storage/v1alpha1/gen/go"
-	"github.com/opiproject/opi-spdk-bridge/pkg/server"
+	"github.com/opiproject/opi-spdk-bridge/pkg/utils"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
@@ -38,17 +38,17 @@ type testEnv struct {
 }
 
 func (e *testEnv) Close() {
-	server.CloseListener(e.ln)
+	utils.CloseListener(e.ln)
 	if err := os.RemoveAll(e.testSocket); err != nil {
 		log.Fatal(err)
 	}
-	server.CloseGrpcConnection(e.conn)
+	utils.CloseGrpcConnection(e.conn)
 }
 
 func createTestEnvironment(spdkResponses []string) *testEnv {
 	env := &testEnv{}
-	env.testSocket = server.GenerateSocketName("middleend")
-	env.ln, env.jsonRPC = server.CreateTestSpdkServer(env.testSocket, spdkResponses)
+	env.testSocket = utils.GenerateSocketName("middleend")
+	env.ln, env.jsonRPC = utils.CreateTestSpdkServer(env.testSocket, spdkResponses)
 	env.opiSpdkServer = NewServer(env.jsonRPC)
 
 	ctx := context.Background()
@@ -135,7 +135,7 @@ var (
 		Cipher:        pb.EncryptionType_ENCRYPTION_TYPE_AES_CBC_256,
 	}
 
-	checkGlobalTestProtoObjectsNotChanged = server.CheckTestProtoObjectsNotChanged(
+	checkGlobalTestProtoObjectsNotChanged = utils.CheckTestProtoObjectsNotChanged(
 		&encryptedVolumeAesXts256,
 		&encryptedVolumeAesXts256InResponse,
 		&encryptedVolumeAesXts128,
@@ -389,11 +389,11 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 			var request *pb.CreateEncryptedVolumeRequest
 			if tt.in != nil {
 				// make a copy to prevent key overwriting in the original structures
-				request = server.ProtoClone(tt.in)
+				request = utils.ProtoClone(tt.in)
 			}
-			fullname := server.ResourceIDToVolumeName(encryptedVolumeID)
+			fullname := utils.ResourceIDToVolumeName(encryptedVolumeID)
 			if tt.out != nil {
-				tt.out = server.ProtoClone(tt.out)
+				tt.out = utils.ProtoClone(tt.out)
 				tt.out.Name = fullname
 			}
 			if tt.existBefore {
@@ -434,7 +434,7 @@ func TestMiddleEnd_CreateEncryptedVolume(t *testing.T) {
 
 func TestMiddleEnd_DeleteEncryptedVolume(t *testing.T) {
 	t.Cleanup(checkGlobalTestProtoObjectsNotChanged(t, t.Name()))
-	fullname := server.ResourceIDToVolumeName(encryptedVolumeID)
+	fullname := utils.ResourceIDToVolumeName(encryptedVolumeID)
 	tests := map[string]struct {
 		in          *pb.DeleteEncryptedVolumeRequest
 		spdk        []string
@@ -508,7 +508,7 @@ func TestMiddleEnd_DeleteEncryptedVolume(t *testing.T) {
 			existAfter:  false,
 		},
 		"malformed name": {
-			in:          &pb.DeleteEncryptedVolumeRequest{Name: server.ResourceIDToVolumeName("-ABC-DEF"), AllowMissing: false},
+			in:          &pb.DeleteEncryptedVolumeRequest{Name: utils.ResourceIDToVolumeName("-ABC-DEF"), AllowMissing: false},
 			spdk:        []string{},
 			errCode:     status.Convert(errMalformedArgument).Code(),
 			errMsg:      status.Convert(errMalformedArgument).Message(),
@@ -523,7 +523,7 @@ func TestMiddleEnd_DeleteEncryptedVolume(t *testing.T) {
 			if tt.existBefore {
 				testEnv.opiSpdkServer.volumes.encryptedVolumes[fullname] = bdevName
 			}
-			request := server.ProtoClone(tt.in)
+			request := utils.ProtoClone(tt.in)
 
 			_, err := testEnv.opiSpdkServer.DeleteEncryptedVolume(testEnv.ctx, request)
 
