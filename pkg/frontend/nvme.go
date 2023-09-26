@@ -19,20 +19,20 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-type npiSubsystemListener struct {
+type nvmeNpiTransport struct {
 }
 
-// NewSubsystemListener creates a new instance of a SubsystemListener for npi transport
-func NewSubsystemListener() frontend.SubsystemListener {
-	return npiSubsystemListener{}
+// NewNvmeNpiTransport creates a new instance of a NvmeTransport for npi
+func NewNvmeNpiTransport() frontend.NvmeTransport {
+	return nvmeNpiTransport{}
 }
 
-func (c npiSubsystemListener) Params(ctrlr *pb.NvmeController, nqn string) spdk.NvmfSubsystemAddListenerParams {
+func (c nvmeNpiTransport) Params(ctrlr *pb.NvmeController, nqn string) (spdk.NvmfSubsystemAddListenerParams, error) {
 	result := spdk.NvmfSubsystemAddListenerParams{}
 	result.Nqn = nqn
 	result.ListenAddress.Trtype = "npi"
 	result.ListenAddress.Traddr = calculateTransportAddr(ctrlr.Spec.PcieId)
-	return result
+	return result, nil
 }
 
 func calculateTransportAddr(pci *pb.PciEndpoint) string {
