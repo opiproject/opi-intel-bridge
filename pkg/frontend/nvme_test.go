@@ -440,6 +440,40 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			errMsg:             "QoS min_limit wr_bandwidth_mbs cannot be negative",
 			existingController: nil,
 		},
+		"non 0 port id": {
+			in: &pb.NvmeController{
+				Spec: &pb.NvmeControllerSpec{
+					PcieId: &pb.PciEndpoint{
+						PortId:           wrapperspb.Int32(1),
+						PhysicalFunction: wrapperspb.Int32(0),
+						VirtualFunction:  wrapperspb.Int32(0),
+					},
+					NvmeControllerId: proto.Int32(1),
+				},
+			},
+			out:                nil,
+			spdk:               []string{},
+			errCode:            codes.InvalidArgument,
+			errMsg:             "only port 0 is supported",
+			existingController: nil,
+		},
+		"non 0 physical_function": {
+			in: &pb.NvmeController{
+				Spec: &pb.NvmeControllerSpec{
+					PcieId: &pb.PciEndpoint{
+						PortId:           wrapperspb.Int32(0),
+						PhysicalFunction: wrapperspb.Int32(1),
+						VirtualFunction:  wrapperspb.Int32(0),
+					},
+					NvmeControllerId: proto.Int32(1),
+				},
+			},
+			out:                nil,
+			spdk:               []string{},
+			errCode:            codes.InvalidArgument,
+			errMsg:             "only physical_function 0 is supported",
+			existingController: nil,
+		},
 	}
 
 	for testName, tt := range tests {
