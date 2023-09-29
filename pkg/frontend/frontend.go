@@ -6,6 +6,10 @@
 package frontend
 
 import (
+	"log"
+
+	"github.com/philippgille/gokv"
+
 	"github.com/opiproject/gospdk/spdk"
 	pb "github.com/opiproject/opi-api/storage/v1alpha1/gen/go"
 	"github.com/opiproject/opi-spdk-bridge/pkg/frontend"
@@ -16,18 +20,26 @@ type Server struct {
 	pb.FrontendNvmeServiceServer
 	pb.FrontendVirtioBlkServiceServer
 
-	nvme *frontend.NvmeParameters
-	rpc  spdk.JSONRPC
+	nvme  *frontend.NvmeParameters
+	rpc   spdk.JSONRPC
+	store gokv.Store
 }
 
 // NewServer creates initialized instance of Nvme server
-func NewServer(jsonRPC spdk.JSONRPC) *Server {
+func NewServer(jsonRPC spdk.JSONRPC, store gokv.Store) *Server {
+	if jsonRPC == nil {
+		log.Panic("nil for JSONRPC is not allowed")
+	}
+	if store == nil {
+		log.Panic("nil for Store is not allowed")
+	}
 	opiSpdkServer := frontend.NewCustomizedServer(
-		jsonRPC, NewNvmeNpiTransport(), NewMevBlkTransport())
+		jsonRPC, store, NewNvmeNpiTransport(), NewMevBlkTransport())
 	return &Server{
 		opiSpdkServer,
 		opiSpdkServer,
 		&opiSpdkServer.Nvme,
 		jsonRPC,
+		store,
 	}
 }
