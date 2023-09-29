@@ -53,7 +53,6 @@ func calculateTransportAddr(pci *pb.PciEndpoint) string {
 
 // CreateNvmeController creates an Nvme controller
 func (s *Server) CreateNvmeController(ctx context.Context, in *pb.CreateNvmeControllerRequest) (*pb.NvmeController, error) {
-	log.Printf("Intel bridge CreateNvmeController received from client: %v", in.NvmeController)
 	if err := s.verifyNvmeControllerOnCreate(in.NvmeController); err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
@@ -82,7 +81,6 @@ func (s *Server) CreateNvmeController(ctx context.Context, in *pb.CreateNvmeCont
 
 // UpdateNvmeController updates an Nvme controller
 func (s *Server) UpdateNvmeController(ctx context.Context, in *pb.UpdateNvmeControllerRequest) (*pb.NvmeController, error) {
-	log.Printf("Intel bridge UpdateNvmeController received from client: %v", in)
 	if err := s.verifyNvmeControllerOnUpdate(in.NvmeController); err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
