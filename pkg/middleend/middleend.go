@@ -11,11 +11,14 @@ import (
 	"runtime"
 	"runtime/debug"
 
+	"github.com/philippgille/gokv"
+
 	"github.com/opiproject/gospdk/spdk"
 	pb "github.com/opiproject/opi-api/storage/v1alpha1/gen/go"
 	"github.com/opiproject/opi-intel-bridge/pkg/models"
 	"github.com/opiproject/opi-spdk-bridge/pkg/middleend"
 	"github.com/opiproject/opi-spdk-bridge/pkg/utils"
+
 	"go.einride.tech/aip/fieldbehavior"
 	"go.einride.tech/aip/resourceid"
 	"go.einride.tech/aip/resourcename"
@@ -43,16 +46,24 @@ type Server struct {
 	pb.MiddleendEncryptionServiceServer
 	pb.MiddleendQosVolumeServiceServer
 
+	store   gokv.Store
 	rpc     spdk.JSONRPC
 	volumes volumeParameters
 }
 
 // NewServer creates initialized instance of middleend server
-func NewServer(jsonRPC spdk.JSONRPC) *Server {
-	opiSpdkServer := middleend.NewServer(jsonRPC)
+func NewServer(jsonRPC spdk.JSONRPC, store gokv.Store) *Server {
+	if jsonRPC == nil {
+		log.Panic("nil for JSONRPC is not allowed")
+	}
+	if store == nil {
+		log.Panic("nil for Store is not allowed")
+	}
+	opiSpdkServer := middleend.NewServer(jsonRPC, store)
 	return &Server{
 		opiSpdkServer,
 		opiSpdkServer,
+		store,
 		jsonRPC,
 		volumeParameters{encryptedVolumes: make(map[string]string)},
 	}

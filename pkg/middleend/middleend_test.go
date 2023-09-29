@@ -12,9 +12,12 @@ import (
 	"os"
 	"testing"
 
+	"github.com/philippgille/gokv/gomap"
+
 	"github.com/opiproject/gospdk/spdk"
 	pb "github.com/opiproject/opi-api/storage/v1alpha1/gen/go"
 	"github.com/opiproject/opi-spdk-bridge/pkg/utils"
+
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
@@ -49,7 +52,10 @@ func createTestEnvironment(spdkResponses []string) *testEnv {
 	env := &testEnv{}
 	env.testSocket = utils.GenerateSocketName("middleend")
 	env.ln, env.jsonRPC = utils.CreateTestSpdkServer(env.testSocket, spdkResponses)
-	env.opiSpdkServer = NewServer(env.jsonRPC)
+	options := gomap.DefaultOptions
+	options.Codec = utils.ProtoCodec{}
+	store := gomap.NewStore(options)
+	env.opiSpdkServer = NewServer(env.jsonRPC, store)
 
 	ctx := context.Background()
 	conn, err := grpc.DialContext(ctx,
