@@ -176,8 +176,6 @@ func verifyCreateEncryptedVolumeRequestArgs(in *pb.CreateEncryptedVolumeRequest)
 
 // DeleteEncryptedVolume deletes an encrypted volume
 func (s *Server) DeleteEncryptedVolume(_ context.Context, in *pb.DeleteEncryptedVolumeRequest) (*emptypb.Empty, error) {
-	log.Printf("DeleteEncryptedVolume: Received from client: %v", in)
-
 	if err := fieldbehavior.ValidateRequiredFields(in); err != nil {
 		log.Printf("error: %v", err)
 		return nil, errMissingArgument
