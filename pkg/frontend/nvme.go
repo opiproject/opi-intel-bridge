@@ -29,12 +29,12 @@ func NewNvmeNpiTransport() frontend.NvmeTransport {
 }
 
 func (c nvmeNpiTransport) Params(ctrlr *pb.NvmeController, nqn string) (spdk.NvmfSubsystemAddListenerParams, error) {
-	if ctrlr.Spec.PcieId.PortId.Value != 0 {
+	if ctrlr.GetSpec().GetPcieId().GetPortId().GetValue() != 0 {
 		return spdk.NvmfSubsystemAddListenerParams{},
 			errors.New("only port 0 is supported")
 	}
 
-	if ctrlr.Spec.PcieId.PhysicalFunction.Value != 0 {
+	if ctrlr.GetSpec().GetPcieId().GetPhysicalFunction().GetValue() != 0 {
 		return spdk.NvmfSubsystemAddListenerParams{},
 			errors.New("only physical_function 0 is supported")
 	}
@@ -42,7 +42,7 @@ func (c nvmeNpiTransport) Params(ctrlr *pb.NvmeController, nqn string) (spdk.Nvm
 	result := spdk.NvmfSubsystemAddListenerParams{}
 	result.Nqn = nqn
 	result.ListenAddress.Trtype = "npi"
-	result.ListenAddress.Traddr = calculateTransportAddr(ctrlr.Spec.PcieId)
+	result.ListenAddress.Traddr = calculateTransportAddr(ctrlr.GetSpec().GetPcieId())
 	return result, nil
 }
 
@@ -59,7 +59,7 @@ func (s *Server) CreateNvmeController(ctx context.Context, in *pb.CreateNvmeCont
 
 	log.Printf("Passing request to opi-spdk-bridge")
 	response, err := s.FrontendNvmeServiceServer.CreateNvmeController(ctx, in)
-	if err == nil {
+	if err == nil && in.GetNvmeController().GetSpec().GetTrtype() == pb.NvmeTransportType_NVME_TRANSPORT_PCIE {
 		// response contains different QoS limits. It is an indication that
 		// opi-spdk-bridge returned an already existing controller providing idempotence
 		if !proto.Equal(response.Spec.MaxLimit, in.NvmeController.Spec.MaxLimit) ||
@@ -88,8 +88,7 @@ func (s *Server) UpdateNvmeController(ctx context.Context, in *pb.UpdateNvmeCont
 	originalNvmeController := s.nvme.Controllers[in.NvmeController.Name]
 	log.Printf("Passing request to opi-spdk-bridge")
 	response, err := s.FrontendNvmeServiceServer.UpdateNvmeController(ctx, in)
-
-	if err == nil {
+	if err == nil && in.GetNvmeController().GetSpec().GetTrtype() == pb.NvmeTransportType_NVME_TRANSPORT_PCIE {
 		if qosErr := s.setNvmeQosLimit(in.NvmeController); qosErr != nil {
 			log.Println("Failed to set qos settings:", qosErr)
 			log.Println("Restore original controller")
