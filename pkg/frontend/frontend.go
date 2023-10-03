@@ -34,7 +34,12 @@ func NewServer(jsonRPC spdk.JSONRPC, store gokv.Store) *Server {
 		log.Panic("nil for Store is not allowed")
 	}
 	opiSpdkServer := frontend.NewCustomizedServer(
-		jsonRPC, store, NewNvmeNpiTransport(), NewMevBlkTransport())
+		jsonRPC, store,
+		map[pb.NvmeTransportType]frontend.NvmeTransport{
+			pb.NvmeTransportType_NVME_TRANSPORT_PCIE: NewNvmeNpiTransport(),
+			pb.NvmeTransportType_NVME_TRANSPORT_TCP:  frontend.NewNvmeTCPTransport(),
+		},
+		NewMevBlkTransport())
 	return &Server{
 		opiSpdkServer,
 		opiSpdkServer,
