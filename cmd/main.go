@@ -36,6 +36,8 @@ import (
 
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 )
 
 func main() {
@@ -70,9 +72,16 @@ func main() {
 }
 
 func runGrpcServer(grpcPort int, spdkAddress string, tlsFiles string, store gokv.Store) {
+	tp := utils.InitTracerProvider("opi-intel-bridge")
+	defer func() {
+		if err := tp.Shutdown(context.Background()); err != nil {
+			log.Panicf("Tracer Provider Shutdown: %v", err)
+		}
+	}()
+
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", grpcPort))
 	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+		log.Panicf("failed to listen: %v", err)
 	}
 
 	var serverOptions []grpc.ServerOption
@@ -82,16 +91,17 @@ func runGrpcServer(grpcPort int, spdkAddress string, tlsFiles string, store gokv
 		log.Println("Use TLS certificate files:", tlsFiles)
 		config, err := utils.ParseTLSFiles(tlsFiles)
 		if err != nil {
-			log.Fatal("Failed to parse string with tls paths:", err)
+			log.Panic("Failed to parse string with tls paths:", err)
 		}
 		log.Println("TLS config:", config)
 		var option grpc.ServerOption
 		if option, err = utils.SetupTLSCredentials(config); err != nil {
-			log.Fatal("Failed to setup TLS:", err)
+			log.Panic("Failed to setup TLS:", err)
 		}
 		serverOptions = append(serverOptions, option)
 	}
-	serverOptions = append(serverOptions, grpc.UnaryInterceptor(
+	serverOptions = append(serverOptions, grpc.ChainUnaryInterceptor(
+		otelgrpc.UnaryServerInterceptor(),
 		logging.UnaryServerInterceptor(utils.InterceptorLogger(log.Default()),
 			logging.WithLogOnEvents(
 				logging.StartCall,
@@ -124,7 +134,7 @@ func runGrpcServer(grpcPort int, spdkAddress string, tlsFiles string, store gokv
 
 	log.Printf("gRPC server listening at %v", lis.Addr())
 	if err := s.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %v", err)
+		log.Panicf("failed to serve: %v", err)
 	}
 }
 

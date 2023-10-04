@@ -8,6 +8,8 @@ services:
   opi-intel-server:
     build:
       context: .
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
     ports:
       - "8082:8082"
       - "50051:50051"
@@ -27,6 +29,17 @@ services:
     healthcheck:
       test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
 
+  jaeger:
+    image: jaegertracing/all-in-one:1.49.0
+    ports:
+      - "16686:16686"
+      - "4317:4317"
+      - "4318:4318"
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    networks:
+      - opi
+
   opi-gw-test:
     image: curlimages/curl:8.3.0
     networks:
@@ -35,6 +48,15 @@ services:
       opi-intel-server:
         condition: service_healthy
     command: curl -qkL http://opi-intel-server:8082/v1/inventory/1/inventory/2
+
+  opi-jaeger-test:
+    image: curlimages/curl:8.3.0
+    networks:
+      - opi
+    depends_on:
+      opi-intel-server:
+        condition: service_healthy
+    command: sh -c 'curl -s "http://jaeger:16686/api/traces?service=opi-intel-bridge&lookback=20m&prettyPrint=true&limit=10" | grep operationName'
 
   opi-test:
     image: docker.io/namely/grpc-cli
