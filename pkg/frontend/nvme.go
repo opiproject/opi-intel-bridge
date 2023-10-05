@@ -15,6 +15,7 @@ import (
 	pb "github.com/opiproject/opi-api/storage/v1alpha1/gen/go"
 	"github.com/opiproject/opi-intel-bridge/pkg/models"
 	"github.com/opiproject/opi-spdk-bridge/pkg/frontend"
+	"github.com/opiproject/opi-spdk-bridge/pkg/utils"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
@@ -28,7 +29,7 @@ func NewNvmeNpiTransport() frontend.NvmeTransport {
 	return nvmeNpiTransport{}
 }
 
-func (c nvmeNpiTransport) Params(ctrlr *pb.NvmeController, nqn string) (spdk.NvmfSubsystemAddListenerParams, error) {
+func (c nvmeNpiTransport) Params(ctrlr *pb.NvmeController, subsys *pb.NvmeSubsystem) (spdk.NvmfSubsystemAddListenerParams, error) {
 	if ctrlr.GetSpec().GetPcieId().GetPortId().GetValue() != 0 {
 		return spdk.NvmfSubsystemAddListenerParams{},
 			errors.New("only port 0 is supported")
@@ -40,7 +41,7 @@ func (c nvmeNpiTransport) Params(ctrlr *pb.NvmeController, nqn string) (spdk.Nvm
 	}
 
 	result := spdk.NvmfSubsystemAddListenerParams{}
-	result.Nqn = nqn
+	result.Nqn = subsys.GetSpec().GetNqn()
 	result.ListenAddress.Trtype = "npi"
 	result.ListenAddress.Traddr = calculateTransportAddr(ctrlr.GetSpec().GetPcieId())
 	return result, nil
@@ -193,8 +194,8 @@ func (s *Server) verifyNvmeControllerMinMaxLimitCorrespondence(minLimit *pb.QosL
 
 func (s *Server) setNvmeQosLimit(controller *pb.NvmeController) error {
 	log.Printf("Setting QoS limits %v for %v", controller.Spec.MaxLimit, controller.Name)
-	subsysName := frontend.ResourceIDToSubsystemName(
-		frontend.GetSubsystemIDFromNvmeName(controller.Name),
+	subsysName := utils.ResourceIDToSubsystemName(
+		utils.GetSubsystemIDFromNvmeName(controller.Name),
 	)
 	params := models.NpiQosBwIopsLimitParams{
 		Nqn: s.nvme.Subsystems[subsysName].Spec.Nqn,

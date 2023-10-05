@@ -10,7 +10,6 @@ import (
 
 	"github.com/opiproject/gospdk/spdk"
 	pb "github.com/opiproject/opi-api/storage/v1alpha1/gen/go"
-	"github.com/opiproject/opi-spdk-bridge/pkg/frontend"
 	"github.com/opiproject/opi-spdk-bridge/pkg/utils"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -26,13 +25,13 @@ var (
 	}
 	testSubsystemID = "subsystem-test"
 	testSubsystem   = pb.NvmeSubsystem{
-		Name: frontend.ResourceIDToSubsystemName(testSubsystemID),
+		Name: utils.ResourceIDToSubsystemName(testSubsystemID),
 		Spec: &pb.NvmeSubsystemSpec{
 			Nqn: "nqn.2022-09.io.spdk:opi3",
 		},
 	}
 	testControllerID   = "controller-test"
-	testControllerName = frontend.ResourceIDToControllerName(
+	testControllerName = utils.ResourceIDToControllerName(
 		testSubsystemID, testControllerID,
 	)
 	testControllerWithMaxQos = pb.NvmeController{
