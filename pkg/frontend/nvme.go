@@ -40,6 +40,11 @@ func (c nvmeNpiTransport) Params(ctrlr *pb.NvmeController, subsys *pb.NvmeSubsys
 			errors.New("only physical_function 0 is supported")
 	}
 
+	if subsys.GetSpec().GetHostnqn() != "" {
+		return spdk.NvmfSubsystemAddListenerParams{},
+			errors.New("hostnqn for subsystem is not supported for npi")
+	}
+
 	result := spdk.NvmfSubsystemAddListenerParams{}
 	result.Nqn = subsys.GetSpec().GetNqn()
 	result.ListenAddress.Trtype = "npi"

@@ -60,6 +60,7 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 		errCode            codes.Code
 		errMsg             string
 		existingController *pb.NvmeController
+		hostnqn            string
 	}{
 		"max_limit rw_iops_kiops is not supported": {
 			in: &pb.NvmeController{
@@ -510,6 +511,27 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			errMsg:             "only physical_function 0 is supported",
 			existingController: nil,
 		},
+		"non-empty hostnqn": {
+			in: &pb.NvmeController{
+				Spec: &pb.NvmeControllerSpec{
+					Endpoint: &pb.NvmeControllerSpec_PcieId{
+						PcieId: &pb.PciEndpoint{
+							PortId:           wrapperspb.Int32(0),
+							PhysicalFunction: wrapperspb.Int32(0),
+							VirtualFunction:  wrapperspb.Int32(0),
+						},
+					},
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					NvmeControllerId: proto.Int32(1),
+				},
+			},
+			out:                nil,
+			spdk:               []string{},
+			errCode:            codes.InvalidArgument,
+			errMsg:             "hostnqn for subsystem is not supported for npi",
+			existingController: nil,
+			hostnqn:            "nqn.2014-08.org.nvmexpress:uuid:feb98abe-d51f-40c8-b348-2753f3571d3c",
+		},
 	}
 
 	for testName, tt := range tests {
@@ -517,7 +539,8 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			tt.in = utils.ProtoClone(tt.in)
 			testEnv := createTestEnvironment(tt.spdk)
 			defer testEnv.Close()
-			testEnv.opiSpdkServer.nvme.Subsystems[testSubsystem.Name] = &testSubsystem
+			testEnv.opiSpdkServer.nvme.Subsystems[testSubsystem.Name] = utils.ProtoClone(&testSubsystem)
+			testEnv.opiSpdkServer.nvme.Subsystems[testSubsystem.Name].Spec.Hostnqn = tt.hostnqn
 			if tt.existingController != nil {
 				tt.existingController = utils.ProtoClone(tt.existingController)
 				tt.existingController.Name = testControllerName
