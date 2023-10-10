@@ -70,7 +70,7 @@ func NewServer(jsonRPC spdk.JSONRPC, store gokv.Store) *Server {
 }
 
 // CreateEncryptedVolume creates an encrypted volume
-func (s *Server) CreateEncryptedVolume(_ context.Context, in *pb.CreateEncryptedVolumeRequest) (*pb.EncryptedVolume, error) {
+func (s *Server) CreateEncryptedVolume(ctx context.Context, in *pb.CreateEncryptedVolumeRequest) (*pb.EncryptedVolume, error) {
 	defer func() {
 		if in != nil && in.EncryptedVolume != nil {
 			for i := range in.EncryptedVolume.Key {
@@ -109,7 +109,7 @@ func (s *Server) CreateEncryptedVolume(_ context.Context, in *pb.CreateEncrypted
 		return nil, errAlreadyExists
 	}
 
-	bdevUUID, err := s.getBdevUUIDByName(in.EncryptedVolume.VolumeNameRef)
+	bdevUUID, err := s.getBdevUUIDByName(ctx, in.EncryptedVolume.VolumeNameRef)
 	if err != nil {
 		log.Println("Failed to find UUID for bdev", in.EncryptedVolume.VolumeNameRef)
 		return nil, err
@@ -129,7 +129,7 @@ func (s *Server) CreateEncryptedVolume(_ context.Context, in *pb.CreateEncrypted
 	}()
 
 	var result models.NpiBdevSetKeysResult
-	err = s.rpc.Call("npi_bdev_set_keys", params, &result)
+	err = s.rpc.Call(ctx, "npi_bdev_set_keys", params, &result)
 	if err != nil {
 		log.Println("error:", err)
 		return nil, spdk.ErrFailedSpdkCall
@@ -175,7 +175,7 @@ func verifyCreateEncryptedVolumeRequestArgs(in *pb.CreateEncryptedVolumeRequest)
 }
 
 // DeleteEncryptedVolume deletes an encrypted volume
-func (s *Server) DeleteEncryptedVolume(_ context.Context, in *pb.DeleteEncryptedVolumeRequest) (*emptypb.Empty, error) {
+func (s *Server) DeleteEncryptedVolume(ctx context.Context, in *pb.DeleteEncryptedVolumeRequest) (*emptypb.Empty, error) {
 	if err := fieldbehavior.ValidateRequiredFields(in); err != nil {
 		log.Printf("error: %v", err)
 		return nil, errMissingArgument
@@ -195,7 +195,7 @@ func (s *Server) DeleteEncryptedVolume(_ context.Context, in *pb.DeleteEncrypted
 		return nil, errVolumeNotFound
 	}
 
-	bdevUUID, err := s.getBdevUUIDByName(underlyingBdev)
+	bdevUUID, err := s.getBdevUUIDByName(ctx, underlyingBdev)
 	if err != nil {
 		log.Println("Failed to find UUID for bdev", in.Name)
 		return nil, err
@@ -204,7 +204,7 @@ func (s *Server) DeleteEncryptedVolume(_ context.Context, in *pb.DeleteEncrypted
 		UUID: bdevUUID,
 	}
 	var result models.NpiBdevClearKeysResult
-	err = s.rpc.Call("npi_bdev_clear_keys", params, &result)
+	err = s.rpc.Call(ctx, "npi_bdev_clear_keys", params, &result)
 	if err != nil {
 		log.Println(err)
 		return nil, spdk.ErrFailedSpdkCall
@@ -217,10 +217,10 @@ func (s *Server) DeleteEncryptedVolume(_ context.Context, in *pb.DeleteEncrypted
 	return &emptypb.Empty{}, nil
 }
 
-func (s *Server) getBdevUUIDByName(name string) (string, error) {
+func (s *Server) getBdevUUIDByName(ctx context.Context, name string) (string, error) {
 	params := spdk.BdevGetBdevsParams{Name: name}
 	var result []spdk.BdevGetBdevsResult
-	err := s.rpc.Call("bdev_get_bdevs", params, &result)
+	err := s.rpc.Call(ctx, "bdev_get_bdevs", params, &result)
 	if err != nil {
 		log.Println("error:", err)
 		return "", spdk.ErrFailedSpdkCall
