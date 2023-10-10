@@ -113,7 +113,7 @@ func runGrpcServer(grpcPort int, spdkAddress string, tlsFiles string, store gokv
 	)
 	s := grpc.NewServer(serverOptions...)
 
-	jsonRPC := spdk.NewSpdkJSONRPC(spdkAddress)
+	jsonRPC := spdk.NewClient(spdkAddress)
 	frontendOpiIntelServer := fe.NewServer(jsonRPC, store)
 	frontendOpiSpdkServer := frontend.NewServer(jsonRPC, store)
 	backendOpiSpdkServer := backend.NewServer(jsonRPC, store)
