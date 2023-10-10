@@ -76,7 +76,7 @@ func (s *Server) CreateNvmeController(ctx context.Context, in *pb.CreateNvmeCont
 				"Controller %v exists with different QoS limits", in.NvmeController.Name)
 		}
 
-		if qosErr := s.setNvmeQosLimit(in.NvmeController); qosErr != nil {
+		if qosErr := s.setNvmeQosLimit(ctx, in.NvmeController); qosErr != nil {
 			s.cleanupNvmeControllerCreation(in.NvmeController.Name)
 			return nil, qosErr
 		}
@@ -95,7 +95,7 @@ func (s *Server) UpdateNvmeController(ctx context.Context, in *pb.UpdateNvmeCont
 	log.Printf("Passing request to opi-spdk-bridge")
 	response, err := s.FrontendNvmeServiceServer.UpdateNvmeController(ctx, in)
 	if err == nil && in.GetNvmeController().GetSpec().GetTrtype() == pb.NvmeTransportType_NVME_TRANSPORT_PCIE {
-		if qosErr := s.setNvmeQosLimit(in.NvmeController); qosErr != nil {
+		if qosErr := s.setNvmeQosLimit(ctx, in.NvmeController); qosErr != nil {
 			log.Println("Failed to set qos settings:", qosErr)
 			log.Println("Restore original controller")
 			s.nvme.Controllers[in.NvmeController.Name] = originalNvmeController
@@ -197,7 +197,7 @@ func (s *Server) verifyNvmeControllerMinMaxLimitCorrespondence(minLimit *pb.QosL
 	return nil
 }
 
-func (s *Server) setNvmeQosLimit(controller *pb.NvmeController) error {
+func (s *Server) setNvmeQosLimit(ctx context.Context, controller *pb.NvmeController) error {
 	log.Printf("Setting QoS limits %v for %v", controller.Spec.MaxLimit, controller.Name)
 	subsysName := utils.ResourceIDToSubsystemName(
 		utils.GetSubsystemIDFromNvmeName(controller.Name),
@@ -221,7 +221,7 @@ func (s *Server) setNvmeQosLimit(controller *pb.NvmeController) error {
 	}
 
 	var result models.NpiQosBwIopsLimitResult
-	err := s.rpc.Call("npi_qos_bw_iops_limit", &params, &result)
+	err := s.rpc.Call(ctx, "npi_qos_bw_iops_limit", &params, &result)
 	if err != nil {
 		log.Printf("error: %v", err)
 		return spdk.ErrFailedSpdkCall
