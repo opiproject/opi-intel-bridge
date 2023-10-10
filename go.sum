@@ -440,6 +440,8 @@ github.com/opiproject/gospdk v0.0.0-20230924031820-4b65d0851cb9 h1:DkqXBfcVaJEts
 github.com/opiproject/gospdk v0.0.0-20230924031820-4b65d0851cb9/go.mod h1:rO2nM/OyY69zPLQO2mNX8+ckvyAd2TqV1vLLG7qEB74=
 github.com/opiproject/gospdk v0.0.0-20231003165248-8edbef6eb841 h1:xfR6qBHRRsRunE6+yDX5s1BhFFMElJNGh0MOt0rjLsU=
 github.com/opiproject/gospdk v0.0.0-20231003165248-8edbef6eb841/go.mod h1:mRMIpGIwz5uuUUaDhh6ceIYq20qR5OVtxE0/x5fprEA=
+github.com/opiproject/gospdk v0.0.0-20231009130851-ff9bd6faf71a h1:8j6GXu13bFM3uEo30n1H3h1MmgncFhjQkqw0TWEEy00=
+github.com/opiproject/gospdk v0.0.0-20231009130851-ff9bd6faf71a/go.mod h1:mRMIpGIwz5uuUUaDhh6ceIYq20qR5OVtxE0/x5fprEA=
 github.com/opiproject/opi-api v0.0.0-20231002080217-fc749d07fdda h1:w/HTrqmBrXabdcc71ACkRQqavKDFvfPp0MqiGWKTGjw=
 github.com/opiproject/opi-api v0.0.0-20231002080217-fc749d07fdda/go.mod h1:92pv4ulvvPMuxCJ9ND3aYbmBfEMLx0VCjpkiR7ZTqPY=
 github.com/opiproject/opi-api v0.0.0-20231004104309-217649f4535f h1:TXLfuUmFwB7Zk8YKIzEfT/LQ2i5d+BW/BzjQgaBBOWM=
@@ -460,6 +462,8 @@ github.com/opiproject/opi-spdk-bridge v0.1.2-0.20231007094833-d69cbf81897a h1:en
 github.com/opiproject/opi-spdk-bridge v0.1.2-0.20231007094833-d69cbf81897a/go.mod h1:INyfSuY7woo5F/d0YjN3EerzYvBhNVLXylIANfCdxd0=
 github.com/opiproject/opi-spdk-bridge v0.1.2-0.20231007135056-df9fa5d7b614 h1:OW5/l/D74kyOtyeqecLm7yLWb/SyPpsINH5zAvUluJ4=
 github.com/opiproject/opi-spdk-bridge v0.1.2-0.20231007135056-df9fa5d7b614/go.mod h1:KRkBGPdFmmY+JeZrHj5Aa/LnSN+MUuW3nVkb7Bd7Fu8=
+github.com/opiproject/opi-spdk-bridge v0.1.2-0.20231010064806-d8cec1a78a27 h1:F2WRdrW71hn/EMVa3R4QTyzqFUZ/4pC4EKHpnnBR2nI=
+github.com/opiproject/opi-spdk-bridge v0.1.2-0.20231010064806-d8cec1a78a27/go.mod h1:kyhCIlm5xZxRzgOrOhmYyPLniSVg++fQ917VoTnSs5c=
 github.com/opiproject/opi-strongswan-bridge v0.1.1 h1:Mz/8AtA0DD8O/H9jCsDw7wuVoWNiqgXICLsD10XWJ+g=
 github.com/opiproject/opi-strongswan-bridge v0.1.1/go.mod h1:ek3r3zLa9nOfb2a7ybdMJvb5BSGU9I17Xo38UMXfE+k=
 github.com/otiai10/copy v1.2.0 h1:HvG945u96iNadPoG2/Ja2+AUJeW5YuFQMixq9yirC+k=
