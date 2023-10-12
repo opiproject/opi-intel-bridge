@@ -23,7 +23,7 @@ import (
 	"github.com/opiproject/opi-spdk-bridge/pkg/utils"
 	"github.com/opiproject/opi-strongswan-bridge/pkg/ipsec"
 
-	pc "github.com/opiproject/opi-api/common/v1/gen/go"
+	pc "github.com/opiproject/opi-api/inventory/v1/gen/go"
 	ps "github.com/opiproject/opi-api/security/v1/gen/go"
 	pb "github.com/opiproject/opi-api/storage/v1alpha1/gen/go"
 
