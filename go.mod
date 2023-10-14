@@ -7,7 +7,7 @@ require (
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.0.1
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.18.0
 	github.com/onsi/ginkgo/v2 v2.13.0
-	github.com/opiproject/gospdk v0.0.0-20231014014118-2af60ac62be2
+	github.com/opiproject/gospdk v0.0.0-20231014170006-3290904650f7
 	github.com/opiproject/opi-api v0.0.0-20231012135448-00e9f8d63cb4
 	github.com/opiproject/opi-smbios-bridge v0.1.3-0.20231014032351-c6a3b5c3d360
 	github.com/opiproject/opi-spdk-bridge v0.1.2-0.20231014133224-e746d5c8ebdb
