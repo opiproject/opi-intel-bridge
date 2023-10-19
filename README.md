@@ -14,12 +14,23 @@
 ----
 
 This is an Intel bridge to OPI APIs. Currently it supports storage APIs and is subject to extension for other domains including inventory, ipsec and networking.
-The intel-opi-bridge (further bridge) acts as a gRPC server for xPU management and configuration.
+The intel-opi-bridge (further bridge) acts as a gRPC server for xPU management and configuration. See [Intel xPU (IPU)](https://www.intel.com/content/www/us/en/products/details/network-io/ipu.html) for more details about IPU.
 
-The diagram below illustrates main system components of an exemplary NVMe-oF initiator deployment. The bridge (in blue) runs on an xPU and translates OPI API commands to appropriate sequences of Intel SDK instructions. Ultimately, two emulated NVMe storage devices are exposed to the host. These devices are backed by an "over Fabrics"-connection to some remote storage backends while the host has an illusion of accessing locally attached storage and can run standard/unmodified apps/drivers to access it.
+The diagram below illustrates main system components of an exemplary xPU NVMe-oF initiator deployment. The bridge (in blue) runs on an xPU and translates OPI API commands to appropriate sequences of Intel SDK instructions. Ultimately, two emulated NVMe/PCIe storage devices are exposed to the host. These devices are backed by an "over Fabrics"-connection to some remote storage backends while the host has an illusion of accessing locally attached storage and can run standard and unmodified apps/drivers to access it. Storage-related services and computations are offloaded from the host and accelerated on the xPU itself.
 
-![opi-intel-bridge system overview](doc/images/opi-intel-bridge_system-overview.png "opi-intel-bridge system overview")\
-*Fig. 1 - System components in NVMe-oF scenario*
+![opi-intel-bridge system overview initiator](doc/images/opi-intel-bridge_system-overview-initiator.png "opi-intel-bridge system overview initiator")\
+*Fig. 1 - System components in NVMe-oF initiator scenario.*
+
+Next to the initiator mode, the xPU can also be run in a target mode and serve as an acceleration and virtualization layer for locally attached SSD drives (JBOF usage model). Note that in this case xPU is not required to be plugged into a physical server and runs headless as a low-power, low-cost storage appliance. Customized storage services can be run on the xPU as well to realize arbitrary storage operations.
+In the diagram below a standard NVMe/TCP driver is used on a host to access physical storage which is exposed by the xPU over network via two NVMe namespaces.
+
+![opi-intel-bridge system overview target](doc/images/opi-intel-bridge_system-overview-target.png "opi-intel-bridge system overview target")\
+*Fig. 2 - System components in NVMe-oF target scenario.*
+
+Combining both above usage scenarios results in xPU acting as both initiator and target to accelerate NVMe-oF communication on both ends of a network connection - see the diagram below. Hyperconverged use cases are possible if two xPUs are plugged into the same physical server.
+
+![opi-intel-bridge system overview initiator and target](doc/images/opi-intel-bridge_system-overview-initiator-and-target.png "opi-intel-bridge system overview initiator and target")\
+*Fig. 3 - System components in a combined NVMe-oF initiator and target scenario.*
 
 ## Quickstart
 
