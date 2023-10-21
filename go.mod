@@ -10,7 +10,7 @@ require (
 	github.com/opiproject/gospdk v0.0.0-20231016193945-967dd4230965
 	github.com/opiproject/opi-api v0.0.0-20231016162146-d81cc5ee60d4
 	github.com/opiproject/opi-smbios-bridge v0.1.3-0.20231016193849-71ff9369659f
-	github.com/opiproject/opi-spdk-bridge v0.1.2-0.20231015050001-e70e732c141f
+	github.com/opiproject/opi-spdk-bridge v0.1.2-0.20231021100448-06e6f022fa94
 	github.com/opiproject/opi-strongswan-bridge v0.1.1
 	github.com/philippgille/gokv v0.6.0
 	github.com/philippgille/gokv/gomap v0.6.0
@@ -18,7 +18,7 @@ require (
 	go.einride.tech/aip v0.62.0
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.45.0
 	golang.org/x/tools v0.14.0
-	google.golang.org/grpc v1.58.3
+	google.golang.org/grpc v1.59.0
 	google.golang.org/protobuf v1.31.0
 )
 
