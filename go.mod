@@ -14,7 +14,7 @@ require (
 	github.com/opiproject/opi-strongswan-bridge v0.1.1
 	github.com/philippgille/gokv v0.6.0
 	github.com/philippgille/gokv/gomap v0.6.0
-	github.com/vektra/mockery/v2 v2.35.4
+	github.com/vektra/mockery/v2 v2.36.0
 	go.einride.tech/aip v0.62.0
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.45.0
 	golang.org/x/tools v0.14.0
