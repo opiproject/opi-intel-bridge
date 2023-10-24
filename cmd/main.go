@@ -28,7 +28,7 @@ import (
 	pb "github.com/opiproject/opi-api/storage/v1alpha1/gen/go"
 
 	"github.com/philippgille/gokv"
-	"github.com/philippgille/gokv/gomap"
+	"github.com/philippgille/gokv/redis"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -53,13 +53,19 @@ func main() {
 	var tlsFiles string
 	flag.StringVar(&tlsFiles, "tls", "", "TLS files in server_cert:server_key:ca_cert format.")
 
+	var redisAddress string
+	flag.StringVar(&redisAddress, "redis_addr", "127.0.0.1:6379", "Redis address in ip_address:port format")
+
 	flag.Parse()
 
 	// Create KV store for persistence
-	options := gomap.DefaultOptions
+	options := redis.DefaultOptions
 	options.Codec = utils.ProtoCodec{}
-	// TODO: we can change to redis or badger at any given time
-	store := gomap.NewStore(options)
+	options.Address = redisAddress
+	store, err := redis.NewClient(options)
+	if err != nil {
+		log.Panic(err)
+	}
 	defer func(store gokv.Store) {
 		err := store.Close()
 		if err != nil {
