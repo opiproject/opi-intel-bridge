@@ -133,7 +133,7 @@ func runGrpcServer(grpcPort int, spdkAddress string, tlsFiles string, store gokv
 	pb.RegisterAioVolumeServiceServer(s, backendOpiSpdkServer)
 	pb.RegisterMiddleendEncryptionServiceServer(s, middleendOpiIntelServer)
 	pb.RegisterMiddleendQosVolumeServiceServer(s, middleendOpiIntelServer)
-	pc.RegisterInventorySvcServer(s, &inventory.Server{})
+	pc.RegisterInventoryServiceServer(s, &inventory.Server{})
 	ps.RegisterIPsecServer(s, &ipsec.Server{})
 
 	reflection.Register(s)
@@ -153,7 +153,7 @@ func runGatewayServer(grpcPort int, httpPort int) {
 	// Note: Make sure the gRPC server is running properly and accessible
 	mux := runtime.NewServeMux()
 	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
-	err := pc.RegisterInventorySvcHandlerFromEndpoint(ctx, mux, fmt.Sprintf(":%d", grpcPort), opts)
+	err := pc.RegisterInventoryServiceHandlerFromEndpoint(ctx, mux, fmt.Sprintf(":%d", grpcPort), opts)
 	if err != nil {
 		log.Panic("cannot register handler server")
 	}
