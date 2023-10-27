@@ -3,6 +3,7 @@
 [![Linters](https://github.com/opiproject/opi-intel-bridge/actions/workflows/linters.yml/badge.svg)](https://github.com/opiproject/opi-intel-bridge/actions/workflows/linters.yml)
 [![CodeQL](https://github.com/opiproject/opi-intel-bridge/actions/workflows/codeql.yml/badge.svg)](https://github.com/opiproject/opi-intel-bridge/actions/workflows/codeql.yml)
 [![tests](https://github.com/opiproject/opi-intel-bridge/actions/workflows/go.yml/badge.svg)](https://github.com/opiproject/opi-intel-bridge/actions/workflows/go.yml)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/7999/badge)](https://www.bestpractices.dev/projects/7999)\
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/opiproject/opi-intel-bridge/badge)](https://securityscorecards.dev/viewer/?platform=github.com&org=opiproject&repo=opi-intel-bridge)
 [![codecov](https://codecov.io/gh/opiproject/opi-intel-bridge/branch/main/graph/badge.svg)](https://codecov.io/gh/opiproject/opi-intel-bridge)
 [![Go Report Card](https://goreportcard.com/badge/github.com/opiproject/opi-intel-bridge)](https://goreportcard.com/report/github.com/opiproject/opi-intel-bridge)
