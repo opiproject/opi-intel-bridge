@@ -21,7 +21,7 @@ RUN go build -v -o /opi-intel-bridge ./cmd/...
 FROM alpine:3.18@sha256:eece025e432126ce23f223450a0326fbebde39cdf496a85d8c016293fc851978
 RUN apk add --no-cache --no-check-certificate hwdata && rm -rf /var/cache/apk/*
 COPY --from=builder /opi-intel-bridge /
-COPY --from=docker.io/fullstorydev/grpcurl:v1.8.8-alpine /bin/grpcurl /usr/local/bin/
+COPY --from=docker.io/fullstorydev/grpcurl:v1.8.9-alpine /bin/grpcurl /usr/local/bin/
 EXPOSE 50051
 CMD [ "/opi-intel-bridge", "-grpc_port=50051", "-http_port=8082" ]
 HEALTHCHECK CMD grpcurl -plaintext localhost:50051 list || exit 1
