@@ -465,6 +465,8 @@ github.com/opiproject/gospdk v0.0.0-20231023151541-9be16d63c58b h1:04TXQXoQl43ZJ
 github.com/opiproject/gospdk v0.0.0-20231023151541-9be16d63c58b/go.mod h1:Dyq0xUyjz1gqq8hVtAbBlqcf6YcQhZaYo7UF0t7Vbvs=
 github.com/opiproject/opi-api v0.0.0-20231024064347-7cfc2845903f h1:/IXOSHQb6d9sqsTIqS5t8eyyzYpZcKGQBJtaNrfXZmQ=
 github.com/opiproject/opi-api v0.0.0-20231024064347-7cfc2845903f/go.mod h1:92pv4ulvvPMuxCJ9ND3aYbmBfEMLx0VCjpkiR7ZTqPY=
+github.com/opiproject/opi-api v0.0.0-20231024191239-b23b3f9635f0 h1:tnHsLAB4mLeYuB3LAw4wIY4bZ3RUzymr1ysrhO1v5pw=
+github.com/opiproject/opi-api v0.0.0-20231024191239-b23b3f9635f0/go.mod h1:92pv4ulvvPMuxCJ9ND3aYbmBfEMLx0VCjpkiR7ZTqPY=
 github.com/opiproject/opi-smbios-bridge v0.1.3-0.20231024141026-c7fb111b359b h1:KC2JoX3dNx+onXshDHPFURJfOOCyI9IeZcg/uHLP+0U=
 github.com/opiproject/opi-smbios-bridge v0.1.3-0.20231024141026-c7fb111b359b/go.mod h1:o+x5lPkV34jgo2TnkK3gKQkAmqhsGIBTtuvHwp37WAg=
 github.com/opiproject/opi-spdk-bridge v0.1.2-0.20231024070821-1a131cbd7bd4 h1:tm2G/69JDAVToDu9E1LUyiahzYCiFoXmKTCcXCXhB3c=
@@ -473,6 +475,8 @@ github.com/opiproject/opi-spdk-bridge v0.1.2-0.20231027174326-fc54b84144ac h1:l5
 github.com/opiproject/opi-spdk-bridge v0.1.2-0.20231027174326-fc54b84144ac/go.mod h1:UBObqT6pPFxnHqTNNCc3XKc0MD8Z2KdcOrzrcRA4a0k=
 github.com/opiproject/opi-strongswan-bridge v0.1.1 h1:Mz/8AtA0DD8O/H9jCsDw7wuVoWNiqgXICLsD10XWJ+g=
 github.com/opiproject/opi-strongswan-bridge v0.1.1/go.mod h1:ek3r3zLa9nOfb2a7ybdMJvb5BSGU9I17Xo38UMXfE+k=
+github.com/opiproject/opi-strongswan-bridge v0.1.2-0.20231031145149-9e8c84af5ebb h1:ZDw1UGLhj+okhH+zcVz1FK8ouYxUoTa2ssEVpPCycgc=
+github.com/opiproject/opi-strongswan-bridge v0.1.2-0.20231031145149-9e8c84af5ebb/go.mod h1:LhZBsEUb/OqWSLl6PXMWVh/23gDndosGDsZLQDad7MQ=
 github.com/otiai10/copy v1.2.0/go.mod h1:rrF5dJ5F0t/EWSYODDu4j9/vEeYHMkc8jt0zJChqQWw=
 github.com/otiai10/copy v1.11.0 h1:OKBD80J/mLBrwnzXqGtFCzprFSGioo30JcmR4APsNwc=
 github.com/otiai10/curr v0.0.0-20150429015615-9b4961190c95/go.mod h1:9qAhocn7zKJG+0mI8eUu6xqkFDYS2kb2saOteoSB3cE=
@@ -604,6 +608,7 @@ github.com/stretchr/testify v1.8.4 h1:CcVxjf3Q8PM0mHUKJCdn+eZZtm5yQwehR5yeSVQQcU
 github.com/stretchr/testify v1.8.4/go.mod h1:sz/lmYIOXD/1dqDmKjjqLyZ2RngseejIcXlSw2iwfAo=
 github.com/strongswan/govici v0.6.0 h1:QAjc7IIx1c/1P0Hz7yMX91FB5BUNKtyXzfxpuPyBKXE=
 github.com/strongswan/govici v0.6.0/go.mod h1:RgO/KrMlFNsRf3dSoxwWSDSV+ASd98n1T+2G3QMEVHE=
+github.com/strongswan/govici v0.7.0/go.mod h1:WvC3Lo9kEzjxUb5xNe2B4NczQpa7+cZMIy2x8eZLzSE=
 github.com/subosito/gotenv v1.6.0 h1:9NlTDc1FTs4qu0DDq7AEtTPNw6SVm7uBMsUCUjABIf8=
 github.com/subosito/gotenv v1.6.0/go.mod h1:Dk4QP5c2W3ibzajGcXpNraDfq2IrhjMIvMSWPKKo0FU=
 github.com/t-yuki/gocover-cobertura v0.0.0-20180217150009-aaee18c8195c h1:+aPplBwWcHBo6q9xrfWdMrT9o4kltkmmvpemgIjep/8=
