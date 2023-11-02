@@ -8,9 +8,9 @@ require (
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.18.0
 	github.com/onsi/ginkgo/v2 v2.13.0
 	github.com/opiproject/gospdk v0.0.0-20231023151541-9be16d63c58b
-	github.com/opiproject/opi-api v0.0.0-20231024191239-b23b3f9635f0
+	github.com/opiproject/opi-api v0.0.0-20231028074849-2fd1b3a4ab9f
 	github.com/opiproject/opi-smbios-bridge v0.1.3-0.20231024141026-c7fb111b359b
-	github.com/opiproject/opi-spdk-bridge v0.1.2-0.20231027174326-fc54b84144ac
+	github.com/opiproject/opi-spdk-bridge v0.1.2-0.20231031162026-3faeb81d0289
 	github.com/opiproject/opi-strongswan-bridge v0.1.2-0.20231031145149-9e8c84af5ebb
 	github.com/philippgille/gokv v0.6.0
 	github.com/philippgille/gokv/gomap v0.6.0
@@ -99,7 +99,7 @@ require (
 	github.com/golangci/unconvert v0.0.0-20180507085042-28b1c447d1f4 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/google/pprof v0.0.0-20210407192527-94a9f03dee38 // indirect
-	github.com/google/uuid v1.3.1 // indirect
+	github.com/google/uuid v1.4.0 // indirect
 	github.com/gordonklaus/ineffassign v0.0.0-20230610083614-0e73809eb601 // indirect
 	github.com/gostaticanalysis/analysisutil v0.7.1 // indirect
 	github.com/gostaticanalysis/comment v1.4.2 // indirect
