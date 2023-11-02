@@ -68,6 +68,8 @@ services:
     depends_on:
       opi-intel-server:
         condition: service_healthy
+      opi-gw-test:
+        condition: service_completed_successfully # to get at least one operation registered in jaeger
     command: sh -c 'curl -s "http://jaeger:16686/api/traces?service=opi-intel-bridge&lookback=20m&prettyPrint=true&limit=10" | grep operationName'
 
   opi-test:
@@ -75,8 +77,10 @@ services:
     networks:
       - opi
     depends_on:
-      opi-intel-server:
-        condition: service_healthy
+      opi-gw-test:
+        condition: service_completed_successfully
+      opi-jaeger-test:
+        condition: service_completed_successfully
     command: ls opi-intel-server:50051 opi_api.storage.v1.FrontendNvmeService -l
 
   opi-client:
