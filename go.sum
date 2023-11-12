@@ -499,6 +499,8 @@ github.com/opiproject/opi-strongswan-bridge v0.1.2-0.20231104090450-17b39c06dd72
 github.com/opiproject/opi-strongswan-bridge v0.1.2-0.20231104090450-17b39c06dd72/go.mod h1:TWQQXJ3A/M0/h3MOP6J1AVNRD81QQ04tW6KDDruwQ4A=
 github.com/opiproject/opi-strongswan-bridge v0.1.2-0.20231105165826-6ad9b3507cb7 h1:Fgp0iSOttr/5ezTZW9YYbSEU16qGXWC31zrAKQt1ztM=
 github.com/opiproject/opi-strongswan-bridge v0.1.2-0.20231105165826-6ad9b3507cb7/go.mod h1:TWQQXJ3A/M0/h3MOP6J1AVNRD81QQ04tW6KDDruwQ4A=
+github.com/opiproject/opi-strongswan-bridge v0.1.2-0.20231111124002-d4dd7efe7c6f h1:3pAqS7kHWi3+E2ogFP0hTGuIERzrTMxWCG15tSWy4cM=
+github.com/opiproject/opi-strongswan-bridge v0.1.2-0.20231111124002-d4dd7efe7c6f/go.mod h1:g3gjhTbFPtWyEqMJJqJiwY5XJCEnoLTNfrpcupOsMEA=
 github.com/otiai10/copy v1.2.0/go.mod h1:rrF5dJ5F0t/EWSYODDu4j9/vEeYHMkc8jt0zJChqQWw=
 github.com/otiai10/copy v1.11.0 h1:OKBD80J/mLBrwnzXqGtFCzprFSGioo30JcmR4APsNwc=
 github.com/otiai10/curr v0.0.0-20150429015615-9b4961190c95/go.mod h1:9qAhocn7zKJG+0mI8eUu6xqkFDYS2kb2saOteoSB3cE=
