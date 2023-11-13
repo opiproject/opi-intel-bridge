@@ -6,7 +6,7 @@ require (
 	github.com/golangci/golangci-lint v1.55.2
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.0.1
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.18.0
-	github.com/onsi/ginkgo/v2 v2.13.0
+	github.com/onsi/ginkgo/v2 v2.13.1
 	github.com/opiproject/gospdk v0.0.0-20231106063554-36ab50606e9c
 	github.com/opiproject/opi-api v0.0.0-20231106063049-7979f3e83669
 	github.com/opiproject/opi-smbios-bridge v0.1.3-0.20231111031817-70db7728f3b6
@@ -72,7 +72,7 @@ require (
 	github.com/ghodss/yaml v1.0.0 // indirect
 	github.com/ghostiam/protogetter v0.2.3 // indirect
 	github.com/go-critic/go-critic v0.9.0 // indirect
-	github.com/go-logr/logr v1.2.4 // indirect
+	github.com/go-logr/logr v1.3.0 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-ole/go-ole v1.3.0 // indirect
 	github.com/go-redis/redis v6.15.6+incompatible // indirect
