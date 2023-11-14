@@ -29,26 +29,36 @@ func NewNvmeNpiTransport() frontend.NvmeTransport {
 	return nvmeNpiTransport{}
 }
 
-func (c nvmeNpiTransport) Params(ctrlr *pb.NvmeController, subsys *pb.NvmeSubsystem) (spdk.NvmfSubsystemAddListenerParams, error) {
+func (c nvmeNpiTransport) Params(ctrlr *pb.NvmeController, subsys *pb.NvmeSubsystem) (any, error) {
 	if ctrlr.GetSpec().GetPcieId().GetPortId().GetValue() != 0 {
-		return spdk.NvmfSubsystemAddListenerParams{},
+		return models.NpiNvmfSubsystemAddListenerParams{},
 			errors.New("only port 0 is supported")
 	}
 
 	if ctrlr.GetSpec().GetPcieId().GetPhysicalFunction().GetValue() != 0 {
-		return spdk.NvmfSubsystemAddListenerParams{},
+		return models.NpiNvmfSubsystemAddListenerParams{},
 			errors.New("only physical_function 0 is supported")
 	}
 
 	if subsys.GetSpec().GetHostnqn() != "" {
-		return spdk.NvmfSubsystemAddListenerParams{},
+		return models.NpiNvmfSubsystemAddListenerParams{},
 			errors.New("hostnqn for subsystem is not supported for npi")
 	}
 
-	result := spdk.NvmfSubsystemAddListenerParams{}
+	maxNsq := ctrlr.GetSpec().GetMaxNsq()
+	maxNcq := ctrlr.GetSpec().GetMaxNcq()
+	if maxNsq != maxNcq {
+		return models.NpiNvmfSubsystemAddListenerParams{},
+			errors.New("max_nsq and max_ncq must be equal")
+	}
+
+	result := models.NpiNvmfSubsystemAddListenerParams{}
 	result.Nqn = subsys.GetSpec().GetNqn()
 	result.ListenAddress.Trtype = "npi"
 	result.ListenAddress.Traddr = calculateTransportAddr(ctrlr.GetSpec().GetPcieId())
+	if maxNsq > 0 {
+		result.MaxQPairs = int(maxNsq) + 1 // + 1 admin queue
+	}
 	return result, nil
 }
 

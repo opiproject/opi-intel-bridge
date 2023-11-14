@@ -4,6 +4,14 @@
 // Package models holds definitions for SPDK json RPC structs
 package models
 
+import "github.com/opiproject/gospdk/spdk"
+
+// NpiNvmfSubsystemAddListenerParams holds the parameters required to Delete a NVMf subsystem
+type NpiNvmfSubsystemAddListenerParams struct {
+	spdk.NvmfSubsystemAddListenerParams
+	MaxQPairs int `json:"max_qpairs,omitempty"`
+}
+
 // NpiBdevSetKeysParams holds the parameters required to set crypto keys
 type NpiBdevSetKeysParams struct {
 	UUID   string `json:"uuid"`
