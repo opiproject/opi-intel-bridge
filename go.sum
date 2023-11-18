@@ -475,6 +475,8 @@ github.com/opiproject/opi-spdk-bridge v0.1.2-0.20231118130531-7911fb9d2292 h1:40
 github.com/opiproject/opi-spdk-bridge v0.1.2-0.20231118130531-7911fb9d2292/go.mod h1:oDNtXt1sH3pat33qLLOUMOGY1tgTal8MBp6xQAHfC+0=
 github.com/opiproject/opi-strongswan-bridge v0.1.2-0.20231111124002-d4dd7efe7c6f h1:3pAqS7kHWi3+E2ogFP0hTGuIERzrTMxWCG15tSWy4cM=
 github.com/opiproject/opi-strongswan-bridge v0.1.2-0.20231111124002-d4dd7efe7c6f/go.mod h1:g3gjhTbFPtWyEqMJJqJiwY5XJCEnoLTNfrpcupOsMEA=
+github.com/opiproject/opi-strongswan-bridge v0.1.2-0.20231115195255-98da6e9a8225 h1:VEBsX0w1nqnHEKSZtTCrAcWSdZxaGziHv/NlrxtsGls=
+github.com/opiproject/opi-strongswan-bridge v0.1.2-0.20231115195255-98da6e9a8225/go.mod h1:8Zs44MIdUNgXGj4KDQ6Sp5OtYP+TPgv8zZbtrBz7AC4=
 github.com/otiai10/copy v1.2.0/go.mod h1:rrF5dJ5F0t/EWSYODDu4j9/vEeYHMkc8jt0zJChqQWw=
 github.com/otiai10/copy v1.11.0 h1:OKBD80J/mLBrwnzXqGtFCzprFSGioo30JcmR4APsNwc=
 github.com/otiai10/curr v0.0.0-20150429015615-9b4961190c95/go.mod h1:9qAhocn7zKJG+0mI8eUu6xqkFDYS2kb2saOteoSB3cE=
@@ -633,6 +635,7 @@ github.com/uudashr/gocognit v1.1.2 h1:l6BAEKJqQH2UpKAPKdMfZf5kE4W/2xk8pfU1OVLvni
 github.com/uudashr/gocognit v1.1.2/go.mod h1:aAVdLURqcanke8h3vg35BC++eseDm66Z7KmchI5et4k=
 github.com/vektra/mockery/v2 v2.36.1 h1:F/2tEFFRWdHe36smr+e6YIiKzXTZVd0cCAUqG0GTw1s=
 github.com/vektra/mockery/v2 v2.36.1/go.mod h1:diB13hxXG6QrTR0ol2Rk8s2dRMftzvExSvPDKr+IYKk=
+github.com/vektra/mockery/v2 v2.37.1/go.mod h1:diB13hxXG6QrTR0ol2Rk8s2dRMftzvExSvPDKr+IYKk=
 github.com/xen0n/gosmopolitan v1.2.2 h1:/p2KTnMzwRexIW8GlKawsTWOxn7UHA+jCMF/V8HHtvU=
 github.com/xen0n/gosmopolitan v1.2.2/go.mod h1:7XX7Mj61uLYrj0qmeN0zi7XDon9JRAEhYQqAPLVNTeg=
 github.com/yagipy/maintidx v1.0.0 h1:h5NvIsCz+nRDapQ0exNv4aJ0yXSI0420omVANTv3GJM=

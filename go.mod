@@ -11,11 +11,11 @@ require (
 	github.com/opiproject/opi-api v0.0.0-20231113071405-8df008ba93b3
 	github.com/opiproject/opi-smbios-bridge v0.1.3-0.20231118051054-0082ec96846c
 	github.com/opiproject/opi-spdk-bridge v0.1.2-0.20231118130531-7911fb9d2292
-	github.com/opiproject/opi-strongswan-bridge v0.1.2-0.20231111124002-d4dd7efe7c6f
+	github.com/opiproject/opi-strongswan-bridge v0.1.2-0.20231115195255-98da6e9a8225
 	github.com/philippgille/gokv v0.6.0
 	github.com/philippgille/gokv/gomap v0.6.0
 	github.com/philippgille/gokv/redis v0.6.0
-	github.com/vektra/mockery/v2 v2.36.1
+	github.com/vektra/mockery/v2 v2.37.1
 	go.einride.tech/aip v0.65.0
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.46.0
 	golang.org/x/tools v0.15.0
