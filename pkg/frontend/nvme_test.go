@@ -532,6 +532,24 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			existingController: nil,
 			hostnqn:            "nqn.2014-08.org.nvmexpress:uuid:feb98abe-d51f-40c8-b348-2753f3571d3c",
 		},
+		"valid request with empty SPDK response": {
+			in:                 &testControllerWithMaxQos,
+			out:                nil,
+			spdk:               []string{""},
+			errCode:            codes.Unknown,
+			errMsg:             fmt.Sprintf("nvmf_subsystem_add_listener: %v", "EOF"),
+			existingController: nil,
+			hostnqn:            "",
+		},
+		"valid request with invalid SPDK response": {
+			in:                 &testControllerWithMaxQos,
+			out:                nil,
+			spdk:               []string{`{"id":%d,"error":{"code":0,"message":""},"result":false}`},
+			errCode:            codes.InvalidArgument,
+			errMsg:             fmt.Sprintf("Could not create CTRL: %v", testControllerName),
+			existingController: nil,
+			hostnqn:            "",
+		},
 	}
 
 	for testName, tt := range tests {
