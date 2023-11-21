@@ -550,6 +550,55 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			existingController: nil,
 			hostnqn:            "",
 		},
+		"non-equal max_nsq and max_ncq": {
+			in: &pb.NvmeController{
+				Spec: &pb.NvmeControllerSpec{
+					Endpoint: &pb.NvmeControllerSpec_PcieId{
+						PcieId: &pb.PciEndpoint{
+							PortId:           wrapperspb.Int32(0),
+							PhysicalFunction: wrapperspb.Int32(0),
+							VirtualFunction:  wrapperspb.Int32(0),
+						},
+					},
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					NvmeControllerId: proto.Int32(1),
+					MaxNsq:           17,
+					MaxNcq:           18,
+				},
+			},
+			out:                nil,
+			spdk:               []string{},
+			errCode:            codes.InvalidArgument,
+			errMsg:             "max_nsq and max_ncq must be equal",
+			existingController: nil,
+			hostnqn:            "",
+		},
+		"non-zero max_nsq and max_ncq": {
+			in: &pb.NvmeController{
+				Spec: &pb.NvmeControllerSpec{
+					Endpoint: testControllerWithMaxQos.Spec.Endpoint,
+					Trtype:   pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					MaxNsq:   17,
+					MaxNcq:   17,
+				},
+			},
+			out: &pb.NvmeController{
+				Spec: &pb.NvmeControllerSpec{
+					Endpoint:         testControllerWithMaxQos.Spec.Endpoint,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					NvmeControllerId: proto.Int32(-1),
+					MaxNsq:           17,
+					MaxNcq:           17,
+				},
+				Status: &pb.NvmeControllerStatus{Active: true},
+			},
+			spdk: []string{
+				`{"id":%d,"error":{"code":0,"message":""},"result":true}`,
+				`{"id":%d,"error":{"code":0,"message":""},"result":true}`},
+			errCode:            codes.OK,
+			errMsg:             "",
+			existingController: nil,
+		},
 	}
 
 	for testName, tt := range tests {
