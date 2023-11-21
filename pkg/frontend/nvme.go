@@ -6,7 +6,6 @@ package frontend
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"log"
 	"strconv"
@@ -25,6 +24,9 @@ type nvmeNpiTransport struct {
 	rpc spdk.JSONRPC
 }
 
+// build time check that struct implements interface
+var _ frontend.NvmeTransport = (*nvmeNpiTransport)(nil)
+
 // NewNvmeNpiTransport creates a new instance of a NvmeTransport for npi
 func NewNvmeNpiTransport(rpc spdk.JSONRPC) frontend.NvmeTransport {
 	if rpc == nil {
@@ -36,27 +38,70 @@ func NewNvmeNpiTransport(rpc spdk.JSONRPC) frontend.NvmeTransport {
 	}
 }
 
-func (c nvmeNpiTransport) Params(ctrlr *pb.NvmeController, subsys *pb.NvmeSubsystem) (spdk.NvmfSubsystemAddListenerParams, error) {
+func (c *nvmeNpiTransport) CreateController(
+	ctx context.Context,
+	ctrlr *pb.NvmeController,
+	subsys *pb.NvmeSubsystem,
+) error {
 	if ctrlr.GetSpec().GetPcieId().GetPortId().GetValue() != 0 {
-		return spdk.NvmfSubsystemAddListenerParams{},
-			errors.New("only port 0 is supported")
+		return status.Error(codes.InvalidArgument, "only port 0 is supported")
 	}
 
 	if ctrlr.GetSpec().GetPcieId().GetPhysicalFunction().GetValue() != 0 {
-		return spdk.NvmfSubsystemAddListenerParams{},
-			errors.New("only physical_function 0 is supported")
+		return status.Error(codes.InvalidArgument,
+			"only physical_function 0 is supported")
 	}
 
 	if subsys.GetSpec().GetHostnqn() != "" {
-		return spdk.NvmfSubsystemAddListenerParams{},
-			errors.New("hostnqn for subsystem is not supported for npi")
+		return status.Error(codes.InvalidArgument,
+			"hostnqn for subsystem is not supported for npi")
 	}
 
-	result := spdk.NvmfSubsystemAddListenerParams{}
+	params := c.params(ctrlr, subsys)
+	var result spdk.NvmfSubsystemAddListenerResult
+	err := c.rpc.Call(ctx, "nvmf_subsystem_add_listener", &params, &result)
+	if err != nil {
+		return status.Error(codes.Unknown, err.Error())
+	}
+	log.Printf("Received from SPDK: %v", result)
+	if !result {
+		msg := fmt.Sprintf("Could not create CTRL: %s", ctrlr.Name)
+		return status.Errorf(codes.InvalidArgument, msg)
+	}
+
+	return nil
+}
+
+func (c *nvmeNpiTransport) DeleteController(
+	ctx context.Context,
+	ctrlr *pb.NvmeController,
+	subsys *pb.NvmeSubsystem,
+) error {
+	params := c.params(ctrlr, subsys)
+	var result spdk.NvmfSubsystemAddListenerResult
+	err := c.rpc.Call(ctx, "nvmf_subsystem_remove_listener", &params, &result)
+	if err != nil {
+		return err
+	}
+	log.Printf("Received from SPDK: %v", result)
+	if !result {
+		msg := fmt.Sprintf("Could not delete CTRL: %s", ctrlr.Name)
+		return status.Errorf(codes.InvalidArgument, msg)
+	}
+
+	return nil
+}
+
+func (c *nvmeNpiTransport) params(
+	ctrlr *pb.NvmeController,
+	subsys *pb.NvmeSubsystem,
+) models.NpiNvmfSubsystemAddListenerParams {
+	result := models.NpiNvmfSubsystemAddListenerParams{}
 	result.Nqn = subsys.GetSpec().GetNqn()
 	result.ListenAddress.Trtype = "npi"
 	result.ListenAddress.Traddr = calculateTransportAddr(ctrlr.GetSpec().GetPcieId())
-	return result, nil
+
+	return result
 }
 
 func calculateTransportAddr(pci *pb.PciEndpoint) string {
