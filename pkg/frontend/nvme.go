@@ -57,7 +57,17 @@ func (c *nvmeNpiTransport) CreateController(
 			"hostnqn for subsystem is not supported for npi")
 	}
 
+	maxNsq := ctrlr.GetSpec().GetMaxNsq()
+	maxNcq := ctrlr.GetSpec().GetMaxNcq()
+	if maxNsq != maxNcq {
+		return status.Error(codes.InvalidArgument,
+			"max_nsq and max_ncq must be equal")
+	}
+
 	params := c.params(ctrlr, subsys)
+	if maxNsq > 0 {
+		params.MaxQPairs = int(maxNsq) + 1 // + 1 admin queue
+	}
 	var result spdk.NvmfSubsystemAddListenerResult
 	err := c.rpc.Call(ctx, "nvmf_subsystem_add_listener", &params, &result)
 	if err != nil {
