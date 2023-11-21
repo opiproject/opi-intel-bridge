@@ -22,11 +22,18 @@ import (
 )
 
 type nvmeNpiTransport struct {
+	rpc spdk.JSONRPC
 }
 
 // NewNvmeNpiTransport creates a new instance of a NvmeTransport for npi
-func NewNvmeNpiTransport() frontend.NvmeTransport {
-	return nvmeNpiTransport{}
+func NewNvmeNpiTransport(rpc spdk.JSONRPC) frontend.NvmeTransport {
+	if rpc == nil {
+		log.Panicf("rpc cannot be nil")
+	}
+
+	return &nvmeNpiTransport{
+		rpc: rpc,
+	}
 }
 
 func (c nvmeNpiTransport) Params(ctrlr *pb.NvmeController, subsys *pb.NvmeSubsystem) (spdk.NvmfSubsystemAddListenerParams, error) {
