@@ -15,7 +15,7 @@ require (
 	github.com/philippgille/gokv v0.6.0
 	github.com/philippgille/gokv/gomap v0.6.0
 	github.com/philippgille/gokv/redis v0.6.0
-	github.com/vektra/mockery/v2 v2.37.1
+	github.com/vektra/mockery/v2 v2.38.0
 	go.einride.tech/aip v0.65.0
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.46.1
 	golang.org/x/tools v0.15.0
