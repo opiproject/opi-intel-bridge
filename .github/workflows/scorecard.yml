@@ -7,16 +7,14 @@ on:
   pull_request:
     branches: [ main ]
 
-permissions:
-  contents: read
+permissions: read-all
 
 jobs:
   call:
     permissions:
-      # Keep in sync with opi-smbios-bridge, no direct way to inherit permissions
-      contents: read
       security-events: write
       id-token: write
       actions: read
+      contents: read
     uses: opiproject/actions/.github/workflows/scorecard.yml@main
     secrets: inherit
