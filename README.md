@@ -28,13 +28,15 @@ In the diagram below a standard NVMe/TCP driver is used on a host to access phys
 ![opi-intel-bridge system overview target](doc/images/opi-intel-bridge_system-overview-target.png "opi-intel-bridge system overview target")\
 *Fig. 2 - System components in NVMe-oF target scenario.*
 
-Combining both above usage scenarios results in xPU acting as both initiator and target to accelerate NVMe-oF communication on both ends of a network connection - see the diagram below. Hyperconverged use cases are possible if two xPUs are plugged into the same physical server or if an xPU is run in initiator and target mode simultaneously.
+Combining both above usage scenarios results in xPU acting as both initiator and target to accelerate NVMe-oF communication on both ends of a network connection - see the diagram below. Hyperconverged use cases are possible if two xPUs are plugged into the same physical server
 
 ![opi-intel-bridge system overview initiator and target 1](doc/images/opi-intel-bridge_system-overview-initiator-and-target.png "opi-intel-bridge system overview initiator and target 1")\
 *Fig. 3 - System components in a combined NVMe-oF initiator and target scenario with two independent xPUs.*
 
+or if an xPU is run in initiator and target mode simultaneously.
+
 ![opi-intel-bridge system overview initiator and target 2](doc/images/opi-intel-bridge_system-overview-initiator-and-target-simultaneously.png "opi-intel-bridge system overview initiator and target 2")\
-*Fig. 3 - System components in a combined NVMe-oF initiator and target scenario with one xPU running in both modes simultaneously.*
+*Fig. 4 - System components in a combined NVMe-oF initiator and target scenario with one xPU running in both modes simultaneously.*
 
 ## Quickstart
 
