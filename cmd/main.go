@@ -16,10 +16,10 @@ import (
 
 	"github.com/opiproject/gospdk/spdk"
 	fe "github.com/opiproject/opi-intel-bridge/pkg/frontend"
-	me "github.com/opiproject/opi-intel-bridge/pkg/middleend"
 	"github.com/opiproject/opi-smbios-bridge/pkg/inventory"
 	"github.com/opiproject/opi-spdk-bridge/pkg/backend"
 	"github.com/opiproject/opi-spdk-bridge/pkg/frontend"
+	"github.com/opiproject/opi-spdk-bridge/pkg/middleend"
 	"github.com/opiproject/opi-spdk-bridge/pkg/utils"
 	"github.com/opiproject/opi-strongswan-bridge/pkg/ipsec"
 
@@ -124,7 +124,9 @@ func runGrpcServer(grpcPort int, spdkAddress string, tlsFiles string, store gokv
 	frontendOpiIntelServer := fe.NewServer(jsonRPC, store)
 	frontendOpiSpdkServer := frontend.NewServer(jsonRPC, store)
 	backendOpiSpdkServer := backend.NewServer(jsonRPC, store)
-	middleendOpiIntelServer := me.NewServer(jsonRPC, store)
+	middleendOpiIntelServer := middleend.NewCustomizedServer(
+		jsonRPC, store, spdk.TweakModeJoinNegLbaWithLba,
+	)
 
 	pb.RegisterFrontendNvmeServiceServer(s, frontendOpiIntelServer)
 	pb.RegisterFrontendVirtioBlkServiceServer(s, frontendOpiIntelServer)
