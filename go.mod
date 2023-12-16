@@ -10,7 +10,7 @@ require (
 	github.com/opiproject/gospdk v0.0.0-20231211065208-f7581ffd84e3
 	github.com/opiproject/opi-api v0.0.0-20231204182835-b9900483c605
 	github.com/opiproject/opi-smbios-bridge v0.1.3-0.20231209030245-a017fdaa0e05
-	github.com/opiproject/opi-spdk-bridge v0.1.2-0.20231209130805-216eed337783
+	github.com/opiproject/opi-spdk-bridge v0.1.2-0.20231216104946-ba9b02943330
 	github.com/opiproject/opi-strongswan-bridge v0.1.2-0.20231211064623-e4ef0e4fa95f
 	github.com/philippgille/gokv v0.6.0
 	github.com/philippgille/gokv/gomap v0.6.0
