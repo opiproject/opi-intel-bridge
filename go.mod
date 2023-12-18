@@ -18,7 +18,7 @@ require (
 	github.com/vektra/mockery/v2 v2.38.0
 	go.einride.tech/aip v0.66.0
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.46.1
-	golang.org/x/tools v0.16.0
+	golang.org/x/tools v0.16.1
 	google.golang.org/grpc v1.60.0
 	google.golang.org/protobuf v1.31.0
 )
