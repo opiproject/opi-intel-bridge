@@ -16,7 +16,12 @@ Entries in this file are grouped into several categories:
 
 ## [Unreleased]
 
-* Add virtio-blk support ([#234](https://github.com/opiproject/opi-intel-bridge/pull/234)).
+* Virtio-blk support ([#234](https://github.com/opiproject/opi-intel-bridge/pull/234)).
+* HTTP gateway for inventory service ([264](https://github.com/opiproject/opi-intel-bridge/pull/264))
+* Nvme/TCP as a target ([#314](https://github.com/opiproject/opi-intel-bridge/pull/314))
+* Otel monitoring ([#317](https://github.com/opiproject/opi-intel-bridge/pull/317))
+* Nvme/TCP PSK support ([#318](https://github.com/opiproject/opi-intel-bridge/pull/318))
+* Setting number of queues per NVMe controller ([#410](https://github.com/opiproject/opi-intel-bridge/pull/410))
 
 ## [0.1.0] - 2023-07-14
 
