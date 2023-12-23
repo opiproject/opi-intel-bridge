@@ -304,6 +304,8 @@ github.com/google/renameio v0.1.0/go.mod h1:KWCgfxg9yswjAJkECMjeO8J8rahYeXnNhOm4
 github.com/google/uuid v1.1.2/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/google/uuid v1.4.0 h1:MtMxsa51/r9yyhkyLsVeVt0B+BGQZzpQiTQ4eHZ8bc4=
 github.com/google/uuid v1.4.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
+github.com/google/uuid v1.5.0 h1:1p67kYwdtXjb0gL0BPiP1Av9wiZPo5A8z2cWkTZ+eyU=
+github.com/google/uuid v1.5.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/googleapis/gax-go/v2 v2.0.4/go.mod h1:0Wqv26UfaUD9n4G6kQubkQ+KchISgw+vpHVxEJEs9eg=
 github.com/googleapis/gax-go/v2 v2.0.5/go.mod h1:DWXyrwAJ9X0FpwwEdw+IPEYBICEFu5mhpdKc/us6bOk=
 github.com/googleapis/google-cloud-go-testing v0.0.0-20200911160855-bcd43fbb19e8/go.mod h1:dvDLG8qkwmyD9a/MJJN3XJcT3xFxOKAvTZGvuZmac9g=
@@ -496,6 +498,8 @@ github.com/opiproject/opi-spdk-bridge v0.1.2-0.20231209130805-216eed337783 h1:Mu
 github.com/opiproject/opi-spdk-bridge v0.1.2-0.20231209130805-216eed337783/go.mod h1:/ZbkFyOQ+uO1k/8v0LoCtHWtsl+epm+Q93wHC2KHxyY=
 github.com/opiproject/opi-spdk-bridge v0.1.2-0.20231216104946-ba9b02943330 h1:B3WFdXr2atzb7NY4pbQIECU50YSieRCddMxNu9bS+5c=
 github.com/opiproject/opi-spdk-bridge v0.1.2-0.20231216104946-ba9b02943330/go.mod h1:IhVRYYbKPYTlL4mcxpWv/Vzva3PZ6s3dXuQccF8oVFM=
+github.com/opiproject/opi-spdk-bridge v0.1.2-0.20231223100012-ce91e47a0706 h1:ijQoQS7qlpSbT9By/ArLHfxLiWOY7CMxcT9uX95Ih9U=
+github.com/opiproject/opi-spdk-bridge v0.1.2-0.20231223100012-ce91e47a0706/go.mod h1:wwWzO4WimF1FP/RQyUIYwpgwBwoZwomRdCOmAUanb8w=
 github.com/opiproject/opi-strongswan-bridge v0.1.2-0.20231115195255-98da6e9a8225 h1:VEBsX0w1nqnHEKSZtTCrAcWSdZxaGziHv/NlrxtsGls=
 github.com/opiproject/opi-strongswan-bridge v0.1.2-0.20231115195255-98da6e9a8225/go.mod h1:8Zs44MIdUNgXGj4KDQ6Sp5OtYP+TPgv8zZbtrBz7AC4=
 github.com/opiproject/opi-strongswan-bridge v0.1.2-0.20231125033052-50b17584c014 h1:keNLbYTf5vqDw3yXpJtIXP5AaSwF620l4zPZcRSi41Q=
