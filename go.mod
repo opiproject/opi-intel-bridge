@@ -7,7 +7,7 @@ require (
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.0.1
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.18.1
 	github.com/onsi/ginkgo/v2 v2.13.2
-	github.com/opiproject/gospdk v0.0.0-20231211065208-f7581ffd84e3
+	github.com/opiproject/gospdk v0.0.0-20231219165142-11b04ca74a85
 	github.com/opiproject/opi-api v0.0.0-20231204182835-b9900483c605
 	github.com/opiproject/opi-smbios-bridge v0.1.3-0.20231209030245-a017fdaa0e05
 	github.com/opiproject/opi-spdk-bridge v0.1.2-0.20231216104946-ba9b02943330
@@ -19,7 +19,7 @@ require (
 	go.einride.tech/aip v0.66.0
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.46.1
 	golang.org/x/tools v0.16.1
-	google.golang.org/grpc v1.60.0
+	google.golang.org/grpc v1.60.1
 	google.golang.org/protobuf v1.31.0
 )
 
