@@ -506,6 +506,8 @@ github.com/opiproject/opi-spdk-bridge v0.1.2-0.20231223100012-ce91e47a0706 h1:ij
 github.com/opiproject/opi-spdk-bridge v0.1.2-0.20231223100012-ce91e47a0706/go.mod h1:wwWzO4WimF1FP/RQyUIYwpgwBwoZwomRdCOmAUanb8w=
 github.com/opiproject/opi-spdk-bridge v0.1.2-0.20231230090335-801303e53d7f h1:q8UhVDIougLRepqS7B6/h6Ket92LVIptwmlNUnIis8k=
 github.com/opiproject/opi-spdk-bridge v0.1.2-0.20231230090335-801303e53d7f/go.mod h1:LPNyLhvQAIVzZCjEpWQ2OJnS/2Bsr90gnpaqx/Qwvmw=
+github.com/opiproject/opi-spdk-bridge v0.1.2-0.20240106091918-d9e1c4b435da h1:eFgiISbZbfeW2QLmGwjO+1j7tlb/bNSy/TxK99sLM5w=
+github.com/opiproject/opi-spdk-bridge v0.1.2-0.20240106091918-d9e1c4b435da/go.mod h1:Jqkm3cuCCjHALRuAy6cWZN7aiQPF9pSgEOuyHohGfEo=
 github.com/opiproject/opi-strongswan-bridge v0.1.2-0.20231115195255-98da6e9a8225 h1:VEBsX0w1nqnHEKSZtTCrAcWSdZxaGziHv/NlrxtsGls=
 github.com/opiproject/opi-strongswan-bridge v0.1.2-0.20231115195255-98da6e9a8225/go.mod h1:8Zs44MIdUNgXGj4KDQ6Sp5OtYP+TPgv8zZbtrBz7AC4=
 github.com/opiproject/opi-strongswan-bridge v0.1.2-0.20231125033052-50b17584c014 h1:keNLbYTf5vqDw3yXpJtIXP5AaSwF620l4zPZcRSi41Q=
