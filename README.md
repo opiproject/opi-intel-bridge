@@ -76,6 +76,8 @@ import "github.com/opiproject/opi-intel-bridge/pkg/middleend"
 
 ### Usage
 
+Before initiating the bridge, the [Redis](https://redis.io/) and [Jaeger](https://www.jaegertracing.io/) services must be operational. To specify non-standard ports for these services, use the `--help` command with the binary to find out which parameters needs to be passed.
+
 On xPU run
 
 ```bash
