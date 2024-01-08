@@ -16,12 +16,20 @@ Entries in this file are grouped into several categories:
 
 ## [Unreleased]
 
+## [0.2.0] - 2024-01-12
+
+### Added
+
+* Usage of SPDK Acceleration Framework for encryption ([#465](https://github.com/opiproject/opi-intel-bridge/pull/465)).
+* Setting number of queues per NVMe controller ([#410](https://github.com/opiproject/opi-intel-bridge/pull/410)).
+* Otel monitoring ([#317](https://github.com/opiproject/opi-intel-bridge/pull/317)).
+* Nvme/TCP as a target ([#314](https://github.com/opiproject/opi-intel-bridge/pull/314)).
+* HTTP gateway for inventory service ([264](https://github.com/opiproject/opi-intel-bridge/pull/264)).
 * Virtio-blk support ([#234](https://github.com/opiproject/opi-intel-bridge/pull/234)).
-* HTTP gateway for inventory service ([264](https://github.com/opiproject/opi-intel-bridge/pull/264))
-* Nvme/TCP as a target ([#314](https://github.com/opiproject/opi-intel-bridge/pull/314))
-* Otel monitoring ([#317](https://github.com/opiproject/opi-intel-bridge/pull/317))
-* Nvme/TCP PSK support ([#318](https://github.com/opiproject/opi-intel-bridge/pull/318))
-* Setting number of queues per NVMe controller ([#410](https://github.com/opiproject/opi-intel-bridge/pull/410))
+
+### Security
+
+* Nvme/TCP PSK support ([#318](https://github.com/opiproject/opi-intel-bridge/pull/318)).
 
 ## [0.1.0] - 2023-07-14
 
