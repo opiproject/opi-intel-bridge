@@ -78,6 +78,8 @@ import "github.com/opiproject/opi-intel-bridge/pkg/middleend"
 
 Before initiating the bridge, the [Redis](https://redis.io/) and [Jaeger](https://www.jaegertracing.io/) services must be operational. To specify non-standard ports for these services, use the `--help` command with the binary to find out which parameters needs to be passed.
 
+According to this guideline, the Docker should be installed and appropriately configured in compliance with your organization's policies, such as the utilization of a Proxy, to ensure its proper functioning.
+
 On xPU run
 
 ```bash
