@@ -71,7 +71,6 @@ To import the bridge within another go package or module use
 
 ```go
 import "github.com/opiproject/opi-intel-bridge/pkg/frontend"
-import "github.com/opiproject/opi-intel-bridge/pkg/middleend"
 ```
 
 ### Usage
