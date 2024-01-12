@@ -1,8 +1,6 @@
 module github.com/opiproject/opi-intel-bridge
 
-go 1.21
-
-toolchain go1.21.6
+go 1.19
 
 require (
 	github.com/golangci/golangci-lint v1.55.2
@@ -18,7 +16,6 @@ require (
 	github.com/philippgille/gokv/gomap v0.6.0
 	github.com/philippgille/gokv/redis v0.6.0
 	github.com/vektra/mockery/v2 v2.39.2
-	go.einride.tech/aip v0.66.0
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.46.1
 	golang.org/x/tools v0.16.1
 	google.golang.org/grpc v1.60.1
@@ -207,6 +204,7 @@ require (
 	github.com/ykadowak/zerologlint v0.1.3 // indirect
 	gitlab.com/bosi/decorder v0.4.1 // indirect
 	go-simpler.org/sloglint v0.1.2 // indirect
+	go.einride.tech/aip v0.66.0 // indirect
 	go.opentelemetry.io/otel v1.21.0 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.21.0 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.21.0 // indirect
