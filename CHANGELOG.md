@@ -48,5 +48,5 @@ Entries in this file are grouped into several categories:
 * Hardening of project security through enablement of security scans ([#137](https://github.com/opiproject/opi-intel-bridge/pull/137), [#149](https://github.com/opiproject/opi-intel-bridge/pull/149)).
 
 [unreleased]: https://github.com/opiproject/opi-intel-bridge/compare/v0.2.0...HEAD
-[0.2.0]: https://github.com/opiproject/opi-intel-bridge/compare/v0.0.1...v0.0.2
+[0.2.0]: https://github.com/opiproject/opi-intel-bridge/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/opiproject/opi-intel-bridge/releases/tag/v0.1.0
