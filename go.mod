@@ -6,7 +6,7 @@ require (
 	github.com/golangci/golangci-lint v1.55.2
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.0.1
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.19.0
-	github.com/onsi/ginkgo/v2 v2.13.2
+	github.com/onsi/ginkgo/v2 v2.14.0
 	github.com/opiproject/gospdk v0.0.0-20240115073959-dff04eece15a
 	github.com/opiproject/opi-api v0.0.0-20231204182835-b9900483c605
 	github.com/opiproject/opi-smbios-bridge v0.1.3-0.20231209030245-a017fdaa0e05
