@@ -8,8 +8,8 @@ require (
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.19.0
 	github.com/onsi/ginkgo/v2 v2.14.0
 	github.com/opiproject/gospdk v0.0.0-20240115073959-dff04eece15a
-	github.com/opiproject/opi-api v0.0.0-20231204182835-b9900483c605
-	github.com/opiproject/opi-smbios-bridge v0.1.3-0.20231209030245-a017fdaa0e05
+	github.com/opiproject/opi-api v0.0.0-20240109154027-4acfe7603053
+	github.com/opiproject/opi-smbios-bridge v0.1.3-0.20240115074113-898160ca3bf9
 	github.com/opiproject/opi-spdk-bridge v0.1.2-0.20240115073748-1fc498ec641e
 	github.com/opiproject/opi-strongswan-bridge v0.1.2-0.20231211064623-e4ef0e4fa95f
 	github.com/philippgille/gokv v0.6.0
