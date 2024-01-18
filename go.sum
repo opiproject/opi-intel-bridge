@@ -464,6 +464,8 @@ github.com/opiproject/gospdk v0.0.0-20240115073959-dff04eece15a h1:RcBndvpWDCt4L
 github.com/opiproject/gospdk v0.0.0-20240115073959-dff04eece15a/go.mod h1:9CMbTd9ptR6tl6HRRn8C33DPeWF85hTo4KZCa5iKftY=
 github.com/opiproject/opi-api v0.0.0-20231204182835-b9900483c605 h1:3buAwkHHsEMjn+cIUOTi7RLcG8n3/52UNm8pZ8tZOJI=
 github.com/opiproject/opi-api v0.0.0-20231204182835-b9900483c605/go.mod h1:92pv4ulvvPMuxCJ9ND3aYbmBfEMLx0VCjpkiR7ZTqPY=
+github.com/opiproject/opi-api v0.0.0-20240115075233-7dc729079487 h1:6287wV/1Cw9YUk7J/nnHFBVWFqwmqqBvdYr7dafYIXk=
+github.com/opiproject/opi-api v0.0.0-20240115075233-7dc729079487/go.mod h1:92pv4ulvvPMuxCJ9ND3aYbmBfEMLx0VCjpkiR7ZTqPY=
 github.com/opiproject/opi-smbios-bridge v0.1.3-0.20231209030245-a017fdaa0e05 h1:uWdrNakf8wVHsBFoMzCkmrcbggvI0Ix9lf+5tYd3ZAo=
 github.com/opiproject/opi-smbios-bridge v0.1.3-0.20231209030245-a017fdaa0e05/go.mod h1:Fqs+wTgKKIGJV1smVGYEsAtestrRoj+dLAb4ZbzHoxA=
 github.com/opiproject/opi-spdk-bridge v0.1.2-0.20240106091918-d9e1c4b435da h1:eFgiISbZbfeW2QLmGwjO+1j7tlb/bNSy/TxK99sLM5w=
@@ -472,6 +474,8 @@ github.com/opiproject/opi-spdk-bridge v0.1.2-0.20240115073748-1fc498ec641e h1:8P
 github.com/opiproject/opi-spdk-bridge v0.1.2-0.20240115073748-1fc498ec641e/go.mod h1:+RyVSssSdaS/a55MQovvvuRbUj4I5S/7YsD1bqP6vw0=
 github.com/opiproject/opi-strongswan-bridge v0.1.2-0.20231211064623-e4ef0e4fa95f h1:rViM4P0NO/V62cRs77D6/RAELphlL22LfnKnJQPHZ6c=
 github.com/opiproject/opi-strongswan-bridge v0.1.2-0.20231211064623-e4ef0e4fa95f/go.mod h1:IPdFEwZNRMu3DifU3DCbNePvBfKTeQ5VVzNxl7xoY+0=
+github.com/opiproject/opi-strongswan-bridge v0.1.2-0.20240117231232-0a5ad56792e1 h1:qU7zFBzbfIRrn8r/Gz6ND8U1uJuDlaK0fZq8gD32/Bg=
+github.com/opiproject/opi-strongswan-bridge v0.1.2-0.20240117231232-0a5ad56792e1/go.mod h1:+ZC22OKO5+xH7cC9yj8SQAV0zXa+6NuUxb0Ayo487iA=
 github.com/otiai10/copy v1.2.0/go.mod h1:rrF5dJ5F0t/EWSYODDu4j9/vEeYHMkc8jt0zJChqQWw=
 github.com/otiai10/copy v1.11.0 h1:OKBD80J/mLBrwnzXqGtFCzprFSGioo30JcmR4APsNwc=
 github.com/otiai10/curr v0.0.0-20150429015615-9b4961190c95/go.mod h1:9qAhocn7zKJG+0mI8eUu6xqkFDYS2kb2saOteoSB3cE=
