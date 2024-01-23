@@ -48,7 +48,7 @@ It is assumed that Intel IPU is already properly set up to be used with Intel OP
 The following variables are used throughout this document:
 
 | Variable         | Description                                                                                                                                        |
-| -----------------| -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
 | BRIDGE_IP        | opi-intel-bridge gRPC listening IP address e.g. 10.10.10.10 or localhost                                                                           |
 | BRIDGE_PORT      | opi-intel-bridge gRPC listening port e.g. 50051                                                                                                    |
 | BRIDGE_ADDR      | BRIDGE_IP:BRIDGE_PORT                                                                                                                              |
@@ -127,30 +127,30 @@ or specify commands manually
 grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmeSubsystem "{nvme_subsystem : {spec : {nqn: 'nqn.2022-09.io.spdk:opitest2', serial_number: 'myserial2', model_number: 'mymodel2', max_namespaces: 11} }, nvme_subsystem_id : 'subsystem2' }"
 grpc_cli call --json_input --json_output $BRIDGE_ADDR ListNvmeSubsystems "{}"
 grpc_cli call --json_input --json_output $BRIDGE_ADDR GetNvmeSubsystem "{name : '//storage.opiproject.org/subsystems/subsystem2'}"
-grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmeController "{parent: '//storage.opiproject.org/subsystems/subsystem2', nvme_controller : {spec : {nvme_controller_id: 2, pcie_id : {physical_function : 0, virtual_function : 0, port_id: 0}, max_nsq:5, max_ncq:5, 'trtype': 'NVME_TRANSPORT_PCIE' } }, nvme_controller_id : 'controller1'}"
+grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmeController "{parent: '//storage.opiproject.org/subsystems/subsystem2', nvme_controller : {spec : {nvme_controller_id: 2, pcie_id : {physical_function : 0, virtual_function : 0, port_id: 0}, max_nsq:5, max_ncq:5, 'trtype': 'NVME_TRANSPORT_TYPE_PCIE' } }, nvme_controller_id : 'controller1'}"
 grpc_cli call --json_input --json_output $BRIDGE_ADDR ListNvmeControllers "{parent : '//storage.opiproject.org/subsystems/subsystem2'}"
 grpc_cli call --json_input --json_output $BRIDGE_ADDR GetNvmeController "{name : '//storage.opiproject.org/subsystems/subsystem2/controllers/controller1'}"
 
 # Nvme VF creation on PF0
 grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmeSubsystem "{nvme_subsystem : {spec : {nqn: 'nqn.2022-09.io.spdk:opitest3', serial_number: 'mev-opi-serial', model_number: 'mev-opi-model', max_namespaces: 11} }, nvme_subsystem_id : 'subsystem03' }"
-grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmeController "{parent: '//storage.opiproject.org/subsystems/subsystem03', nvme_controller : {spec : {nvme_controller_id: 2, pcie_id : {physical_function : 0, virtual_function : 3, port_id: 0 }, max_nsq:5, max_ncq:5, 'trtype': 'NVME_TRANSPORT_PCIE' } }, nvme_controller_id : 'controller3'}"
+grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmeController "{parent: '//storage.opiproject.org/subsystems/subsystem03', nvme_controller : {spec : {nvme_controller_id: 2, pcie_id : {physical_function : 0, virtual_function : 3, port_id: 0 }, max_nsq:5, max_ncq:5, 'trtype': 'NVME_TRANSPORT_TYPE_PCIE' } }, nvme_controller_id : 'controller3'}"
 
 # Create Nvme/TCP controller
 grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmeSubsystem "{nvme_subsystem : {spec : {nqn: 'nqn.2022-09.io.spdk:opitest4', serial_number: 'myserial2', model_number: 'mymodel2', max_namespaces: 11} }, nvme_subsystem_id : 'subsystem4' }"
-grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmeController "{'parent':'//storage.opiproject.org/subsystems/subsystem4','nvme_controller':{'spec':{'nvme_controller_id':2,'fabrics_id':{'traddr': '127.0.0.1', trsvcid: '4421', adrfam: 'NVME_ADRFAM_IPV4'}, 'max_nsq':5,'max_ncq':5, 'trtype': 'NVME_TRANSPORT_TCP'}},'nvme_controller_id':'controller4'}"
+grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmeController "{'parent':'//storage.opiproject.org/subsystems/subsystem4','nvme_controller':{'spec':{'nvme_controller_id':2,'fabrics_id':{'traddr': '127.0.0.1', trsvcid: '4421', adrfam: 'NVME_ADDRESS_FAMILY_IPV4'}, 'max_nsq':5,'max_ncq':5, 'trtype': 'NVME_TRANSPORT_TYPE_TCP'}},'nvme_controller_id':'controller4'}"
 grpc_cli call --json_input --json_output $BRIDGE_ADDR GetNvmeController "{name : '//storage.opiproject.org/subsystems/subsystem4/controllers/controller4'}"
 
 # Connect to remote storage-target
 grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmeRemoteController "{nvme_remote_controller : {multipath: 'NVME_MULTIPATH_MULTIPATH'}, nvme_remote_controller_id: 'nvmetcp12'}"
 grpc_cli call --json_input --json_output $BRIDGE_ADDR ListNvmeRemoteControllers "{parent: 'todo'}"
 grpc_cli call --json_input --json_output $BRIDGE_ADDR GetNvmeRemoteController "{name: '//storage.opiproject.org/volumes/nvmetcp12'}"
-grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmePath "{nvme_path : {controller_name_ref: '//storage.opiproject.org/volumes/nvmetcp12', traddr:'11.11.11.2', trtype:'NVME_TRANSPORT_TCP', fabrics:{subnqn:'nqn.2016-06.com.opi.spdk.target0', trsvcid:'4444', adrfam:'NVME_ADRFAM_IPV4', hostnqn:'nqn.2014-08.org.nvmexpress:uuid:feb98abe-d51f-40c8-b348-2753f3571d3c'}}, nvme_path_id: 'nvmetcp12path0'}"
+grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmePath "{nvme_path : {controller_name_ref: '//storage.opiproject.org/volumes/nvmetcp12', traddr:'11.11.11.2', trtype:'NVME_TRANSPORT_TYPE_TCP', fabrics:{subnqn:'nqn.2016-06.com.opi.spdk.target0', trsvcid:'4444', adrfam:'NVME_ADDRESS_FAMILY_IPV4', hostnqn:'nqn.2014-08.org.nvmexpress:uuid:feb98abe-d51f-40c8-b348-2753f3571d3c'}}, nvme_path_id: 'nvmetcp12path0'}"
 grpc_cli call --json_input --json_output $BRIDGE_ADDR ListNvmePaths "{parent : 'todo'}"
 grpc_cli call --json_input --json_output $BRIDGE_ADDR GetNvmePath "{name: '//storage.opiproject.org/volumes/nvmetcp12path0'}"
 
 # Connect to local PCIe storage-target
 grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmeRemoteController "{nvme_remote_controller : {multipath: 'NVME_MULTIPATH_DISABLE'}, nvme_remote_controller_id: 'nvmepcie13'}"
-grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmePath "{nvme_path : {controller_name_ref: '//storage.opiproject.org/volumes/nvmepcie13', traddr:'0000:01:00.0', trtype:'NVME_TRANSPORT_PCIE'}, nvme_path_id: 'nvmepcie13path0'}"
+grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmePath "{nvme_path : {controller_name_ref: '//storage.opiproject.org/volumes/nvmepcie13', traddr:'0000:01:00.0', trtype:'NVME_TRANSPORT_TYPE_PCIE'}, nvme_path_id: 'nvmepcie13path0'}"
 
 # Virtio-blk PF creation (virtio-blk requires a volume, that's why it is created after connection to storage-target)
 grpc_cli --json_input --json_output call $BRIDGE_ADDR CreateVirtioBlk "{virtio_blk_id: 'virtioblk0', virtio_blk : { volume_name_ref: 'nvmetcp12n0', pcie_id: { physical_function: '0', virtual_function: '0', port_id: '0'}}}"
