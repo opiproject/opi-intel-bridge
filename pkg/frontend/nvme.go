@@ -127,7 +127,7 @@ func (s *Server) CreateNvmeController(ctx context.Context, in *pb.CreateNvmeCont
 
 	log.Printf("Passing request to opi-spdk-bridge")
 	response, err := s.FrontendNvmeServiceServer.CreateNvmeController(ctx, in)
-	if err == nil && in.GetNvmeController().GetSpec().GetTrtype() == pb.NvmeTransportType_NVME_TRANSPORT_PCIE {
+	if err == nil && in.GetNvmeController().GetSpec().GetTrtype() == pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE {
 		// response contains different QoS limits. It is an indication that
 		// opi-spdk-bridge returned an already existing controller providing idempotence
 		if !proto.Equal(response.Spec.MaxLimit, in.NvmeController.Spec.MaxLimit) ||
@@ -156,7 +156,7 @@ func (s *Server) UpdateNvmeController(ctx context.Context, in *pb.UpdateNvmeCont
 	originalNvmeController := s.nvme.Controllers[in.NvmeController.Name]
 	log.Printf("Passing request to opi-spdk-bridge")
 	response, err := s.FrontendNvmeServiceServer.UpdateNvmeController(ctx, in)
-	if err == nil && in.GetNvmeController().GetSpec().GetTrtype() == pb.NvmeTransportType_NVME_TRANSPORT_PCIE {
+	if err == nil && in.GetNvmeController().GetSpec().GetTrtype() == pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE {
 		if qosErr := s.setNvmeQosLimit(ctx, in.NvmeController); qosErr != nil {
 			log.Println("Failed to set qos settings:", qosErr)
 			log.Println("Restore original controller")

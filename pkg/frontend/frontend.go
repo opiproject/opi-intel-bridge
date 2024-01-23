@@ -36,8 +36,8 @@ func NewServer(jsonRPC spdk.JSONRPC, store gokv.Store) *Server {
 	opiSpdkServer := frontend.NewCustomizedServer(
 		jsonRPC, store,
 		map[pb.NvmeTransportType]frontend.NvmeTransport{
-			pb.NvmeTransportType_NVME_TRANSPORT_PCIE: NewNvmeNpiTransport(jsonRPC),
-			pb.NvmeTransportType_NVME_TRANSPORT_TCP:  frontend.NewNvmeTCPTransport(jsonRPC),
+			pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE: NewNvmeNpiTransport(jsonRPC),
+			pb.NvmeTransportType_NVME_TRANSPORT_TYPE_TCP:  frontend.NewNvmeTCPTransport(jsonRPC),
 		},
 		NewMevBlkTransport())
 	return &Server{

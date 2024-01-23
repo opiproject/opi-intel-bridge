@@ -39,7 +39,7 @@ var (
 			Endpoint: &pb.NvmeControllerSpec_PcieId{
 				PcieId: &testPciEndpoint,
 			},
-			Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+			Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 			NvmeControllerId: proto.Int32(1),
 			MaxLimit: &pb.QosLimit{
 				RdIopsKiops:    1,
@@ -66,7 +66,7 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
 					Endpoint:         testControllerWithMaxQos.Spec.Endpoint,
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(1),
 					MaxLimit:         &pb.QosLimit{RwIopsKiops: 1},
 				},
@@ -81,7 +81,7 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
 					Endpoint:         testControllerWithMaxQos.Spec.Endpoint,
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(1),
 					MaxLimit:         &pb.QosLimit{RwBandwidthMbs: 1},
 				},
@@ -119,7 +119,7 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			out: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
 					Endpoint:         testControllerWithMaxQos.Spec.Endpoint,
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(-1),
 					MaxLimit:         &pb.QosLimit{RdIopsKiops: 1, WrIopsKiops: 1, RdBandwidthMbs: 1, WrBandwidthMbs: 1},
 				},
@@ -136,14 +136,14 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
 					Endpoint:         testControllerWithMaxQos.Spec.Endpoint,
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(1),
 				},
 			},
 			out: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
 					Endpoint:         testControllerWithMaxQos.Spec.Endpoint,
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(-1),
 				},
 				Status: &pb.NvmeControllerStatus{Active: true},
@@ -159,7 +159,7 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
 					Endpoint:         testControllerWithMaxQos.Spec.Endpoint,
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(1),
 					MinLimit:         &pb.QosLimit{RdBandwidthMbs: 1, WrBandwidthMbs: 1},
 					MaxLimit:         &pb.QosLimit{RdIopsKiops: 1, WrIopsKiops: 1, RdBandwidthMbs: 1, WrBandwidthMbs: 1},
@@ -168,7 +168,7 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			out: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
 					Endpoint:         testControllerWithMaxQos.Spec.Endpoint,
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(-1),
 					MinLimit:         &pb.QosLimit{RdBandwidthMbs: 1, WrBandwidthMbs: 1},
 					MaxLimit:         &pb.QosLimit{RdIopsKiops: 1, WrIopsKiops: 1, RdBandwidthMbs: 1, WrBandwidthMbs: 1},
@@ -181,7 +181,7 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			existingController: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
 					Endpoint:         testControllerWithMaxQos.Spec.Endpoint,
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(-1),
 					MinLimit:         &pb.QosLimit{RdBandwidthMbs: 1, WrBandwidthMbs: 1},
 					MaxLimit:         &pb.QosLimit{RdIopsKiops: 1, WrIopsKiops: 1, RdBandwidthMbs: 1, WrBandwidthMbs: 1},
@@ -193,7 +193,7 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
 					Endpoint:         testControllerWithMaxQos.Spec.Endpoint,
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(1),
 					MaxLimit:         &pb.QosLimit{RdIopsKiops: 12321, WrIopsKiops: 1, RdBandwidthMbs: 1, WrBandwidthMbs: 1},
 				},
@@ -205,7 +205,7 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			existingController: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
 					Endpoint:         testControllerWithMaxQos.Spec.Endpoint,
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(-1),
 					MaxLimit:         &pb.QosLimit{RdIopsKiops: 1, WrIopsKiops: 1, RdBandwidthMbs: 1, WrBandwidthMbs: 1},
 				},
@@ -216,7 +216,7 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
 					Endpoint:         testControllerWithMaxQos.Spec.Endpoint,
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(1),
 					MinLimit:         &pb.QosLimit{RdBandwidthMbs: 12321, WrBandwidthMbs: 1},
 				},
@@ -228,7 +228,7 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			existingController: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
 					Endpoint:         testControllerWithMaxQos.Spec.Endpoint,
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(-1),
 					MinLimit:         &pb.QosLimit{RdBandwidthMbs: 1, WrBandwidthMbs: 1},
 				},
@@ -239,7 +239,7 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
 					Endpoint:         testControllerWithMaxQos.Spec.Endpoint,
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(1),
 					MinLimit:         &pb.QosLimit{RwBandwidthMbs: 1},
 				},
@@ -254,7 +254,7 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
 					Endpoint:         testControllerWithMaxQos.Spec.Endpoint,
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(1),
 					MinLimit:         &pb.QosLimit{RwIopsKiops: 1},
 				},
@@ -269,7 +269,7 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
 					Endpoint:         testControllerWithMaxQos.Spec.Endpoint,
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(1),
 					MinLimit:         &pb.QosLimit{RdIopsKiops: 1},
 				},
@@ -284,7 +284,7 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
 					Endpoint:         testControllerWithMaxQos.Spec.Endpoint,
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(1),
 					MinLimit:         &pb.QosLimit{WrIopsKiops: 1},
 				},
@@ -299,7 +299,7 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
 					Endpoint:         testControllerWithMaxQos.Spec.Endpoint,
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(1),
 					MinLimit:         &pb.QosLimit{RdBandwidthMbs: 1, WrBandwidthMbs: 1},
 					MaxLimit:         &pb.QosLimit{},
@@ -308,7 +308,7 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			out: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
 					Endpoint:         testControllerWithMaxQos.Spec.Endpoint,
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(-1),
 					MinLimit:         &pb.QosLimit{RdBandwidthMbs: 1, WrBandwidthMbs: 1},
 					MaxLimit:         &pb.QosLimit{},
@@ -326,7 +326,7 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
 					Endpoint:         testControllerWithMaxQos.Spec.Endpoint,
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(1),
 					MinLimit:         &pb.QosLimit{RdBandwidthMbs: 2},
 					MaxLimit:         &pb.QosLimit{RdBandwidthMbs: 1},
@@ -342,7 +342,7 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
 					Endpoint:         testControllerWithMaxQos.Spec.Endpoint,
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(1),
 					MinLimit:         &pb.QosLimit{WrBandwidthMbs: 2},
 					MaxLimit:         &pb.QosLimit{WrBandwidthMbs: 1},
@@ -358,7 +358,7 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
 					Endpoint:         testControllerWithMaxQos.Spec.Endpoint,
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(1),
 					MaxLimit:         &pb.QosLimit{RdIopsKiops: 2, WrIopsKiops: 2, RdBandwidthMbs: 2, WrBandwidthMbs: 2},
 					MinLimit:         &pb.QosLimit{RdBandwidthMbs: 1, WrBandwidthMbs: 1},
@@ -367,7 +367,7 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			out: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
 					Endpoint:         testControllerWithMaxQos.Spec.Endpoint,
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(-1),
 					MaxLimit:         &pb.QosLimit{RdIopsKiops: 2, WrIopsKiops: 2, RdBandwidthMbs: 2, WrBandwidthMbs: 2},
 					MinLimit:         &pb.QosLimit{RdBandwidthMbs: 1, WrBandwidthMbs: 1},
@@ -385,7 +385,7 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
 					Endpoint:         testControllerWithMaxQos.Spec.Endpoint,
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(1),
 					MaxLimit:         &pb.QosLimit{RdIopsKiops: -1},
 				},
@@ -400,7 +400,7 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
 					Endpoint:         testControllerWithMaxQos.Spec.Endpoint,
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(1),
 					MaxLimit:         &pb.QosLimit{WrIopsKiops: -1},
 				},
@@ -415,7 +415,7 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
 					Endpoint:         testControllerWithMaxQos.Spec.Endpoint,
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(1),
 					MaxLimit:         &pb.QosLimit{RdBandwidthMbs: -1},
 				},
@@ -430,7 +430,7 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
 					Endpoint:         testControllerWithMaxQos.Spec.Endpoint,
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(1),
 					MaxLimit:         &pb.QosLimit{WrBandwidthMbs: -1},
 				},
@@ -445,7 +445,7 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
 					Endpoint:         testControllerWithMaxQos.Spec.Endpoint,
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(1),
 					MinLimit:         &pb.QosLimit{RdBandwidthMbs: -1},
 				},
@@ -460,7 +460,7 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
 					Endpoint:         testControllerWithMaxQos.Spec.Endpoint,
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(1),
 					MinLimit:         &pb.QosLimit{WrBandwidthMbs: -1},
 				},
@@ -481,7 +481,7 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 							VirtualFunction:  wrapperspb.Int32(0),
 						},
 					},
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(1),
 				},
 			},
@@ -501,7 +501,7 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 							VirtualFunction:  wrapperspb.Int32(0),
 						},
 					},
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(1),
 				},
 			},
@@ -521,7 +521,7 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 							VirtualFunction:  wrapperspb.Int32(0),
 						},
 					},
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(1),
 				},
 			},
@@ -560,7 +560,7 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 							VirtualFunction:  wrapperspb.Int32(0),
 						},
 					},
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(1),
 					MaxNsq:           17,
 					MaxNcq:           18,
@@ -577,7 +577,7 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			in: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
 					Endpoint: testControllerWithMaxQos.Spec.Endpoint,
-					Trtype:   pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:   pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					MaxNsq:   17,
 					MaxNcq:   17,
 				},
@@ -585,7 +585,7 @@ func TestFrontEnd_CreateNvmeController(t *testing.T) {
 			out: &pb.NvmeController{
 				Spec: &pb.NvmeControllerSpec{
 					Endpoint:         testControllerWithMaxQos.Spec.Endpoint,
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(-1),
 					MaxNsq:           17,
 					MaxNcq:           17,
@@ -674,7 +674,7 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
 					Endpoint:         testControllerWithMaxQos.Spec.Endpoint,
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(1),
 					MaxLimit:         &pb.QosLimit{RwIopsKiops: 1},
 				},
@@ -690,7 +690,7 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
 					Endpoint:         testControllerWithMaxQos.Spec.Endpoint,
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(1),
 					MaxLimit:         &pb.QosLimit{RwBandwidthMbs: 1},
 				},
@@ -706,7 +706,7 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
 					Endpoint:         testControllerWithMaxQos.Spec.Endpoint,
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(1),
 					MinLimit:         &pb.QosLimit{RwBandwidthMbs: 1},
 				},
@@ -722,7 +722,7 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
 					Endpoint:         testControllerWithMaxQos.Spec.Endpoint,
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(1),
 					MinLimit:         &pb.QosLimit{RwIopsKiops: 1},
 				},
@@ -738,7 +738,7 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
 					Endpoint:         testControllerWithMaxQos.Spec.Endpoint,
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(1),
 					MinLimit:         &pb.QosLimit{RdIopsKiops: 1},
 				},
@@ -754,7 +754,7 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
 					Endpoint:         testControllerWithMaxQos.Spec.Endpoint,
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(1),
 					MinLimit:         &pb.QosLimit{WrIopsKiops: 1},
 				},
@@ -770,7 +770,7 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
 					Endpoint:         testControllerWithMaxQos.Spec.Endpoint,
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(1),
 					MinLimit:         &pb.QosLimit{RdBandwidthMbs: 2},
 					MaxLimit:         &pb.QosLimit{RdBandwidthMbs: 1},
@@ -787,7 +787,7 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
 					Endpoint:         testControllerWithMaxQos.Spec.Endpoint,
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(1),
 					MinLimit:         &pb.QosLimit{WrBandwidthMbs: 2},
 					MaxLimit:         &pb.QosLimit{WrBandwidthMbs: 1},
@@ -804,7 +804,7 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
 					Endpoint:         testControllerWithMaxQos.Spec.Endpoint,
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(1),
 					MaxLimit:         &pb.QosLimit{RdIopsKiops: -1},
 				},
@@ -820,7 +820,7 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
 					Endpoint:         testControllerWithMaxQos.Spec.Endpoint,
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(1),
 					MaxLimit:         &pb.QosLimit{WrIopsKiops: -1},
 				},
@@ -836,7 +836,7 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
 					Endpoint:         testControllerWithMaxQos.Spec.Endpoint,
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(1),
 					MaxLimit:         &pb.QosLimit{RdBandwidthMbs: -1},
 				},
@@ -852,7 +852,7 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
 					Endpoint:         testControllerWithMaxQos.Spec.Endpoint,
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(1),
 					MaxLimit:         &pb.QosLimit{WrBandwidthMbs: -1},
 				},
@@ -868,7 +868,7 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
 					Endpoint:         testControllerWithMaxQos.Spec.Endpoint,
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(1),
 					MinLimit:         &pb.QosLimit{RdBandwidthMbs: -1},
 				},
@@ -884,7 +884,7 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
 					Endpoint:         testControllerWithMaxQos.Spec.Endpoint,
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(1),
 					MinLimit:         &pb.QosLimit{WrBandwidthMbs: -1},
 				},
@@ -900,7 +900,7 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
 					Endpoint:         testControllerWithMaxQos.Spec.Endpoint,
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(1),
 				},
 			},
@@ -908,7 +908,7 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
 					Endpoint:         testControllerWithMaxQos.Spec.Endpoint,
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(1),
 				},
 				Status: &pb.NvmeControllerStatus{Active: true},
@@ -923,7 +923,7 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
 					Endpoint:         testControllerWithMaxQos.Spec.Endpoint,
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(1),
 					MaxLimit:         &pb.QosLimit{RdIopsKiops: 10},
 					MinLimit:         &pb.QosLimit{RdBandwidthMbs: 5},
@@ -940,7 +940,7 @@ func TestFrontEnd_UpdateNvmeController(t *testing.T) {
 				Name: testControllerName,
 				Spec: &pb.NvmeControllerSpec{
 					Endpoint:         testControllerWithMaxQos.Spec.Endpoint,
-					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_PCIE,
+					Trtype:           pb.NvmeTransportType_NVME_TRANSPORT_TYPE_PCIE,
 					NvmeControllerId: proto.Int32(1),
 					MaxLimit:         &pb.QosLimit{RdIopsKiops: 10},
 					MinLimit:         &pb.QosLimit{RdBandwidthMbs: 5},
