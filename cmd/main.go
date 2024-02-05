@@ -156,10 +156,19 @@ func runGatewayServer(grpcPort int, httpPort int) {
 	// Note: Make sure the gRPC server is running properly and accessible
 	mux := runtime.NewServeMux()
 	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
-	err := pc.RegisterInventoryServiceHandlerFromEndpoint(ctx, mux, fmt.Sprintf(":%d", grpcPort), opts)
-	if err != nil {
-		log.Panic("cannot register handler server")
-	}
+	endpoint := fmt.Sprintf("localhost:%d", grpcPort)
+	registerGatewayHandler(ctx, mux, endpoint, opts, pc.RegisterInventoryServiceHandlerFromEndpoint, "inventory")
+
+	registerGatewayHandler(ctx, mux, endpoint, opts, pb.RegisterAioVolumeServiceHandlerFromEndpoint, "backend aio")
+	registerGatewayHandler(ctx, mux, endpoint, opts, pb.RegisterNullVolumeServiceHandlerFromEndpoint, "backend null")
+	registerGatewayHandler(ctx, mux, endpoint, opts, pb.RegisterNvmeRemoteControllerServiceHandlerFromEndpoint, "backend nvme")
+
+	registerGatewayHandler(ctx, mux, endpoint, opts, pb.RegisterMiddleendEncryptionServiceHandlerFromEndpoint, "middleend encryption")
+	registerGatewayHandler(ctx, mux, endpoint, opts, pb.RegisterMiddleendQosVolumeServiceHandlerFromEndpoint, "middleend qos")
+
+	registerGatewayHandler(ctx, mux, endpoint, opts, pb.RegisterFrontendVirtioBlkServiceHandlerFromEndpoint, "frontend virtio-blk")
+	registerGatewayHandler(ctx, mux, endpoint, opts, pb.RegisterFrontendVirtioScsiServiceHandlerFromEndpoint, "frontend virtio-scsi")
+	registerGatewayHandler(ctx, mux, endpoint, opts, pb.RegisterFrontendNvmeServiceHandlerFromEndpoint, "frontend nvme")
 
 	// Start HTTP server (and proxy calls to gRPC server endpoint)
 	log.Printf("HTTP Server listening at %v", httpPort)
@@ -169,8 +178,17 @@ func runGatewayServer(grpcPort int, httpPort int) {
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
 	}
-	err = server.ListenAndServe()
+	err := server.ListenAndServe()
 	if err != nil {
 		log.Panic("cannot start HTTP gateway server")
+	}
+}
+
+type registerHandlerFunc func(context.Context, *runtime.ServeMux, string, []grpc.DialOption) error
+
+func registerGatewayHandler(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption, registerFunc registerHandlerFunc, serviceName string) {
+	err := registerFunc(ctx, mux, endpoint, opts)
+	if err != nil {
+		log.Panicf("cannot register %s handler server: %v", serviceName, err)
 	}
 }
