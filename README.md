@@ -49,7 +49,7 @@ The following variables are used throughout this document:
 
 | Variable         | Description                                                                                                                                        |
 | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| BRIDGE_IP        | opi-intel-bridge gRPC listening IP address e.g. 10.10.10.10 or localhost                                                                           |
+| BRIDGE_IP        | opi-intel-bridge gRPC/HTTP listening IP address e.g. 10.10.10.10 or localhost                                                                           |
 | BRIDGE_PORT      | opi-intel-bridge gRPC listening port e.g. 50051                                                                                                    |
 | BRIDGE_ADDR      | BRIDGE_IP:BRIDGE_PORT                                                                                                                              |
 | BRIDGE_HTTP_PORT | opi-intel-bridge http gateway port e.g. 8082                                                                                                       |
@@ -96,12 +96,6 @@ To send commands to the bridge, grpc_cli tool is used. It can be used as a conta
 alias grpc_cli="docker run --network=host --rm -it namely/grpc-cli"
 ```
 
-In addition HTTP is supported via grpc gateway, for example:
-
-```bash
-curl -kL http://10.10.10.10:8082/v1/inventory/1/inventory/2
-```
-
 On management machine run below command to check bridge availability and reflection capabilities
 
 ```bash
@@ -120,9 +114,10 @@ opi_api.storage.v1.NvmeRemoteControllerService
 opi_api.storage.v1.NullDebugService
 ```
 
-or specify commands manually
+run either gRPC or HTTP requests
 
 ```bash
+# gRPC requests
 # Nvme PF creation
 grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmeSubsystem "{nvme_subsystem : {spec : {nqn: 'nqn.2022-09.io.spdk:opitest2', serial_number: 'myserial2', model_number: 'mymodel2', max_namespaces: 11} }, nvme_subsystem_id : 'subsystem2' }"
 grpc_cli call --json_input --json_output $BRIDGE_ADDR ListNvmeSubsystems "{}"
@@ -198,6 +193,49 @@ grpc_cli call --json_input --json_output $BRIDGE_ADDR DeleteNvmeSubsystem "{name
 # Delete Nvme/TCP
 grpc_cli call --json_input --json_output $BRIDGE_ADDR DeleteNvmeController "{name : 'nvmeSubsystems/subsystem4/nvmeControllers/controller4'}"
 grpc_cli call --json_input --json_output $BRIDGE_ADDR DeleteNvmeSubsystem "{name : 'nvmeSubsystems/subsystem4'}"
+```
+
+```bash
+# HTTP requests
+# inventory
+curl -kL http://$BRIDGE_IP:$BRIDGE_HTTP_PORT/v1/inventory/1/inventory/2
+
+# Nvme
+# create
+curl -X POST -f http://$BRIDGE_IP:$BRIDGE_HTTP_PORT/v1/nvmeRemoteControllers?nvme_remote_controller_id=nvmetcp12 -d '{"multipath": "NVME_MULTIPATH_MULTIPATH"}'
+curl -X POST -f http://$BRIDGE_IP:$BRIDGE_HTTP_PORT/v1/nvmeRemoteControllers/nvmetcp12/nvmePaths?nvme_path_id=nvmetcp12path0 -d "{\"traddr\":\"$TARGET_IP\", \"trtype\":\"NVME_TRANSPORT_TYPE_TCP\", \"fabrics\":{\"subnqn\":\"nqn.2016-06.com.opi.spdk.target0\", \"trsvcid\":\"$TARGET_PORT\", \"adrfam\":\"NVME_ADDRESS_FAMILY_IPV4\", \"hostnqn\":\"nqn.2014-08.org.nvmexpress:uuid:feb98abe-d51f-40c8-b348-2753f3571d3c\"}}"
+curl -X POST -f http://$BRIDGE_IP:$BRIDGE_HTTP_PORT/v1/nvmeSubsystems?nvme_subsystem_id=subsys0 -d '{"spec": {"nqn": "nqn.2022-09.io.spdk:opitest1"}}'
+curl -X POST -f http://$BRIDGE_IP:$BRIDGE_HTTP_PORT/v1/nvmeSubsystems/subsys0/nvmeNamespaces?nvme_namespace_id=namespace0 -d '{"spec": {"volume_name_ref": "Malloc0", "host_nsid": 10}}'
+curl -X POST -f http://$BRIDGE_IP:$BRIDGE_HTTP_PORT/v1/nvmeSubsystems/subsys0/nvmeControllers?nvme_controller_id=ctrl0 -d '{"spec": {"trtype": "NVME_TRANSPORT_TYPE_TCP", "fabrics_id":{"traddr": "127.0.0.1", "trsvcid": "4421", "adrfam": "NVME_ADDRESS_FAMILY_IPV4"}}}'
+# get
+curl -X GET -f http://$BRIDGE_IP:$BRIDGE_HTTP_PORT/v1/nvmeRemoteControllers/nvmetcp12
+curl -X GET -f http://$BRIDGE_IP:$BRIDGE_HTTP_PORT/v1/nvmeRemoteControllers/nvmetcp12/nvmePaths/nvmetcp12path0
+curl -X GET -f http://$BRIDGE_IP:$BRIDGE_HTTP_PORT/v1/nvmeSubsystems/subsys0
+curl -X GET -f http://$BRIDGE_IP:$BRIDGE_HTTP_PORT/v1/nvmeSubsystems/subsys0/nvmeNamespaces/namespace0
+curl -X GET -f http://$BRIDGE_IP:$BRIDGE_HTTP_PORT/v1/nvmeSubsystems/subsys0/nvmeControllers/ctrl0
+# list
+curl -X GET -f http://$BRIDGE_IP:$BRIDGE_HTTP_PORT/v1/nvmeRemoteControllers
+curl -X GET -f http://$BRIDGE_IP:$BRIDGE_HTTP_PORT/v1/nvmeRemoteControllers/nvmetcp12/nvmePaths
+curl -X GET -f http://$BRIDGE_IP:$BRIDGE_HTTP_PORT/v1/nvmeSubsystems
+curl -X GET -f http://$BRIDGE_IP:$BRIDGE_HTTP_PORT/v1/nvmeSubsystems/subsys0/nvmeNamespaces
+curl -X GET -f http://$BRIDGE_IP:$BRIDGE_HTTP_PORT/v1/nvmeSubsystems/subsys0/nvmeControllers
+# stats
+curl -X GET -f http://$BRIDGE_IP:$BRIDGE_HTTP_PORT/v1/nvmeRemoteControllers/nvmetcp12:stats
+curl -X GET -f http://$BRIDGE_IP:$BRIDGE_HTTP_PORT/v1/nvmeRemoteControllers/nvmetcp12/nvmePaths/nvmetcp12path0:stats
+curl -X GET -f http://$BRIDGE_IP:$BRIDGE_HTTP_PORT/v1/nvmeSubsystems/subsys0:stats
+curl -X GET -f http://$BRIDGE_IP:$BRIDGE_HTTP_PORT/v1/nvmeSubsystems/subsys0/nvmeNamespaces/namespace0:stats
+curl -X GET -f http://$BRIDGE_IP:$BRIDGE_HTTP_PORT/v1/nvmeSubsystems/subsys0/nvmeControllers/ctrl0:stats
+# update
+curl -X PATCH -f http://$BRIDGE_IP:$BRIDGE_HTTP_PORT/v1/nvmeRemoteControllers/nvmetcp12 -d '{"multipath": "NVME_MULTIPATH_MULTIPATH"}'
+curl -X PATCH -f http://$BRIDGE_IP:$BRIDGE_HTTP_PORT/v1/nvmeRemoteControllers/nvmetcp12/nvmePaths/nvmetcp12path0 -d "{\"traddr\":\"$TARGET_ADDR\", \"trtype\":\"NVME_TRANSPORT_TYPE_TCP\", \"fabrics\":{\"subnqn\":\"nqn.2016-06.com.opi.spdk.target0\", \"trsvcid\":\"$TARGET_PORT\", \"adrfam\":\"NVME_ADDRESS_FAMILY_IPV4\", \"hostnqn\":\"nqn.2014-08.org.nvmexpress:uuid:feb98abe-d51f-40c8-b348-2753f3571d3c\"}}"
+curl -X PATCH -k http://$BRIDGE_IP:$BRIDGE_HTTP_PORT/v1/nvmeSubsystems/subsys0/nvmeNamespaces/namespace0 -d '{"spec": {"volume_name_ref": "Malloc1", "host_nsid": 10}}'
+curl -X PATCH -k http://$BRIDGE_IP:$BRIDGE_HTTP_PORT/v1/nvmeSubsystems/subsys0/nvmeControllers/ctrl0 -d '{"spec": {"trtype": "NVME_TRANSPORT_TYPE_TCP", "fabrics_id":{"traddr": "127.0.0.1", "trsvcid": "4421", "adrfam": "NVME_ADDRESS_FAMILY_IPV4"}}}'
+# delete
+curl -X DELETE -f http://$BRIDGE_IP:$BRIDGE_HTTP_PORT/v1/nvmeSubsystems/subsys0/nvmeControllers/ctrl0
+curl -X DELETE -f http://$BRIDGE_IP:$BRIDGE_HTTP_PORT/v1/nvmeSubsystems/subsys0/nvmeNamespaces/namespace0
+curl -X DELETE -f http://$BRIDGE_IP:$BRIDGE_HTTP_PORT/v1/nvmeSubsystems/subsys0
+curl -X DELETE -f http://$BRIDGE_IP:$BRIDGE_HTTP_PORT/v1/nvmeRemoteControllers/nvmetcp12/nvmePaths/nvmetcp12path0
+curl -X DELETE -f http://$BRIDGE_IP:$BRIDGE_HTTP_PORT/v1/nvmeRemoteControllers/nvmetcp12
 ```
 
 To observe Nvme devices on host:
