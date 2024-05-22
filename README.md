@@ -139,7 +139,7 @@ grpc_cli call --json_input --json_output $BRIDGE_ADDR GetNvmeController "{name :
 grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmeRemoteController "{nvme_remote_controller : {multipath: 'NVME_MULTIPATH_MULTIPATH'}, nvme_remote_controller_id: 'nvmetcp12'}"
 grpc_cli call --json_input --json_output $BRIDGE_ADDR ListNvmeRemoteControllers "{}"
 grpc_cli call --json_input --json_output $BRIDGE_ADDR GetNvmeRemoteController "{name: 'nvmeRemoteControllers/nvmetcp12'}"
-grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmePath "{parent: 'nvmeRemoteControllers/nvmetcp12', nvme_path : {traddr:'11.11.11.2', trtype:'NVME_TRANSPORT_TYPE_TCP', fabrics:{subnqn:'nqn.2016-06.com.opi.spdk.target0', trsvcid:'4444', adrfam:'NVME_ADDRESS_FAMILY_IPV4', hostnqn:'nqn.2014-08.org.nvmexpress:uuid:feb98abe-d51f-40c8-b348-2753f3571d3c'}}, nvme_path_id: 'nvmetcp12path0'}"
+grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmePath "{parent: 'nvmeRemoteControllers/nvmetcp12', nvme_path : {traddr:'11.11.11.2', trtype:'NVME_TRANSPORT_TYPE_TCP', fabrics:{subnqn:'nqn.2016-06.com.opi.spdk:target0', trsvcid:'4444', adrfam:'NVME_ADDRESS_FAMILY_IPV4', hostnqn:'nqn.2014-08.org.nvmexpress:uuid:feb98abe-d51f-40c8-b348-2753f3571d3c'}}, nvme_path_id: 'nvmetcp12path0'}"
 grpc_cli call --json_input --json_output $BRIDGE_ADDR ListNvmePaths "{parent : 'nvmeRemoteControllers/nvmetcp12'}"
 grpc_cli call --json_input --json_output $BRIDGE_ADDR GetNvmePath "{name: 'nvmeRemoteControllers/nvmetcp12/nvmePaths/nvmetcp12path0'}"
 
@@ -203,7 +203,7 @@ curl -kL http://$BRIDGE_IP:$BRIDGE_HTTP_PORT/v1/inventory/1/inventory/2
 # Nvme
 # create
 curl -X POST -f http://$BRIDGE_IP:$BRIDGE_HTTP_PORT/v1/nvmeRemoteControllers?nvme_remote_controller_id=nvmetcp12 -d '{"multipath": "NVME_MULTIPATH_MULTIPATH"}'
-curl -X POST -f http://$BRIDGE_IP:$BRIDGE_HTTP_PORT/v1/nvmeRemoteControllers/nvmetcp12/nvmePaths?nvme_path_id=nvmetcp12path0 -d "{\"traddr\":\"$TARGET_IP\", \"trtype\":\"NVME_TRANSPORT_TYPE_TCP\", \"fabrics\":{\"subnqn\":\"nqn.2016-06.com.opi.spdk.target0\", \"trsvcid\":\"$TARGET_PORT\", \"adrfam\":\"NVME_ADDRESS_FAMILY_IPV4\", \"hostnqn\":\"nqn.2014-08.org.nvmexpress:uuid:feb98abe-d51f-40c8-b348-2753f3571d3c\"}}"
+curl -X POST -f http://$BRIDGE_IP:$BRIDGE_HTTP_PORT/v1/nvmeRemoteControllers/nvmetcp12/nvmePaths?nvme_path_id=nvmetcp12path0 -d "{\"traddr\":\"$TARGET_IP\", \"trtype\":\"NVME_TRANSPORT_TYPE_TCP\", \"fabrics\":{\"subnqn\":\"nqn.2016-06.com.opi.spdk:target0\", \"trsvcid\":\"$TARGET_PORT\", \"adrfam\":\"NVME_ADDRESS_FAMILY_IPV4\", \"hostnqn\":\"nqn.2014-08.org.nvmexpress:uuid:feb98abe-d51f-40c8-b348-2753f3571d3c\"}}"
 curl -X POST -f http://$BRIDGE_IP:$BRIDGE_HTTP_PORT/v1/nvmeSubsystems?nvme_subsystem_id=subsys0 -d '{"spec": {"nqn": "nqn.2022-09.io.spdk:opitest1"}}'
 curl -X POST -f http://$BRIDGE_IP:$BRIDGE_HTTP_PORT/v1/nvmeSubsystems/subsys0/nvmeNamespaces?nvme_namespace_id=namespace0 -d '{"spec": {"volume_name_ref": "Malloc0", "host_nsid": 10}}'
 curl -X POST -f http://$BRIDGE_IP:$BRIDGE_HTTP_PORT/v1/nvmeSubsystems/subsys0/nvmeControllers?nvme_controller_id=ctrl0 -d '{"spec": {"trtype": "NVME_TRANSPORT_TYPE_TCP", "fabrics_id":{"traddr": "127.0.0.1", "trsvcid": "4421", "adrfam": "NVME_ADDRESS_FAMILY_IPV4"}}}'
@@ -227,7 +227,7 @@ curl -X GET -f http://$BRIDGE_IP:$BRIDGE_HTTP_PORT/v1/nvmeSubsystems/subsys0/nvm
 curl -X GET -f http://$BRIDGE_IP:$BRIDGE_HTTP_PORT/v1/nvmeSubsystems/subsys0/nvmeControllers/ctrl0:stats
 # update
 curl -X PATCH -f http://$BRIDGE_IP:$BRIDGE_HTTP_PORT/v1/nvmeRemoteControllers/nvmetcp12 -d '{"multipath": "NVME_MULTIPATH_MULTIPATH"}'
-curl -X PATCH -f http://$BRIDGE_IP:$BRIDGE_HTTP_PORT/v1/nvmeRemoteControllers/nvmetcp12/nvmePaths/nvmetcp12path0 -d "{\"traddr\":\"$TARGET_ADDR\", \"trtype\":\"NVME_TRANSPORT_TYPE_TCP\", \"fabrics\":{\"subnqn\":\"nqn.2016-06.com.opi.spdk.target0\", \"trsvcid\":\"$TARGET_PORT\", \"adrfam\":\"NVME_ADDRESS_FAMILY_IPV4\", \"hostnqn\":\"nqn.2014-08.org.nvmexpress:uuid:feb98abe-d51f-40c8-b348-2753f3571d3c\"}}"
+curl -X PATCH -f http://$BRIDGE_IP:$BRIDGE_HTTP_PORT/v1/nvmeRemoteControllers/nvmetcp12/nvmePaths/nvmetcp12path0 -d "{\"traddr\":\"$TARGET_ADDR\", \"trtype\":\"NVME_TRANSPORT_TYPE_TCP\", \"fabrics\":{\"subnqn\":\"nqn.2016-06.com.opi.spdk:target0\", \"trsvcid\":\"$TARGET_PORT\", \"adrfam\":\"NVME_ADDRESS_FAMILY_IPV4\", \"hostnqn\":\"nqn.2014-08.org.nvmexpress:uuid:feb98abe-d51f-40c8-b348-2753f3571d3c\"}}"
 curl -X PATCH -k http://$BRIDGE_IP:$BRIDGE_HTTP_PORT/v1/nvmeSubsystems/subsys0/nvmeNamespaces/namespace0 -d '{"spec": {"volume_name_ref": "Malloc1", "host_nsid": 10}}'
 curl -X PATCH -k http://$BRIDGE_IP:$BRIDGE_HTTP_PORT/v1/nvmeSubsystems/subsys0/nvmeControllers/ctrl0 -d '{"spec": {"trtype": "NVME_TRANSPORT_TYPE_TCP", "fabrics_id":{"traddr": "127.0.0.1", "trsvcid": "4421", "adrfam": "NVME_ADDRESS_FAMILY_IPV4"}}}'
 # delete
