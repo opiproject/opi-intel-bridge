@@ -157,7 +157,7 @@ grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateQosVolume "{'qos_vol
 grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateEncryptedVolume "{'encrypted_volume': { 'cipher': 'ENCRYPTION_TYPE_AES_XTS_128', 'volume_name_ref': 'nvmetcp12n1', 'key': 'MDAwMTAyMDMwNDA1MDYwNzA4MDkwYTBiMGMwZDBlMGY='}, 'encrypted_volume_id': 'encnvmetcp12n1' }"
 
 # Create namespace
-grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmeNamespace "{parent: 'nvmeSubsystems/subsystem2', nvme_namespace : {spec : {volume_name_ref : 'nvmetcp12n1', 'host_nsid' : '10', uuid:{value : '1b4e28ba-2fa1-11d2-883f-b9a761bde3fb'}, nguid: '1b4e28ba-2fa1-11d2-883f-b9a761bde3fb', eui64: 1967554867335598546 } }, nvme_namespace_id: 'namespace1'}"
+grpc_cli call --json_input --json_output $BRIDGE_ADDR CreateNvmeNamespace "{parent: 'nvmeSubsystems/subsystem2', nvme_namespace : {spec : {volume_name_ref : 'nvmetcp12n1', 'host_nsid' : '10', uuid:'1b4e28ba-2fa1-11d2-883f-b9a761bde3fb', nguid: '1b4e28ba-2fa1-11d2-883f-b9a761bde3fb', eui64: 1967554867335598546 } }, nvme_namespace_id: 'namespace1'}"
 grpc_cli call --json_input --json_output $BRIDGE_ADDR ListNvmeNamespaces "{parent : 'nvmeSubsystems/subsystem2'}"
 grpc_cli call --json_input --json_output $BRIDGE_ADDR GetNvmeNamespace "{name : 'nvmeSubsystems/subsystem2/nvmeNamespaces/namespace1'}"
 grpc_cli call --json_input --json_output $BRIDGE_ADDR StatsNvmeNamespace "{name : 'nvmeSubsystems/subsystem2/nvmeNamespaces/namespace1'}"
