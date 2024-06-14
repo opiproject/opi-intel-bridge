@@ -79,6 +79,10 @@ Before initiating the bridge, the [Redis](https://redis.io/) and [Jaeger](https:
 
 According to this guideline, the Docker should be installed and appropriately configured in compliance with your organization's policies, such as the utilization of a Proxy, to ensure its proper functioning.
 
+Bring up SSA app according to the steps described in IPU SDK documentation.
+
+Make sure `/var/tmp/spdk.sock` is created.
+
 On xPU run
 
 ```bash
