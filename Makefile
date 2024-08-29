@@ -9,9 +9,14 @@ MAKEFLAGS += --silent
 
 compile: get build
 
-build:
+build: build-evpn build-storage
+build-evpn:
 	@echo "  >  Building binaries..."
-	@CGO_ENABLED=0 go build -o ${PROJECTNAME} ./cmd/...
+	@CGO_ENABLED=0 go build -o ${PROJECTNAME}-evpn ./cmd/main_evpn.go
+
+build-storage:
+	@echo "  >  Building binaries..."
+	@CGO_ENABLED=0 go build -o ${PROJECTNAME}-storage ./cmd/main_storage.go
 
 get:
 	@echo "  >  Checking if there are any missing dependencies..."
