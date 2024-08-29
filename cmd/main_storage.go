@@ -15,7 +15,7 @@ import (
 	"time"
 
 	"github.com/opiproject/gospdk/spdk"
-	fe "github.com/opiproject/opi-intel-bridge/pkg/frontend"
+	fe "github.com/opiproject/opi-intel-bridge/pkg/storage/frontend"
 	"github.com/opiproject/opi-smbios-bridge/pkg/inventory"
 	"github.com/opiproject/opi-spdk-bridge/pkg/backend"
 	"github.com/opiproject/opi-spdk-bridge/pkg/frontend"

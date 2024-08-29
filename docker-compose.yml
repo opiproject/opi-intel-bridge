@@ -22,7 +22,7 @@ services:
         condition: service_healthy
       jaeger:
         condition: service_healthy
-    command: /opi-intel-bridge -grpc_port=50051 -http_port=8082 -spdk_addr /var/tmp/spdk.sock -redis_addr=redis:6379
+    command: /opi-intel-bridge-storage -grpc_port=50051 -http_port=8082 -spdk_addr /var/tmp/spdk.sock -redis_addr=redis:6379
     healthcheck:
       test: grpcurl -plaintext localhost:50051 list || exit 1
 
@@ -72,7 +72,7 @@ services:
         condition: service_healthy
       opi-gw-test:
         condition: service_completed_successfully # to get at least one operation registered in jaeger
-    command: sh -c 'curl -s "http://jaeger:16686/api/traces?service=opi-intel-bridge&lookback=20m&prettyPrint=true&limit=10" | grep operationName'
+    command: sh -c 'curl -s "http://jaeger:16686/api/traces?service=opi-intel-bridge-storage&lookback=20m&prettyPrint=true&limit=10" | grep operationName'
 
   opi-test:
     image: docker.io/namely/grpc-cli
