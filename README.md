@@ -64,13 +64,13 @@ The following variables are used throughout this document:
 To build the solution execute
 
 ```bash
-go build -v -o /opi-intel-bridge ./cmd/...
+go build -v -o /opi-intel-bridge-storage ./cmd/storage
 ```
 
 To import the bridge within another go package or module use
 
 ```go
-import "github.com/opiproject/opi-intel-bridge/pkg/frontend"
+import "github.com/opiproject/opi-intel-bridge-storage/pkg/frontend"
 ```
 
 ### Usage
@@ -86,7 +86,7 @@ Make sure `/var/tmp/spdk.sock` is created.
 On xPU run
 
 ```bash
-$ docker run --rm -it -v /var/tmp/:/var/tmp/ -p $BRIDGE_PORT:$BRIDGE_PORT -p $BRIDGE_HTTP_PORT:$BRIDGE_HTTP_PORT ghcr.io/opiproject/opi-intel-bridge:main /opi-intel-bridge -grpc_port=$BRIDGE_PORT -http_port=$BRIDGE_HTTP_PORT
+$ docker run --rm -it -v /var/tmp/:/var/tmp/ -p $BRIDGE_PORT:$BRIDGE_PORT -p $BRIDGE_HTTP_PORT:$BRIDGE_HTTP_PORT ghcr.io/opiproject/opi-intel-bridge:main /opi-intel-bridge-storage -grpc_port=$BRIDGE_PORT -http_port=$BRIDGE_HTTP_PORT
 
 2023/09/12 20:29:05 TLS files are not specified. Use insecure connection.
 2023/09/12 20:29:05 Connection to SPDK will be via: unix detected from /var/tmp/spdk.sock
@@ -345,7 +345,7 @@ make sure to follow the principle of least privilege for access permissions and 
 Run bridge binary specifying TLS-related server key/certificate and CA cert
 
 ```bash
-./opi-intel-bridge -grpc_port=$BRIDGE_PORT -http_port=$BRIDGE_HTTP_PORT -tls $SERVER_CERT:$SERVER_KEY:$CA_CERT
+./opi-intel-bridge-storage -grpc_port=$BRIDGE_PORT -http_port=$BRIDGE_HTTP_PORT -tls $SERVER_CERT:$SERVER_KEY:$CA_CERT
 ```
 
 for container

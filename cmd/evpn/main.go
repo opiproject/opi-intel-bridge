@@ -4,6 +4,7 @@
 // Copyright (C) 2023 Nordix Foundation.
 
 // Package main is the main package of the application
+//nolint:all
 package main
 
 import (
