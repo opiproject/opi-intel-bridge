@@ -10,7 +10,7 @@ import (
 
 	"github.com/opiproject/gospdk/spdk"
 	pb "github.com/opiproject/opi-api/storage/v1alpha1/gen/go"
-	"github.com/opiproject/opi-intel-bridge/pkg/models"
+	"github.com/opiproject/opi-intel-bridge/pkg/storage/models"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 )
 

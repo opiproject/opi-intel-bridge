@@ -15,9 +15,8 @@ ENV CGO_ENABLED=0
 # build an app
 COPY cmd/ cmd/
 COPY pkg/ pkg/
-RUN go build -v -o /opi-intel-bridge-storage ./cmd/main_storage.go
-RUN go build -v -o /opi-intel-bridge-evpn ./cmd/main_evpn.go
-
+RUN go build -v -o /opi-intel-bridge-storage ./cmd/storage && \
+	go build -v -o /opi-intel-bridge-evpn ./cmd/evpn
 # second stage to reduce image size
 FROM alpine:3.19@sha256:51b67269f354137895d43f3b3d810bfacd3945438e94dc5ac55fdac340352f48
 RUN apk add --no-cache --no-check-certificate hwdata && rm -rf /var/cache/apk/*

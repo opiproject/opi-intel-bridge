@@ -12,11 +12,11 @@ compile: get build
 build: build-evpn build-storage
 build-evpn:
 	@echo "  >  Building binaries..."
-	@CGO_ENABLED=0 go build -o ${PROJECTNAME}-evpn ./cmd/main_evpn.go
+	@CGO_ENABLED=0 go build -o ${PROJECTNAME}-evpn ./cmd/evpn
 
 build-storage:
 	@echo "  >  Building binaries..."
-	@CGO_ENABLED=0 go build -o ${PROJECTNAME}-storage ./cmd/main_storage.go
+	@CGO_ENABLED=0 go build -o ${PROJECTNAME}-storage ./cmd/storage
 
 get:
 	@echo "  >  Checking if there are any missing dependencies..."
