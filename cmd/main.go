@@ -72,7 +72,7 @@ func main() {
 			log.Panic(err)
 		}
 	}(store)
-
+	log.Println("Test Log: Starting gateway and Grpc Server")
 	go runGatewayServer(grpcPort, httpPort)
 	runGrpcServer(grpcPort, spdkAddress, tlsFiles, store)
 }
