@@ -3,6 +3,7 @@
 // Copyright (C) 2023 Nordix Foundation.
 
 // Package p4driverapi handles p4 driver realted functionality
+//
 //nolint:all
 package p4driverapi
 
@@ -11,15 +12,12 @@ import (
 	"context"
 	"encoding/binary"
 
-	// "encoding/hex"
 	"fmt"
 	"net"
 
-	// "strings"
 	"log"
 	"time"
 
-	logr "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 
 	p4_v1 "github.com/p4lang/p4runtime/go/p4/v1"
@@ -90,30 +88,24 @@ func Buildmfs(tablefield TableField) (map[string]client.MatchInterface, bool, er
 		case net.HardwareAddr:
 			mfs[key] = &client.ExactMatch{Value: value[0].(net.HardwareAddr)}
 		case uint16:
-			// if value[1].(string) == lpmStr {
 			switch value[1].(string) {
 			case lpmStr:
 				mfs[key] = &client.LpmMatch{Value: uint16toBytes(value[0].(uint16)), PLen: 31}
-			// } else if value[1].(string) == ternaryStr {
 			case ternaryStr:
 				isTernary = true
 				mfs[key] = &client.TernaryMatch{Value: uint16toBytes(value[0].(uint16)), Mask: uint32toBytes(4294967295)}
-			// } else {
 			default:
 				mfs[key] = &client.ExactMatch{Value: uint16toBytes(value[0].(uint16))}
 			}
 		case *net.IPNet:
 			maskSize, _ := v.Mask.Size()
 			ip := v.IP.To4()
-			// if value[1].(string) == lpmStr {
 			switch value[1].(string) {
 			case lpmStr:
 				mfs[key] = &client.LpmMatch{Value: v.IP.To4(), PLen: int32(maskSize)}
-			// } else if value[1].(string) == ternaryStr {
 			case ternaryStr:
 				isTernary = true
 				mfs[key] = &client.TernaryMatch{Value: []byte(ip), Mask: uint32toBytes(4294967295)}
-			// } else {
 			default:
 				mfs[key] = &client.ExactMatch{Value: []byte(ip)}
 			}
@@ -123,11 +115,9 @@ func Buildmfs(tablefield TableField) (map[string]client.MatchInterface, bool, er
 			case lpmStr:
 
 				mfs[key] = &client.LpmMatch{Value: value[0].(net.IP).To4(), PLen: 24}
-			// } else if value[1].(string) == ternaryStr {
 			case ternaryStr:
 				isTernary = true
 				mfs[key] = &client.TernaryMatch{Value: []byte(v), Mask: uint32toBytes(4294967295)}
-			// } else {
 			default:
 				mfs[key] = &client.ExactMatch{Value: []byte(v)}
 			}
@@ -138,11 +128,9 @@ func Buildmfs(tablefield TableField) (map[string]client.MatchInterface, bool, er
 			case lpmStr:
 
 				mfs[key] = &client.LpmMatch{Value: uint32toBytes(value[0].(uint32)), PLen: 31}
-			// } else if value[1].(string) == ternaryStr {
 			case ternaryStr:
 				isTernary = true
 				mfs[key] = &client.TernaryMatch{Value: uint32toBytes(value[0].(uint32)), Mask: uint32toBytes(4294967295)}
-			// } else {
 			default:
 				mfs[key] = &client.ExactMatch{Value: uint32toBytes(value[0].(uint32))}
 			}
@@ -178,15 +166,6 @@ func DelEntry(entry TableEntry) error {
 	entryP := P4RtC.NewTableEntry(entry.Tablename, mfs, nil, nil)
 	return P4RtC.DeleteTableEntry(Ctx, entryP)
 }
-
-/*// mustMarshal marshal the msg
-func mustMarshal(msg proto.Message) []byte {
-	data, err := proto.Marshal(msg)
-	if err != nil {
-		panic(err) // You should handle errors appropriately in your code
-	}
-	return data
-}*/
 
 // AddEntry adds an entry
 func AddEntry(entry TableEntry) error {
@@ -237,16 +216,6 @@ func AddEntry(entry TableEntry) error {
 	return P4RtC.InsertTableEntry(Ctx, entryP)
 }
 
-/*
-// encodeMac encodes the mac from string
-
-	func encodeMac(macAddrString string) []byte {
-		str := strings.Replace(macAddrString, ":", "", -1)
-		decoded, _ := hex.DecodeString(str)
-		return decoded
-	}
-*/
-
 // StopCh is used to when to stop the p4rtc when a terminate signal is generated
 var StopCh = make(chan struct{})
 
@@ -256,10 +225,10 @@ func NewP4RuntimeClient(binPath string, p4infoPath string, conn *grpc.ClientConn
 	c := p4_v1.NewP4RuntimeClient(conn)
 	resp, err := c.Capabilities(Ctx, &p4_v1.CapabilitiesRequest{})
 	if err != nil {
-		logr.Fatalf("intel-e2000: Error in Capabilities RPC: %v", err)
+		log.Printf("intel-e2000: Error in Capabilities RPC: %v", err)
 		return err
 	}
-	logr.Infof("intel-e2000: P4Runtime server version is %s", resp.P4RuntimeApiVersion)
+	log.Printf("intel-e2000: P4Runtime server version is %s", resp.P4RuntimeApiVersion)
 
 	electionID := &p4_v1.Uint128{High: 0, Low: 1}
 
@@ -277,13 +246,13 @@ func NewP4RuntimeClient(binPath string, p4infoPath string, conn *grpc.ClientConn
 		sent := false
 		for isPrimary := range arbitrationCh {
 			if isPrimary {
-				logr.Infof("We are the primary client!")
+				log.Println("We are the primary client!")
 				if !sent {
 					waitCh <- struct{}{}
 					sent = true
 				}
 			} else {
-				logr.Infof("We are not the primary client!")
+				log.Println("We are not the primary client!")
 			}
 		}
 	}()
@@ -294,15 +263,15 @@ func NewP4RuntimeClient(binPath string, p4infoPath string, conn *grpc.ClientConn
 		defer cancel()
 		select {
 		case <-Ctx2.Done():
-			logr.Fatalf("Could not become the primary client within %v", timeout)
+			log.Fatal("Could not become the primary client within ", timeout)
 		case <-errs:
-			logr.Fatalf("Could not get the client within %v", timeout)
+			log.Fatal("Could not get the client within ", timeout)
 		case <-waitCh:
 		}
 	}()
-	logr.Info("Setting forwarding pipe")
+	log.Println("Setting forwarding pipe")
 	if _, err := P4RtC.SetFwdPipe(Ctx, binPath, p4infoPath, 0); err != nil {
-		logr.Fatalf("Error when setting forwarding pipe: %v", err)
+		log.Fatal("Error when setting forwarding pipe: ", err)
 		return err
 	}
 	return nil

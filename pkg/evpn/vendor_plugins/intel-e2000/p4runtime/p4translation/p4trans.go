@@ -3,6 +3,7 @@
 // Copyright (C) 2023 Nordix Foundation.
 
 // Package p4translation handles the intel e2000 fast path configuration
+//
 //nolint:all
 package p4translation
 
@@ -941,7 +942,6 @@ func setUpLb(lb *infradb.LogicalBridge) bool {
 
 // setUpBp  set up the bridge port
 func setUpBp(bp *infradb.BridgePort) bool {
-	// var entries []interface{}
 	entries, err := Pod.translateAddedBp(bp)
 	if err != nil {
 		return false
@@ -962,7 +962,6 @@ func setUpBp(bp *infradb.BridgePort) bool {
 
 // setUpSvi  set up the svi
 func setUpSvi(svi *infradb.Svi) bool {
-	// var entries []interface{}
 	entries, err := Pod.translateAddedSvi(svi)
 	if err != nil {
 		return false
@@ -986,7 +985,6 @@ func tearDownVrf(vrf *infradb.Vrf) bool {
 	if path.Base(vrf.Name) == grdStr {
 		return true
 	}
-	// var entries []interface{}
 	entries := Vxlan.translateDeletedVrf(vrf)
 	for _, entry := range entries {
 		if e, ok := entry.(p4client.TableEntry); ok {
@@ -1004,7 +1002,6 @@ func tearDownVrf(vrf *infradb.Vrf) bool {
 
 // tearDownLb  tear down the logical bridge
 func tearDownLb(lb *infradb.LogicalBridge) bool {
-	// var entries []interface{}
 	entries := Vxlan.translateDeletedLb(lb)
 	for _, entry := range entries {
 		if e, ok := entry.(p4client.TableEntry); ok {
@@ -1022,7 +1019,6 @@ func tearDownLb(lb *infradb.LogicalBridge) bool {
 
 // tearDownBp  tear down the bridge port
 func tearDownBp(bp *infradb.BridgePort) bool {
-	// var entries []interface{}
 	entries, err := Pod.translateDeletedBp(bp)
 	if err != nil {
 		return false
@@ -1043,7 +1039,6 @@ func tearDownBp(bp *infradb.BridgePort) bool {
 
 // tearDownSvi  tear down the svi
 func tearDownSvi(svi *infradb.Svi) bool {
-	// var entries []interface{}
 	entries, err := Pod.translateDeletedSvi(svi)
 	if err != nil {
 		return false
@@ -1111,7 +1106,6 @@ func Initialize() {
 
 	L3 = L3.L3DecoderInit(representors)
 	Pod = Pod.PodDecoderInit(representors)
-	// decoders = []interface{}{L3, Vxlan, Pod}
 	Vxlan = Vxlan.VxlanDecoderInit(representors)
 	L3entries := L3.StaticAdditions()
 	for _, entry := range L3entries {

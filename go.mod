@@ -10,7 +10,7 @@ require (
 	github.com/onsi/ginkgo/v2 v2.14.0
 	github.com/opiproject/gospdk v0.0.0-20240415072512-98d71122a73b
 	github.com/opiproject/opi-api v0.0.0-20240415072823-bb755a5f6ecc
-	github.com/opiproject/opi-evpn-bridge v0.2.1-0.20240708154942-708f94826a3a
+	github.com/opiproject/opi-evpn-bridge v0.2.1-0.20240902142753-8f51de196b54
 	github.com/opiproject/opi-smbios-bridge v0.1.3-0.20240113044816-4401aa6a3d1a
 	github.com/opiproject/opi-spdk-bridge v0.1.2-0.20240417152307-a0f9ef0e5260
 	github.com/opiproject/opi-strongswan-bridge v0.1.2-0.20231211064623-e4ef0e4fa95f
@@ -19,7 +19,6 @@ require (
 	github.com/philippgille/gokv/gomap v0.6.0
 	github.com/philippgille/gokv/redis v0.6.0
 	github.com/roman-kachanovsky/go-binary-pack v0.0.0-20170214094030-e260e0dc6732
-	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/viper v1.16.0
 	github.com/vektra/mockery/v2 v2.38.0
@@ -29,8 +28,6 @@ require (
 	google.golang.org/grpc v1.61.0
 	google.golang.org/protobuf v1.33.0
 )
-
-replace github.com/opiproject/opi-evpn-bridge v0.2.1-0.20240708154942-708f94826a3a => github.com/mardim91/opi-evpn-bridge v0.0.0-20240801134324-5b73532d930c
 
 require (
 	4d63.com/gocheckcompilerdirectives v1.2.1 // indirect
@@ -180,6 +177,7 @@ require (
 	github.com/sashamelentyev/usestdlibvars v1.24.0 // indirect
 	github.com/securego/gosec/v2 v2.18.2 // indirect
 	github.com/shazow/go-diff v0.0.0-20160112020656-b6b7b6733b8c // indirect
+	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/sivchari/containedctx v1.0.3 // indirect
 	github.com/sivchari/nosnakecase v1.7.0 // indirect
 	github.com/sivchari/tenv v1.7.1 // indirect
