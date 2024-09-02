@@ -4,6 +4,7 @@
 // Copyright (C) 2023 Nordix Foundation.
 
 // Package main is the main package of the application
+//
 //nolint:all
 package main
 
@@ -40,7 +41,6 @@ import (
 
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
-	ci_linux "github.com/opiproject/opi-evpn-bridge/pkg/LinuxCIModule"
 	gen_linux "github.com/opiproject/opi-evpn-bridge/pkg/LinuxGeneralModule"
 	frr "github.com/opiproject/opi-evpn-bridge/pkg/frr"
 	netlink "github.com/opiproject/opi-evpn-bridge/pkg/netlink"
@@ -75,11 +75,6 @@ var rootCmd = &cobra.Command{
 			intel_e2000_linux.Initialize()
 			frr.Initialize()
 			ipu_vendor.Initialize()
-
-		case "ci":
-			gen_linux.Initialize()
-			ci_linux.Initialize()
-			frr.Initialize()
 		default:
 			log.Panic(" ERROR: Could not find Build env ")
 		}
@@ -148,10 +143,6 @@ func cleanUp() {
 		ipu_vendor.DeInitialize()
 		close(p4driverapi.StopCh)
 
-	case "ci":
-		gen_linux.DeInitialize()
-		ci_linux.DeInitialize()
-		frr.DeInitialize()
 	default:
 		log.Panic(" ERROR: Could not find Build env ")
 	}
@@ -168,7 +159,6 @@ func main() {
 
 	// initialize  cobra config
 	if err := initialize(); err != nil {
-		// log.Println(err)
 		log.Panicf("Error in initialize(): %v", err)
 	}
 
@@ -190,9 +180,6 @@ func main() {
 		default:
 			fmt.Println("Received unknown signal.")
 		}
-		// Perform any cleanup tasks here.
-		// ...
-
 		// Exit the program.
 		os.Exit(0)
 	}()

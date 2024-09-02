@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) 2022-2023 Intel Corporation, or its subsidiaries.
 // Copyright (C) 2023 Nordix Foundation.
+//
 //nolint:all
 package p4translation
 
@@ -548,10 +549,6 @@ const (
 
 )
 
-/*func setMuxVsi(representors map[string]string) string{
-	var muxVsi:= representors["vrf_mux"][0]
-	return muxVsi
-}*/
 // _isL3vpnEnabled check if l3 enabled
 func _isL3vpnEnabled(vrf *infradb.Vrf) bool {
 	return vrf.Spec.Vni != nil
@@ -577,19 +574,6 @@ func _bigEndian16(id interface{}) interface{} {
 	var unpackedData = binary.BigEndian.Uint16(packedData)
 	return unpackedData
 }
-
-/*// _bigEndian32 convert to big endian 32bit
-func _bigEndian32(id interface{}) interface{} {
-	var bp = new(binarypack.BinaryPack)
-	var packFormat = []string{"I"}
-	var value = []interface{}{id}
-	var packedData, err = bp.Pack(packFormat, value)
-	if err != nil {
-		log.Printf("intel-e2000: error: %v\n",err)
-	}
-	var unpackedData = binary.BigEndian.Uint32(packedData)
-	return unpackedData
-}*/
 
 // _toEgressVsi convert to vsi+16
 func _toEgressVsi(vsiID int) int {
@@ -996,11 +980,6 @@ func (l L3Decoder) translateAddedRoute(route netlink_polling.RouteStruct) []inte
 	return l._l3Route(route, "False")
 }
 
-/*// translateChangedRoute translate the changed route to p4 entries
-func (l L3Decoder) translateChangedRoute(route netlink_polling.RouteStruct) []interface{} {
-	return l.translateAddedRoute(route)
-}*/
-
 // translateDeletedRoute translate the deleted route to p4 entries
 func (l L3Decoder) translateDeletedRoute(route netlink_polling.RouteStruct) []interface{} {
 	var ipv4Net = route.Route0.Dst
@@ -1028,7 +1007,6 @@ func (l L3Decoder) translateAddedNexthop(nexthop netlink_polling.NexthopStruct) 
 
 	switch nexthop.NhType {
 	case netlink_polling.PHY:
-		// if nexthop.NhType == netlink_polling.PHY {
 		var smac, _ = net.ParseMAC(nexthop.Metadata["smac"].(string))
 		var dmac, _ = net.ParseMAC(nexthop.Metadata["dmac"].(string))
 		var portID = nexthop.Metadata["egress_vport"]
@@ -1088,7 +1066,6 @@ func (l L3Decoder) translateAddedNexthop(nexthop netlink_polling.NexthopStruct) 
 					Params:     []interface{}{uint16(portID.(int))},
 				},
 			})
-	// } else if nexthop.NhType == netlink_polling.ACC {
 	case netlink_polling.ACC:
 		var dmac, _ = net.ParseMAC(nexthop.Metadata["dmac"].(string))
 		var vlanID = nexthop.Metadata["vlanID"].(uint32)
@@ -1120,7 +1097,6 @@ func (l L3Decoder) translateAddedNexthop(nexthop netlink_polling.NexthopStruct) 
 					Params:     []interface{}{modPtr, uint32(vport)},
 				},
 			})
-	// } else if nexthop.NhType == netlink_polling.SVI {
 	case netlink_polling.SVI:
 		var smac, _ = net.ParseMAC(nexthop.Metadata["smac"].(string))
 		var dmac, _ = net.ParseMAC(nexthop.Metadata["dmac"].(string))
@@ -1161,7 +1137,6 @@ func (l L3Decoder) translateAddedNexthop(nexthop netlink_polling.NexthopStruct) 
 						Params:     []interface{}{modPtr, uint32(vport)},
 					},
 				})
-		// } else if Type == ipuDB.ACCESS {
 		case infradb.Access:
 			entries = append(entries, p4client.TableEntry{
 				Tablename: macMod,
@@ -1190,11 +1165,9 @@ func (l L3Decoder) translateAddedNexthop(nexthop netlink_polling.NexthopStruct) 
 						Params:     []interface{}{modPtr, uint32(vport)},
 					},
 				})
-		// } else {
 		default:
 			return entries
 		}
-	// } else {
 	default:
 		return entries
 	}
@@ -1202,12 +1175,9 @@ func (l L3Decoder) translateAddedNexthop(nexthop netlink_polling.NexthopStruct) 
 	return entries
 }
 
-/*// translateChangedNexthop translate the changed nexthop to p4 entries
-func (l L3Decoder) translateChangedNexthop(nexthop netlink_polling.NexthopStruct) []interface{} {
-	return l.translateAddedNexthop(nexthop)
-}*/
-//nolint:funlen
 // translateDeletedNexthop translate the deleted nexthop to p4 entries
+//
+//nolint:funlen
 func (l L3Decoder) translateDeletedNexthop(nexthop netlink_polling.NexthopStruct) []interface{} {
 	if nexthop.NhType == netlink_polling.VXLAN {
 		var entries []interface{}
@@ -1220,7 +1190,6 @@ func (l L3Decoder) translateDeletedNexthop(nexthop netlink_polling.NexthopStruct
 	var entries = make([]interface{}, 0)
 	switch nexthop.NhType {
 	case netlink_polling.PHY:
-		// if nexthop.NhType == netlink_polling.PHY {
 		entries = append(entries, p4client.TableEntry{
 			Tablename: macMod,
 			TableField: p4client.TableField{
@@ -1260,7 +1229,6 @@ func (l L3Decoder) translateDeletedNexthop(nexthop netlink_polling.NexthopStruct
 					Priority: int32(0),
 				},
 			})
-	// } else if nexthop.NhType == netlink_polling.ACC {
 	case netlink_polling.ACC:
 		entries = append(entries, p4client.TableEntry{
 			Tablename: pushDmacVlan,
@@ -1281,12 +1249,10 @@ func (l L3Decoder) translateDeletedNexthop(nexthop netlink_polling.NexthopStruct
 					Priority: int32(0),
 				},
 			})
-	// } else if nexthop.NhType == netlink_polling.SVI {
 	case netlink_polling.SVI:
 		var Type = nexthop.Metadata["portType"].(infradb.BridgePortType)
 		switch Type {
 		case infradb.Trunk:
-			// if Type == ipuDB.TRUNK {
 			entries = append(entries, p4client.TableEntry{
 				Tablename: pushMacVlan,
 				TableField: p4client.TableField{
@@ -1306,7 +1272,6 @@ func (l L3Decoder) translateDeletedNexthop(nexthop netlink_polling.NexthopStruct
 						Priority: int32(0),
 					},
 				})
-		// } else if Type == ipuDB.ACCESS {
 		case infradb.Access:
 			entries = append(entries, p4client.TableEntry{
 				Tablename: macMod,
@@ -1327,11 +1292,9 @@ func (l L3Decoder) translateDeletedNexthop(nexthop netlink_polling.NexthopStruct
 						Priority: int32(0),
 					},
 				})
-		// } else {
 		default:
 			return entries
 		}
-	// } else {
 	default:
 		return entries
 	}
@@ -1810,11 +1773,6 @@ func (v VxlanDecoder) translateAddedNexthop(nexthop netlink_polling.NexthopStruc
 	return entries
 }
 
-/*// translateChangedNexthop translates the changed nexthop
-func (v VxlanDecoder) translateChangedNexthop(nexthop netlink_polling.NexthopStruct) []interface{} {
-	return v.translateAddedNexthop(nexthop)
-}*/
-
 // translateDeletedNexthop translates the deleted nexthop
 func (v VxlanDecoder) translateDeletedNexthop(nexthop netlink_polling.NexthopStruct) []interface{} {
 	var entries = make([]interface{}, 0)
@@ -1920,11 +1878,6 @@ func (v VxlanDecoder) translateAddedL2Nexthop(nexthop netlink_polling.L2NexthopS
 	return entries
 }
 
-/*// translateChangedL2Nexthop translates the changed l2 nexthop
-func (v VxlanDecoder) translateChangedL2Nexthop(nexthop netlink_polling.L2NexthopStruct) []interface{} {
-	return v.translateAddedL2Nexthop(nexthop)
-}*/
-
 // translateDeletedL2Nexthop translates the deleted l2 nexthop
 func (v VxlanDecoder) translateDeletedL2Nexthop(nexthop netlink_polling.L2NexthopStruct) []interface{} {
 	var entries = make([]interface{}, 0)
@@ -1992,11 +1945,6 @@ func (v VxlanDecoder) translateAddedFdb(fdb netlink_polling.FdbEntryStruct) []in
 	}
 	return entries
 }
-
-/*// translateChangedFdb translates the changed fdb entry
-func (v VxlanDecoder) translateChangedFdb(fdb netlink_polling.FdbEntryStruct) []interface{} {
-	return v.translateAddedFdb(fdb)
-}*/
 
 // translateDeletedFdb translates the deleted fdb entry
 func (v VxlanDecoder) translateDeletedFdb(fdb netlink_polling.FdbEntryStruct) []interface{} {
@@ -2712,11 +2660,6 @@ func (p PodDecoder) translateAddedFdb(fdb netlink_polling.FdbEntryStruct) []inte
 	return entries
 }
 
-/*// translateChangedFdb translate the changed fdb entry
-func (p PodDecoder) translateChangedFdb(fdb netlink_polling.FdbEntryStruct) []interface{} {
-	return p.translateAddedFdb(fdb)
-}*/
-
 // translateDeletedFdb translate the deleted fdb entry
 func (p PodDecoder) translateDeletedFdb(fdb netlink_polling.FdbEntryStruct) []interface{} {
 	var entries = make([]interface{}, 0)
@@ -2805,11 +2748,6 @@ func (p PodDecoder) translateAddedL2Nexthop(nexthop netlink_polling.L2NexthopStr
 	return entries
 }
 
-/*// translateChangedL2Nexthop translate the changed l2 nexthop entry
-func (p PodDecoder) translateChangedL2Nexthop(nexthop netlink_polling.L2NexthopStruct) []interface{} {
-	return p.translateAddedL2Nexthop(nexthop)
-}*/
-
 // translateDeletedL2Nexthop translate the deleted l2 nexthop entry
 func (p PodDecoder) translateDeletedL2Nexthop(nexthop netlink_polling.L2NexthopStruct) []interface{} {
 	var entries = make([]interface{}, 0)
@@ -2886,20 +2824,7 @@ func (p PodDecoder) StaticAdditions() []interface{} {
 			Params:     []interface{}{uint32(_toEgressVsi(p._portMuxVsi))},
 		},
 	},
-		/*p4client.TableEntry{
-			Tablename: portMuxIn,
-			TableField: p4client.TableField{
-				FieldValue: map[string][2]interface{}{
-					"vsi": {uint16(p._portMuxVsi), "exact"},
-					"vid": {Vlan.PHY0, "exact"},
-				},
-				Priority: int32(0),
-			},
-			Action: p4client.Action{
-				ActionName: "linux_networking_control.set_def_vsi_loopback",
-				Params:      []interface{}{uint32(0)},
-			},
-		},*/
+
 		p4client.TableEntry{
 			Tablename: l2FwdLoop,
 			TableField: p4client.TableField{
@@ -2972,16 +2897,7 @@ func (p PodDecoder) StaticDeletions() []interface{} {
 			Priority: int32(0),
 		},
 	},
-		/*p4client.TableEntry{
-			Tablename: portMuxIn,
-			TableField: p4client.TableField{
-				FieldValue: map[string][2]interface{}{
-					"vsi": {uint16(p._portMuxVsi), "exact"},
-					"vid": {Vlan.PHY0, "exact"},
-				},
-				Priority: int32(0),
-			},
-		},*/
+
 		p4client.TableEntry{
 			Tablename: l2FwdLoop,
 			TableField: p4client.TableField{
