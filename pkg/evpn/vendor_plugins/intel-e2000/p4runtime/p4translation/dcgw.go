@@ -672,18 +672,18 @@ func _deleteTcamEntry(vrfID uint32, direction int) ([]interface{}, uint32) {
 // PhyPort structure of phy ports
 type PhyPort struct {
 	id  int
-	vsi int
+	vsi uint16
 	mac string
 }
 
 // PhyPortInit initializes the phy port
 func (p PhyPort) PhyPortInit(id int, vsi string, mac string) PhyPort {
 	p.id = id
-	val, err := strconv.ParseInt(vsi, 10, 32)
+	val, err := strconv.ParseUint(vsi, 10, 16)
 	if err != nil {
 		panic(err)
 	}
-	p.vsi = int(val)
+	p.vsi = uint16(val)
 	p.mac = mac
 
 	return p
@@ -711,18 +711,18 @@ func _p2pQid(pID int) int {
 
 // GrpcPairPort structure
 type GrpcPairPort struct {
-	vsi  int
+	vsi  uint16
 	mac  string
 	peer map[string]string
 }
 
 // GrpcPairPortInit get the vsi+16
 func (g GrpcPairPort) GrpcPairPortInit(vsi string, mac string) GrpcPairPort {
-	val, err := strconv.ParseInt(vsi, 10, 32)
+	val, err := strconv.ParseUint(vsi, 10, 16)
 	if err != nil {
 		panic(err)
 	}
-	g.vsi = int(val)
+	g.vsi = uint16(val)
 	g.mac = mac
 	return g
 }
@@ -1328,7 +1328,7 @@ func (l L3Decoder) StaticAdditions() []interface{} {
 	},
 	)
 	for _, port := range l._grpcPorts {
-		var peerVsi, err = strconv.ParseInt(port.peer["vsi"], 10, 64)
+		var peerVsi, err = strconv.ParseUint(port.peer["vsi"], 10, 16)
 		if err != nil {
 			panic(err)
 		}
@@ -1358,7 +1358,7 @@ func (l L3Decoder) StaticAdditions() []interface{} {
 				},
 				Action: p4client.Action{
 					ActionName: "linux_networking_control.l2_fwd",
-					Params:     []interface{}{uint32(_toEgressVsi(port.vsi))},
+					Params:     []interface{}{uint32(_toEgressVsi(int(port.vsi)))},
 				},
 			})
 	}
@@ -1388,7 +1388,7 @@ func (l L3Decoder) StaticAdditions() []interface{} {
 				},
 				Action: p4client.Action{
 					ActionName: "linux_networking_control.fwd_to_port",
-					Params:     []interface{}{uint32(_toEgressVsi(port.vsi))},
+					Params:     []interface{}{uint32(_toEgressVsi(int(port.vsi)))},
 				},
 			},
 			p4client.TableEntry{
