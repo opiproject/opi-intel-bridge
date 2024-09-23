@@ -16,7 +16,7 @@ subscribers:
   - name: "frr"
     priority: 3
     events: ["vrf", "svi"]
-  - name: "intel_e2000"
+  - name: "intel-e2000"
     priority: 4
     events: ["vrf", "logical-bridge", "bridge-port", "svi"]
 grpc:
