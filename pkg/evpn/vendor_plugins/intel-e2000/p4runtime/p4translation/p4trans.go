@@ -592,6 +592,7 @@ func handlevrf(objectData *eventbus.ObjectData) {
 		log.Printf("intel-e2000: GetVRF error: %s %s\n", err, objectData.Name)
 		comp.Name = intele2000Str
 		comp.CompStatus = common.ComponentStatusError
+		comp.Details = fmt.Sprintf("intel-e2000: GetVRF error: %s %s\n", err, objectData.Name)
 		if comp.Timer == 0 { // wait timer is 2 powerof natural numbers ex : 1,2,3...
 			comp.Timer = 2 * time.Second
 		} else {
@@ -608,6 +609,7 @@ func handlevrf(objectData *eventbus.ObjectData) {
 		log.Printf("intel-e2000: Mismatch in resoruce version %+v\n and vrf resource version %+v\n", objectData.ResourceVersion, vrf.ResourceVersion)
 		comp.Name = intele2000Str
 		comp.CompStatus = common.ComponentStatusError
+		comp.Details = fmt.Sprintf("intel-e2000: Mismatch in resoruce version %+v\n and vrf resource version %+v\n", objectData.ResourceVersion, vrf.ResourceVersion)
 		if comp.Timer == 0 { // wait timer is 2 powerof natural numbers ex : 1,2,3...
 			comp.Timer = 2 * time.Second
 		} else {
@@ -628,7 +630,8 @@ func handlevrf(objectData *eventbus.ObjectData) {
 		}
 	}
 	if vrf.Status.VrfOperStatus != infradb.VrfOperStatusToBeDeleted {
-		status := offloadVrf(vrf)
+		details, status := offloadVrf(vrf)
+		comp.Details = details
 		if status {
 			comp.CompStatus = common.ComponentStatusSuccess
 
@@ -650,7 +653,8 @@ func handlevrf(objectData *eventbus.ObjectData) {
 			log.Printf("error in updating vrf status: %s\n", err)
 		}
 	} else {
-		status := tearDownVrf(vrf)
+		details, status := tearDownVrf(vrf)
+		comp.Details = details
 		if status {
 			comp.CompStatus = common.ComponentStatusSuccess
 
@@ -682,6 +686,7 @@ func handlelb(objectData *eventbus.ObjectData) {
 		log.Printf("intel-e2000: GetLB error: %s %s\n", err, objectData.Name)
 		comp.Name = intele2000Str
 		comp.CompStatus = common.ComponentStatusError
+		comp.Details = fmt.Sprintf("intel-e2000: GetLB error: %s %s\n", err, objectData.Name)
 		if comp.Timer == 0 {
 			comp.Timer = 2 * time.Second
 		} else {
@@ -702,8 +707,9 @@ func handlelb(objectData *eventbus.ObjectData) {
 		}
 	}
 	if lb.Status.LBOperStatus != infradb.LogicalBridgeOperStatusToBeDeleted {
-		status := setUpLb(lb)
+		details, status := setUpLb(lb)
 		comp.Name = intele2000Str
+		comp.Details = details
 		if status {
 			comp.Details = ""
 			comp.CompStatus = common.ComponentStatusSuccess
@@ -723,8 +729,9 @@ func handlelb(objectData *eventbus.ObjectData) {
 			log.Printf("error in updating lb status: %s\n", err)
 		}
 	} else {
-		status := tearDownLb(lb)
+		details, status := tearDownLb(lb)
 		comp.Name = intele2000Str
+		comp.Details = details
 		if status {
 			comp.CompStatus = common.ComponentStatusSuccess
 			comp.Timer = 0
@@ -753,6 +760,7 @@ func handlebp(objectData *eventbus.ObjectData) {
 		log.Printf("intel-e2000: GetBP error: %s\n", err)
 		comp.Name = intele2000Str
 		comp.CompStatus = common.ComponentStatusError
+		comp.Details = fmt.Sprintf("intel-e2000: GetBP error: %s\n", err)
 		if comp.Timer == 0 {
 			comp.Timer = 2 * time.Second
 		} else {
@@ -773,10 +781,10 @@ func handlebp(objectData *eventbus.ObjectData) {
 		}
 	}
 	if bp.Status.BPOperStatus != infradb.BridgePortOperStatusToBeDeleted {
-		status := setUpBp(bp)
+		details, status := setUpBp(bp)
 		comp.Name = intele2000Str
+		comp.Details = details
 		if status {
-			comp.Details = ""
 			comp.CompStatus = common.ComponentStatusSuccess
 			comp.Timer = 0
 		} else {
@@ -794,8 +802,9 @@ func handlebp(objectData *eventbus.ObjectData) {
 			log.Printf("error in updating bp status: %s\n", err)
 		}
 	} else {
-		status := tearDownBp(bp)
+		details, status := tearDownBp(bp)
 		comp.Name = intele2000Str
+		comp.Details = details
 		if status {
 			comp.CompStatus = common.ComponentStatusSuccess
 			comp.Timer = 0
@@ -826,6 +835,7 @@ func handlesvi(objectData *eventbus.ObjectData) {
 		log.Printf("intel-e2000: GetSvi error: %s %s\n", err, objectData.Name)
 		comp.Name = intele2000Str
 		comp.CompStatus = common.ComponentStatusError
+		comp.Details = fmt.Sprintf("intel-e2000: GetSvi error: %s %s\n", err, objectData.Name)
 		if comp.Timer == 0 {
 			comp.Timer = 2 * time.Second
 		} else {
@@ -842,6 +852,7 @@ func handlesvi(objectData *eventbus.ObjectData) {
 		log.Printf("intel-e2000:: Mismatch in resoruce version %+v\n and svi resource version %+v\n", objectData.ResourceVersion, svi.ResourceVersion)
 		comp.Name = intele2000Str
 		comp.CompStatus = common.ComponentStatusError
+		comp.Details = fmt.Sprintf("intel-e2000:: Mismatch in resoruce version %+v\n and svi resource version %+v\n", objectData.ResourceVersion, svi.ResourceVersion)
 		if comp.Timer == 0 {
 			comp.Timer = 2 * time.Second
 		} else {
@@ -861,8 +872,9 @@ func handlesvi(objectData *eventbus.ObjectData) {
 		}
 	}
 	if svi.Status.SviOperStatus != infradb.SviOperStatusToBeDeleted {
-		status := setUpSvi(svi)
+		details, status := setUpSvi(svi)
 		comp.Name = intele2000Str
+		comp.Details = details
 		if status {
 			comp.CompStatus = common.ComponentStatusSuccess
 			comp.Timer = 0
@@ -881,8 +893,9 @@ func handlesvi(objectData *eventbus.ObjectData) {
 			log.Printf("error in updating svi status: %s\n", err)
 		}
 	} else {
-		status := tearDownSvi(svi)
+		details, status := tearDownSvi(svi)
 		comp.Name = intele2000Str
+		comp.Details = details
 		if status {
 			comp.CompStatus = common.ComponentStatusSuccess
 			comp.Timer = 0
@@ -903,9 +916,9 @@ func handlesvi(objectData *eventbus.ObjectData) {
 }
 
 // offloadVrf  offload the vrf events
-func offloadVrf(vrf *infradb.Vrf) bool {
+func offloadVrf(vrf *infradb.Vrf) (string, bool) {
 	if path.Base(vrf.Name) == grdStr {
-		return true
+		return "", true
 	}
 
 	entries := Vxlan.translateAddedVrf(vrf)
@@ -916,15 +929,15 @@ func offloadVrf(vrf *infradb.Vrf) bool {
 				log.Printf("intel-e2000: error adding entry for %v error %v\n", e.Tablename, er)
 			}
 		} else {
-			log.Println("ntel-e2000: Entry is not of type p4client.TableEntry:-", e)
-			return false
+			log.Println("intel-e2000: Entry is not of type p4client.TableEntry:-", e)
+			return fmt.Sprintf("intel-e2000: Entry is not of type p4client.TableEntry:-%v", e), false
 		}
 	}
-	return true
+	return "", true
 }
 
 // setUpLb  set up the logical bridge
-func setUpLb(lb *infradb.LogicalBridge) bool {
+func setUpLb(lb *infradb.LogicalBridge) (string, bool) {
 	entries := Vxlan.translateAddedLb(lb)
 	for _, entry := range entries {
 		if e, ok := entry.(p4client.TableEntry); ok {
@@ -934,18 +947,17 @@ func setUpLb(lb *infradb.LogicalBridge) bool {
 			}
 		} else {
 			log.Println("intel-e2000: Entry is not of type p4client.TableEntry:-", e)
-			return false
+			return fmt.Sprintf("intel-e2000 setUpLb: Entry is not of type p4client.TableEntry:-%v", e), false
 		}
 	}
-	return true
+	return "", true
 }
 
 // setUpBp  set up the bridge port
-func setUpBp(bp *infradb.BridgePort) bool {
-	// var entries []interface{}
+func setUpBp(bp *infradb.BridgePort) (string, bool) {
 	entries, err := Pod.translateAddedBp(bp)
 	if err != nil {
-		return false
+		return err.Error(), false
 	}
 	for _, entry := range entries {
 		if e, ok := entry.(p4client.TableEntry); ok {
@@ -955,18 +967,17 @@ func setUpBp(bp *infradb.BridgePort) bool {
 			}
 		} else {
 			log.Println("intel-e2000: Entry is not of type p4client.TableEntry:-", e)
-			return false
+			return fmt.Sprintf("intel-e2000 setUpBp: Entry is not of type p4client.TableEntry:-%v", e), false
 		}
 	}
-	return true
+	return "", true
 }
 
 // setUpSvi  set up the svi
-func setUpSvi(svi *infradb.Svi) bool {
-	// var entries []interface{}
+func setUpSvi(svi *infradb.Svi) (string, bool) {
 	entries, err := Pod.translateAddedSvi(svi)
 	if err != nil {
-		return false
+		return err.Error(), false
 	}
 	for _, entry := range entries {
 		if e, ok := entry.(p4client.TableEntry); ok {
@@ -976,16 +987,16 @@ func setUpSvi(svi *infradb.Svi) bool {
 			}
 		} else {
 			log.Println("intel-e2000: Entry is not of type p4client.TableEntry:-", e)
-			return false
+			return fmt.Sprintf("intel-e2000 setUpBp: Entry is not of type p4client.TableEntry:-%v", e), false
 		}
 	}
-	return true
+	return "", true
 }
 
 // tearDownVrf  tear down the vrf
-func tearDownVrf(vrf *infradb.Vrf) bool {
+func tearDownVrf(vrf *infradb.Vrf) (string, bool) {
 	if path.Base(vrf.Name) == grdStr {
-		return true
+		return "", true
 	}
 	// var entries []interface{}
 	entries := Vxlan.translateDeletedVrf(vrf)
@@ -997,15 +1008,14 @@ func tearDownVrf(vrf *infradb.Vrf) bool {
 			}
 		} else {
 			log.Println("intel-e2000: Entry is not of type p4client.TableEntry")
-			return false
+			return fmt.Sprintf("intel-e2000 tearDownVrf: Entry is not of type p4client.TableEntry"), false
 		}
 	}
-	return true
+	return "", true
 }
 
 // tearDownLb  tear down the logical bridge
-func tearDownLb(lb *infradb.LogicalBridge) bool {
-	// var entries []interface{}
+func tearDownLb(lb *infradb.LogicalBridge) (string, bool) {
 	entries := Vxlan.translateDeletedLb(lb)
 	for _, entry := range entries {
 		if e, ok := entry.(p4client.TableEntry); ok {
@@ -1015,18 +1025,17 @@ func tearDownLb(lb *infradb.LogicalBridge) bool {
 			}
 		} else {
 			log.Println("intel-e2000: Entry is not of type p4client.TableEntry")
-			return false
+			return fmt.Sprintf("intel-e2000 tearDownLb: Entry is not of type p4client.TableEntry"), false
 		}
 	}
-	return true
+	return "", true
 }
 
 // tearDownBp  tear down the bridge port
-func tearDownBp(bp *infradb.BridgePort) bool {
-	// var entries []interface{}
+func tearDownBp(bp *infradb.BridgePort) (string, bool) {
 	entries, err := Pod.translateDeletedBp(bp)
 	if err != nil {
-		return false
+		return err.Error(), false
 	}
 	for _, entry := range entries {
 		if e, ok := entry.(p4client.TableEntry); ok {
@@ -1036,18 +1045,17 @@ func tearDownBp(bp *infradb.BridgePort) bool {
 			}
 		} else {
 			log.Println("intel-e2000: Entry is not of type p4client.TableEntry")
-			return false
+			return fmt.Sprintf("intel-e2000 tearDownBp: Entry is not of type p4client.TableEntry"), false
 		}
 	}
-	return true
+	return "", true
 }
 
 // tearDownSvi  tear down the svi
-func tearDownSvi(svi *infradb.Svi) bool {
-	// var entries []interface{}
+func tearDownSvi(svi *infradb.Svi) (string, bool) {
 	entries, err := Pod.translateDeletedSvi(svi)
 	if err != nil {
-		return false
+		return err.Error(), false
 	}
 	for _, entry := range entries {
 		if e, ok := entry.(p4client.TableEntry); ok {
@@ -1057,10 +1065,10 @@ func tearDownSvi(svi *infradb.Svi) bool {
 			}
 		} else {
 			log.Println("intel-e2000: Entry is not of type p4client.TableEntry")
-			return false
+			return fmt.Sprintf("intel-e2000 tearDownSvi: Entry is not of type p4client.TableEntry"), false
 		}
 	}
-	return true
+	return "", true
 }
 
 // Initialize function handles init functionality
