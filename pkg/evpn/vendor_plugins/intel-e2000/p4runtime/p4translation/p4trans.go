@@ -24,7 +24,7 @@ import (
 	"github.com/opiproject/opi-evpn-bridge/pkg/infradb/subscriberframework/eventbus"
 	nm "github.com/opiproject/opi-evpn-bridge/pkg/netlink"
 	eb "github.com/opiproject/opi-evpn-bridge/pkg/netlink/eventbus"
-	p4client "github.com/opiproject/opi-intel-bridge/pkg/evpn/vendor_plugins/intel-e2000/p4runtime/p4driverapi"
+	p4client "github.com/opiproject/opi-evpn-bridge/pkg/vendor_plugins/intel-e2000/p4runtime/p4driverapi"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -942,6 +942,7 @@ func setUpLb(lb *infradb.LogicalBridge) bool {
 
 // setUpBp  set up the bridge port
 func setUpBp(bp *infradb.BridgePort) bool {
+	// var entries []interface{}
 	entries, err := Pod.translateAddedBp(bp)
 	if err != nil {
 		return false
@@ -962,6 +963,7 @@ func setUpBp(bp *infradb.BridgePort) bool {
 
 // setUpSvi  set up the svi
 func setUpSvi(svi *infradb.Svi) bool {
+	// var entries []interface{}
 	entries, err := Pod.translateAddedSvi(svi)
 	if err != nil {
 		return false
@@ -985,6 +987,7 @@ func tearDownVrf(vrf *infradb.Vrf) bool {
 	if path.Base(vrf.Name) == grdStr {
 		return true
 	}
+	// var entries []interface{}
 	entries := Vxlan.translateDeletedVrf(vrf)
 	for _, entry := range entries {
 		if e, ok := entry.(p4client.TableEntry); ok {
@@ -1002,6 +1005,7 @@ func tearDownVrf(vrf *infradb.Vrf) bool {
 
 // tearDownLb  tear down the logical bridge
 func tearDownLb(lb *infradb.LogicalBridge) bool {
+	// var entries []interface{}
 	entries := Vxlan.translateDeletedLb(lb)
 	for _, entry := range entries {
 		if e, ok := entry.(p4client.TableEntry); ok {
@@ -1019,6 +1023,7 @@ func tearDownLb(lb *infradb.LogicalBridge) bool {
 
 // tearDownBp  tear down the bridge port
 func tearDownBp(bp *infradb.BridgePort) bool {
+	// var entries []interface{}
 	entries, err := Pod.translateDeletedBp(bp)
 	if err != nil {
 		return false
@@ -1039,6 +1044,7 @@ func tearDownBp(bp *infradb.BridgePort) bool {
 
 // tearDownSvi  tear down the svi
 func tearDownSvi(svi *infradb.Svi) bool {
+	// var entries []interface{}
 	entries, err := Pod.translateDeletedSvi(svi)
 	if err != nil {
 		return false
@@ -1058,6 +1064,8 @@ func tearDownSvi(svi *infradb.Svi) bool {
 }
 
 // Initialize function handles init functionality
+//
+//gocognit:ignore
 func Initialize() {
 	// Netlink Listener
 	startSubscriber(nm.EventBus, nm.RouteAdded)
@@ -1090,11 +1098,12 @@ func Initialize() {
 
 	err1 := p4client.NewP4RuntimeClient(config.GlobalConfig.P4.Config.BinFile, config.GlobalConfig.P4.Config.P4infoFile, Conn)
 	if err1 != nil {
-		log.Fatalf("intel-e2000: Failed to create P4Runtime client: %v\n", err1)
+		log.Printf("intel-e2000: Failed to create P4Runtime client: %v\n", err1)
 	}
+	time.Sleep(time.Second * 60)
 	// add static rules into the pipeline of representators read from config
 	representors := make(map[string][2]string)
-	for k, v := range config.GlobalConfig.P4.Representors {
+	/*for k, v := range config.GlobalConfig.P4.Representors {
 		vsi, mac, err := idsOf(v.(string))
 		if err != nil {
 			log.Println("intel-e2000: Error:", err)
@@ -1102,10 +1111,52 @@ func Initialize() {
 		}
 		representors[k] = [2]string{vsi, mac}
 	}
-	log.Printf("intel-e2000: REPRESENTORS %+v\n", representors)
+	log.Printf("intel-e2000: REPRESENTORS %+v\n", representors)*/
+	// Add the physical port representors
+	// Add the physical port representors
+	for i, port := range config.GlobalConfig.Interfaces.PhyPorts {
+		key := fmt.Sprintf("phy%d_rep", i)
+		vsi, mac, err := idsOf(port.Rep)
+		if err != nil {
+			log.Printf("Error getting ids for port %s: %v", port.Rep, err)
+			continue
+		}
+		representors[key] = [2]string{vsi, mac}
+	}
 
+	// Add the other interfaces to the representors map
+	// Since these don't have a VSI, we'll just use an empty string for the second element
+	grpcAccVsi, grpcAccMac, err := idsOf(config.GlobalConfig.Interfaces.GrpcAcc)
+	if err != nil {
+		log.Printf("Error getting ids for grpc_acc: %v", err)
+	} else {
+		representors["grpc_acc"] = [2]string{grpcAccVsi, grpcAccMac}
+	}
+
+	grpcHostVsi, grpcHostMac, err := idsOf(config.GlobalConfig.Interfaces.GrpcHost)
+	if err != nil {
+		log.Printf("Error getting ids for grpc_host: %v", err)
+	} else {
+		representors["grpc_host"] = [2]string{grpcHostVsi, grpcHostMac}
+	}
+
+	vrfMuxVsi, vrfMuxMac, err := idsOf(config.GlobalConfig.Interfaces.VrfMux)
+	if err != nil {
+		log.Printf("Error getting ids for vrf_mux: %v", err)
+	} else {
+		representors["vrf_mux"] = [2]string{vrfMuxVsi, vrfMuxMac}
+	}
+
+	portMuxVsi, portMuxMac, err := idsOf(config.GlobalConfig.Interfaces.PortMux)
+	if err != nil {
+		log.Printf("Error getting ids for port_mux: %v", err)
+	} else {
+		representors["port_mux"] = [2]string{portMuxVsi, portMuxMac}
+	}
+	log.Printf("intel-e2000: REPRESENTORS %+v\n", representors)
 	L3 = L3.L3DecoderInit(representors)
 	Pod = Pod.PodDecoderInit(representors)
+	// decoders = []interface{}{L3, Vxlan, Pod}
 	Vxlan = Vxlan.VxlanDecoderInit(representors)
 	L3entries := L3.StaticAdditions()
 	for _, entry := range L3entries {
