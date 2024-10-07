@@ -10,7 +10,7 @@ require (
 	github.com/onsi/ginkgo/v2 v2.14.0
 	github.com/opiproject/gospdk v0.0.0-20240415072512-98d71122a73b
 	github.com/opiproject/opi-api v0.0.0-20240415072823-bb755a5f6ecc
-	github.com/opiproject/opi-evpn-bridge v0.2.1-0.20240902142753-8f51de196b54
+	github.com/opiproject/opi-evpn-bridge v0.2.1-0.20250207120615-90ff64f06ea5
 	github.com/opiproject/opi-smbios-bridge v0.1.3-0.20240113044816-4401aa6a3d1a
 	github.com/opiproject/opi-spdk-bridge v0.1.2-0.20240417152307-a0f9ef0e5260
 	github.com/opiproject/opi-strongswan-bridge v0.1.2-0.20231211064623-e4ef0e4fa95f

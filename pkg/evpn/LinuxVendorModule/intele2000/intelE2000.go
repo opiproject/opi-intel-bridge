@@ -3,7 +3,7 @@
 // Copyright (C) 2023 Nordix Foundation.
 
 // Package intele2000 handles intel e2000 vendor specific tasks
-//nolint: all
+// nolint: all
 package intele2000
 
 import (
@@ -38,6 +38,9 @@ type ModulelvmHandler struct{}
 
 // lvmComp empty interface
 const lvmComp string = "lvm"
+
+// maxRetries Retries for setting rp filter
+const maxRetries int = 5
 
 // run runs the command
 func run(cmd []string, flag bool) (string, int) {
@@ -332,20 +335,24 @@ func handlevrf(objectData *eventbus.ObjectData) {
 func disableRpFilter(iface string) {
 	// Work-around for the observation that sometimes the sysctl -w command did not take effect.
 	rpFilterDisabled := false
-	for i := 0; i < 3; i++ {
+	for i := 0; i < maxRetries; i++ {
 		rpDisable := fmt.Sprintf("net.ipv4.conf.%s.rp_filter=0", iface)
-		run([]string{"sysctl", "-w", rpDisable}, false)
-		time.Sleep(2 * time.Millisecond)
+		output, errCode := run([]string{"sysctl", "-w", rpDisable}, false)
+		if errCode != 0 {
+			log.Printf("Error setting rp_filter: %s\n", output)
+			continue
+		}
+		time.Sleep(200 * time.Millisecond)
 		rpDisable = fmt.Sprintf("net.ipv4.conf.%s.rp_filter", iface)
-		CP, err := run([]string{"sysctl", "-n", rpDisable}, false)
-		if err == 0 && strings.HasPrefix(CP, "0") {
+		output, errCode = run([]string{"sysctl", "-n", rpDisable}, false)
+		if errCode == 0 && strings.HasPrefix(output, "0") {
 			rpFilterDisabled = true
-			log.Printf("LVM: rpFilterDisabled: %+v\n", rpFilterDisabled)
+			log.Printf("RP filter disabled on interface %s\n", iface)
 			break
 		}
 	}
 	if !rpFilterDisabled {
-		log.Printf("Failed to disable rp_filtering on interface %s\n", iface)
+		log.Printf("Failed to disable rp_filter on interface %s\n", iface)
 	}
 }
 
@@ -424,8 +431,8 @@ func Initialize() {
 			}
 		}
 	}
-	portMux = config.GlobalConfig.LinuxFrr.PortMux
-	vrfMux = config.GlobalConfig.LinuxFrr.VrfMux
+	portMux = config.GlobalConfig.Interfaces.PortMux
+	vrfMux = config.GlobalConfig.Interfaces.VrfMux
 	ipMtu = config.GlobalConfig.LinuxFrr.IPMtu
 	brTenant = "br-tenant"
 	ctx = context.Background()
