@@ -25,32 +25,31 @@ grpc:
   server_port: 51703
   num_threads: 10
   static_external_macs: []
+interfaces:
+  phyports:
+    - rep: "enp0s1f0d1"
+      vsi: 0
+    - rep: "enp0s1f0d3"
+      vsi: 1
+  grpcacc: "enp0s1f0d2"
+  grpchost: "00:0d:00:03:09:64"
+  vrfmux: "enp0s1f0d4"
+  portmux: "enp0s1f0d5"
 p4:
   enabled: true
-  representors:
-    port_mux: "port-mux"
-    vrf_mux: "vrf-mux"
-    grpc_acc: "host"
-    grpc_host: "00:20:00:00:14:48"
-    phy0_rep: "port0"
-    phy1_rep: "port1"
   config:
-    p4infofile: /root/p4files/opi_ln.p4info.txt
-    binfile: /root/p4files/opi_ln.pb.bin
+    p4infofile: /root/networking.ethernet.acceleration.mev.infra.joint/gw_integration/p4files/evpn_gw.p4info.txt
+    binfile: /root/networking.ethernet.acceleration.mev.infra.joint/gw_integration/p4files/evpn_gw.pb.bin
 linuxfrr:
   enabled: true
   defaultvtep: "vxlan-vtep"
-  portmux: "enp0s1f0d5"
-  vrfmux: "enp0s1f0d4"
   ipmtu: 2962
+  localas: 65011
 netlink:
   enabled: true
   pollinterval: 1
-  phyports:
-    - name: "enp0s1f0d1"
-      vsi: 0
-    - name: "enp0s1f0d2"
-      vsi: 1
+  grddefaultroute: false
+  enableecmp: true
 loglevel:
   db: INFO
   grpc: INFO
