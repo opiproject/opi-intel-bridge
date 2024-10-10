@@ -22,7 +22,7 @@ import (
 	"github.com/opiproject/opi-evpn-bridge/pkg/infradb"
 	netlink_polling "github.com/opiproject/opi-evpn-bridge/pkg/netlink"
 	"github.com/opiproject/opi-evpn-bridge/pkg/utils"
-	p4client "github.com/opiproject/opi-evpn-bridge/pkg/vendor_plugins/intel-e2000/p4runtime/p4driverapi"
+	p4client "github.com/opiproject/opi-intel-bridge/pkg/evpn/vendor_plugins/intel-e2000/p4runtime/p4driverapi"
 	binarypack "github.com/roman-kachanovsky/go-binary-pack/binary-pack"
 )
 
@@ -614,18 +614,18 @@ func _deleteTcamEntry(vrfID uint32, direction int, prefix interface{}) (p4client
 // PhyPort structure of phy ports
 type PhyPort struct {
 	id  int
-	vsi int
+	vsi uint16
 	mac string
 }
 
 // PhyPortInit initializes the phy port
 func (p PhyPort) PhyPortInit(id int, vsi string, mac string) PhyPort {
 	p.id = id
-	val, err := strconv.ParseInt(vsi, 10, 32)
+	val, err := strconv.ParseUint(vsi, 10, 16)
 	if err != nil {
 		panic(err)
 	}
-	p.vsi = int(val)
+	p.vsi = uint16(val)
 	p.mac = mac
 
 	return p
@@ -773,18 +773,18 @@ func (e *EcmpDispatcher) EcmpDispatcherInit(nexthop []*netlink_polling.NexthopSt
 
 // GrpcPairPort structure
 type GrpcPairPort struct {
-	vsi  int
+	vsi  uint16
 	mac  string
 	peer map[string]string
 }
 
 // GrpcPairPortInit get the vsi+16
 func (g GrpcPairPort) GrpcPairPortInit(vsi string, mac string) GrpcPairPort {
-	val, err := strconv.ParseInt(vsi, 10, 32)
+	val, err := strconv.ParseUint(vsi, 10, 16)
 	if err != nil {
 		panic(err)
 	}
-	g.vsi = int(val)
+	g.vsi = uint16(val)
 	g.mac = mac
 	return g
 }
@@ -1145,7 +1145,6 @@ func (l L3Decoder) translateAddedRoute(route netlink_polling.RouteStruct) []inte
 			ecmp.runWebsterAlg()
 			entries = ecmp.addEcmpDispatcher(entries)
 		}
-		fmt.Printf("Inside translateAddedRoute Entries :%+v", entries)
 		route.Nexthops = []*netlink_polling.NexthopStruct{}
 		route.Nexthops = ecmp.Nexthop
 		ecmpFlag = true
@@ -1166,17 +1165,14 @@ func (l L3Decoder) translateDeletedRoute(route netlink_polling.RouteStruct) []in
 
 	var ecmp EcmpDispatcher
 	if len(route.Nexthops) > 1 {
-		fmt.Printf("Inside translateDeletedRoute")
 		if !ecmp.EcmpDispatcherInit(route.Nexthops, route.Vrf) {
 			return entries
 		}
 		ecmp.id, refCount = ecmpIndexPool.Release_id(ecmp.key, route.Key)
-		fmt.Printf("ecmo id :%+v , refCount = %v", ecmp.id, refCount)
 		if refCount == 0 {
 			ecmp.runWebsterAlg()
 			entries = ecmp.delEcmpDispatcher(entries)
 		}
-		fmt.Printf("Inside translateDeletedRoute Entries :%+v", entries)
 		route.Nexthops = []*netlink_polling.NexthopStruct{}
 		route.Nexthops = ecmp.Nexthop
 		ecmpFlag = true
@@ -1591,7 +1587,7 @@ func (l L3Decoder) StaticAdditions() []interface{} {
 	},
 	)
 	for _, port := range l._grpcPorts {
-		var peerVsi, err = strconv.ParseInt(port.peer["vsi"], 10, 64)
+		var peerVsi, err = strconv.ParseUint(port.peer["vsi"], 10, 16)
 		if err != nil {
 			panic(err)
 		}
