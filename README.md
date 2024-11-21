@@ -49,7 +49,7 @@ The following variables are used throughout this document:
 
 | Variable         | Description                                                                                                                                        |
 | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| BRIDGE_IP        | opi-intel-bridge gRPC/HTTP listening IP address e.g. 10.10.10.10 or localhost                                                                           |
+| BRIDGE_IP        | opi-intel-bridge gRPC/HTTP listening IP address e.g. 10.10.10.10 or localhost                                                                      |
 | BRIDGE_PORT      | opi-intel-bridge gRPC listening port e.g. 50051                                                                                                    |
 | BRIDGE_ADDR      | BRIDGE_IP:BRIDGE_PORT                                                                                                                              |
 | BRIDGE_HTTP_PORT | opi-intel-bridge http gateway port e.g. 8082                                                                                                       |
@@ -58,6 +58,8 @@ The following variables are used throughout this document:
 | BLK_PF_BDF       | physical function PCI address e.g. 0000:af:01.0 for virtio-blk                                                                                     |
 | TARGET_IP        | storage target ip address                                                                                                                          |
 | TARGET_PORT      | storage target port                                                                                                                                |
+| JAEGER_PORT      | Jaeger port                                                                                                                                        |
+| REDIS_PORT       | Redis port                                                                                                                                         |
 
 ### Build and import
 
@@ -86,7 +88,7 @@ Make sure `/var/tmp/spdk.sock` is created.
 On xPU run
 
 ```bash
-$ docker run --rm -it -v /var/tmp/:/var/tmp/ -p $BRIDGE_PORT:$BRIDGE_PORT -p $BRIDGE_HTTP_PORT:$BRIDGE_HTTP_PORT ghcr.io/opiproject/opi-intel-bridge:main /opi-intel-bridge-storage -grpc_port=$BRIDGE_PORT -http_port=$BRIDGE_HTTP_PORT
+$ docker run --rm -it -v /var/tmp/:/var/tmp/ -p $BRIDGE_PORT:$BRIDGE_PORT -p $BRIDGE_HTTP_PORT:$BRIDGE_HTTP_PORT -p $JAEGER_PORT:$JAEGER_PORT -p $REDIS_PORT:$REDIS_PORT ghcr.io/opiproject/opi-intel-bridge:main /opi-intel-bridge-storage -grpc_port=$BRIDGE_PORT -http_port=$BRIDGE_HTTP_PORT
 
 2023/09/12 20:29:05 TLS files are not specified. Use insecure connection.
 2023/09/12 20:29:05 Connection to SPDK will be via: unix detected from /var/tmp/spdk.sock
